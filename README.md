@@ -1,3 +1,7 @@
+![CI](https://github.com/eisaev/blevalueparser/actions/workflows/ci.yml/badge.svg)
+![Code Coverage](https://img.shields.io/badge/Code%20Coverage-87%25-yellow?style=flat)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # BLE Value Parser
 This is a header only library for parsing characteristics of some standardized BLE services. At the moment, parsers are partially implemented for the following services:
 * Device Information Service v1.1
