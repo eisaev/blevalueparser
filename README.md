@@ -1,5 +1,5 @@
 ![Building Examples](https://github.com/eisaev/blevalueparser/actions/workflows/examples.yml/badge.svg)
-![Testing](https://github.com/eisaev/blevalueparser/actions/workflows/examples.yml/badge.svg)
+![Testing](https://github.com/eisaev/blevalueparser/actions/workflows/tests.yml/badge.svg)
 ![Code Coverage](https://img.shields.io/badge/Code%20Coverage-87%25-yellow?style=flat)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
