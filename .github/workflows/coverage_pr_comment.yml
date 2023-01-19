@@ -6,23 +6,24 @@ on:
     types:
       - completed
 
-permissions:
-  pull-requests: write
-
 jobs:
   comment:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     if: ${{github.event.workflow_run.event == 'pull_request'}}
     steps:
-#      - name: Download Artifacts
-#        id: artifact
-#        uses: marocchino/on_artifact@v1
-#        with:
-#          name: all
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: code-coverage-results
+
+      - name: Cat Artifact
+        run: cat code-coverage-results.md
 
       - name: Add PR Comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: All
           message: 'Test commit!'
-            #${{steps.artifact.outputs}}
+

@@ -1,0 +1,53 @@
+name: Test Report
+
+#on:
+#  workflow_run:
+#    workflows: ['Tests']
+#    types:
+#      - completed
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: test-report
+
+#      - name: Download Artifacts
+#        uses: actions/github-script@v6
+#        with:
+#          script: |
+#            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+#               owner: context.repo.owner,
+#               repo: context.repo.repo,
+#               run_id: ${{github.event.workflow_run.id }},
+#            });
+#            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+#              return artifact.name == "test-report"
+#            })[0];
+#            var download = await github.rest.actions.downloadArtifact({
+#               owner: context.repo.owner,
+#               repo: context.repo.repo,
+#               artifact_id: matchArtifact.id,
+#               archive_format: 'zip',
+#            });
+#            var fs = require('fs');
+#            fs.writeFileSync('${{github.workspace}}/test-report.zip', Buffer.from(download.data));
+#
+#      - name: Unpack Artifacts
+#        run: |
+#          mkdir -p test-report
+#          unzip -d test-report test-report.zip
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: 'test-report/junit-*.xml'

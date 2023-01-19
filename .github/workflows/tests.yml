@@ -7,11 +7,13 @@ on:
     branches: ['main']
 
 jobs:
-  build:
+  test:
     strategy:
       matrix:
-        OS: [ubuntu-20.04, macos-12]
-        BUILD_TYPE: [Debug, MinSizeRel]
+        #OS: [ubuntu-20.04, macos-12]
+        #BUILD_TYPE: [Debug, MinSizeRel]
+        OS: [ubuntu-20.04]
+        BUILD_TYPE: [MinSizeRel]
 
     runs-on: ${{matrix.OS}}
 
@@ -39,7 +41,7 @@ jobs:
       working-directory: ${{env.TESTS_DIR}}
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest -C ${{matrix.BUILD_TYPE}} --output-junit junit-${OS}-${BUILD_TYPE}.xml
+      run: ctest -C ${{matrix.BUILD_TYPE}} --no-compress-output --test-output-size-passed 0 --test-output-size-failed 0 --output-junit junit-${{matrix.OS}}-${{matrix.BUILD_TYPE}}.xml
 
     - name: Upload Test Report Artifacts
       uses: actions/upload-artifact@v3
@@ -47,4 +49,47 @@ jobs:
         name: test-report
         path: ${{env.TESTS_DIR}}/junit-*.xml
         if-no-files-found: error
+
+#  report:
+#    needs: test
+#    runs-on: ubuntu-20.04
+#    permissions:
+#      contents: read
+#      issues: read
+#      checks: write
+#      pull-requests: write
+#    steps:
+#      - name: Download Artifacts
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: test-report
+#
+#      - name: Publish Test Results
+#        uses: EnricoMi/publish-unit-test-result-action@v2
+#        if: always()
+#        with:
+#          junit_files: 'junit-*.xml'
+
+  report1:
+    needs: test
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: test-report
+
+      - name: Publish Test Results
+        #uses: dorny/test-reporter@v1
+        uses: eisaev/test-reporter@main
+        with:
+          name: ctest Tests
+          path: 'junit-*.xml'
+          reporter: ctest-junit
 
