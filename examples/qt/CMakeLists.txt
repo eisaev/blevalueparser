@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 3.14)
 
+# vvv This part must be before project() vvv
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Bluetooth Core Quick QuickControls2 LinguistTools)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Bluetooth Core Quick QuickControls2 LinguistTools)
+
+if(APPLE AND (${QT_VERSION_MAJOR} LESS 6))
+    set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "Workaround for Qt 5.15.2 on Apple Silicon" FORCE)
+endif()
+# ^^^ This part must be before project() ^^^
+
 project(bvpqt VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
@@ -8,9 +17,6 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Bluetooth Core Quick QuickControls2 LinguistTools)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Bluetooth Core Quick QuickControls2 LinguistTools)
 
 set(TS_FILES
     translations/${PROJECT_NAME}_en_US.ts
@@ -45,10 +51,6 @@ else()
       ${PROJECT_SOURCES}
       ${QM_FILES}
     )
-
-    if(APPLE)
-        set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "" FORCE)
-    endif()
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE "${BVP_INCLUDE_DIR}")

@@ -42,11 +42,11 @@ To build you'll need at least CMake and Qt5 or Qt6.
 1. Generate project:
   * To build with Qt5 on Apple silicon:
 ```sh
-cmake -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/5.15.2/clang_64/lib/cmake/Qt5 -DCMAKE_OSX_ARCHITECTURES="x86_64"
+cmake -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/5.15.2/clang_64/lib/cmake
 ```
   * To build with Qt5 on Intel:
 ```sh
-cmake -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/5.15.2/clang_64/lib/cmake/Qt5
+cmake -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/5.15.2/clang_64/lib/cmake
 ```
   * To build with Qt6:
 ```sh
@@ -65,11 +65,11 @@ cmake --build ./build
 1. Generate project:
   * To build with Qt5 on Apple silicon:
 ```sh
-cmake -G Xcode -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/5.15.2/clang_64/lib/cmake/Qt5 -DCMAKE_OSX_ARCHITECTURES="x86_64"
+cmake -G Xcode -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/5.15.2/clang_64/lib/cmake
 ```
   * To build with Qt5 on Intel:
 ```sh
-cmake -G Xcode -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/5.15.2/clang_64/lib/cmake/Qt5
+cmake -G Xcode -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/5.15.2/clang_64/lib/cmake
 ```
   * To build with Qt6:
 ```sh
@@ -79,13 +79,6 @@ cmake -G Xcode -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.2.4/macos/lib/cmake
 
 ### QtCreator
 Open top level `CMakeList.txt` in QtCreator, select target, build.
-
-NB: If you have an error
-```
-building for macOS-arm64 but attempting to link with file built for macOS-x86_64
-```
-as result of building with Qt5 on Apple silicon when you need to run `Build->Run CMake` from menu. It looks like bug in QtCreator that causes variable `CMAKE_OSX_ARCHITECTURES` to be ignored on first CMake run.
-
 
 ## Linux
 
