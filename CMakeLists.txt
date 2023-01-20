@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.19)
 
 project(blevalueparser VERSION 0.1 LANGUAGES CXX)
 
@@ -7,7 +7,11 @@ option(BUILD_TESTS "Build tests" ON)
 
 include(GNUInstallDirs)
 
-add_library(${PROJECT_NAME} INTERFACE)
+set(LIBRARY_SOURCES
+    include/blevalueparser.h
+)
+
+add_library(${PROJECT_NAME} INTERFACE ${LIBRARY_SOURCES})
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_14)
 target_include_directories(${PROJECT_NAME} INTERFACE
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>

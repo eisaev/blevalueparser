@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.19)
 
 project(bvptest VERSION 0.1 LANGUAGES CXX)
 
@@ -14,7 +14,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(gtest)
 
 set(TEST_SOURCES
-    #    ${BVP_INCLUDE_DIR}/blevalueparser.h
     tests.cpp
     internalparsertest.cpp
     textstringtest.cpp
