@@ -25,6 +25,7 @@ jobs:
           - QT_VERSION: 6.2.4
             QT_MODULES: qtconnectivity
 
+    name: Build Examples ${{matrix.RUNNER.OS}} - ${{matrix.BUILD_TYPE}}
     runs-on: ${{matrix.RUNNER.RUNS_ON}}
 
     env:

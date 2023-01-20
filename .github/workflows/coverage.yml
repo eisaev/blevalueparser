@@ -8,6 +8,7 @@ on:
 
 jobs:
   coverage:
+    name: Code Coverage Check
     runs-on: [ubuntu-20.04, self-hosted]
 
     env:
@@ -74,6 +75,7 @@ jobs:
         path: code-coverage-results.md
 
   comment:
+    name: Code Coverage PR Commit
     needs: coverage
     runs-on: [ubuntu-20.04, self-hosted]
     permissions:
