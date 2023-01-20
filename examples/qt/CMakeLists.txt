@@ -53,9 +53,8 @@ else()
     )
 endif()
 
-target_include_directories(${PROJECT_NAME} PRIVATE "${BVP_INCLUDE_DIR}")
-
 target_link_libraries(${PROJECT_NAME} PRIVATE
+    blevalueparser
     Qt${QT_VERSION_MAJOR}::Bluetooth
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Qml

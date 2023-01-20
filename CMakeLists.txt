@@ -5,10 +5,14 @@ project(blevalueparser VERSION 0.1 LANGUAGES CXX)
 option(BUILD_EXAMPLES "Build examples" ON)
 option(BUILD_TESTS "Build tests" ON)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+include(GNUInstallDirs)
 
-set(BVP_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
+add_library(${PROJECT_NAME} INTERFACE)
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_14)
+target_include_directories(${PROJECT_NAME} INTERFACE
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 
 if(BUILD_TESTS)
     add_subdirectory("tests")
@@ -17,3 +21,5 @@ endif()
 if(BUILD_EXAMPLES)
     add_subdirectory("examples")
 endif()
+
+install(FILES "include/blevalueparser.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

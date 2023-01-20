@@ -14,7 +14,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(gtest)
 
 set(TEST_SOURCES
-    ${BVP_INCLUDE_DIR}/blevalueparser.h
+    #    ${BVP_INCLUDE_DIR}/blevalueparser.h
     tests.cpp
     internalparsertest.cpp
     textstringtest.cpp
@@ -28,9 +28,10 @@ set(TEST_SOURCES
 )
 
 add_executable(${PROJECT_NAME} ${TEST_SOURCES})
-target_link_libraries(${PROJECT_NAME} gtest)
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    blevalueparser
+    gtest
+)
 
 enable_testing()
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
-
-target_include_directories(${PROJECT_NAME} PRIVATE "${BVP_INCLUDE_DIR}")
