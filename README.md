@@ -32,29 +32,50 @@ void printBatteryLevel(const char *data, size_t size)
     std::cout << "Battery Level: " << int(result->level()) << "%" << std::endl;
 }
 ```
+If you need only a string representation of parsed data you can use the following code example:
+```c++
+#include "blevalueparser.h"
+
+[...]
+
+void printParsed(bvp::CharacteristicType chType, const char *data, size_t size)
+{
+    bvp::BLEValueParser bleValueParser;
+    auto result = bleValueParser.make_value(chType, data, size);
+    if (!result->isValid())
+    {
+        std::cout << "Invalid data" << std::endl;
+        return;
+    }
+
+    std::cout << "Parsed Data: " << result->toString() << std::endl;
+}
+```
+
 
 # Build Tests and Example
 To build you'll need at least CMake and Qt5 or Qt6.
+
+NB: If CMake doesn't find installed Qt then you can explicitly specify the path like this:
+```sh
+# for Qt5
+cmake -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/5.15.2/clang_64/lib/cmake
+```
+```sh
+# for Qt6
+cmake -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.2.4/macos/lib/cmake
+```
 
 ## macOS
 
 ### Console
 1. Generate project:
-  * To build with Qt5 on Apple silicon:
 ```sh
-cmake -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/5.15.2/clang_64/lib/cmake
+cmake -B ./build
 ```
-  * To build with Qt5 on Intel:
+or you can use generator for Ninja build system:
 ```sh
-cmake -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/5.15.2/clang_64/lib/cmake
-```
-  * To build with Qt6:
-```sh
-cmake -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.2.4/macos/lib/cmake
-```
-  Also you can use generator for Ninja build system:
-```sh
-cmake -G Ninja -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.2.4/macos/lib/cmake
+cmake -G Ninja -B ./build
 ```
 2. Build:
 ```sh
@@ -63,17 +84,8 @@ cmake --build ./build
 
 ### Xcode
 1. Generate project:
-  * To build with Qt5 on Apple silicon:
 ```sh
-cmake -G Xcode -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/5.15.2/clang_64/lib/cmake
-```
-  * To build with Qt5 on Intel:
-```sh
-cmake -G Xcode -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/5.15.2/clang_64/lib/cmake
-```
-  * To build with Qt6:
-```sh
-cmake -G Xcode -B ./build -DCMAKE_PREFIX_PATH=${HOME}/Qt/6.2.4/macos/lib/cmake
+cmake -G Xcode -B ./build
 ```
 2. Open generated project in Xcode, select target, build.
 
@@ -90,8 +102,17 @@ cmake --build ./build
 You can also use Ninja build system and QtCreator on Linux.
 
 # Tests
-The functionality of library is covered by tests. The GoogleTest framework is used. The test coverage for the demo application isn't implemented.
+The functionality of library is covered by tests. The GoogleTest framework is used. At the moment test coverage for the demo application isn't implemented.
+
+You can skip tests build on CMake configuration:
+```sh
+cmake -B ./build -DBUILD_TESTS=OFF
+```
 
 # Examples
 Currently there is only one example in the project. This demo application uses Qt framework.
 
+You can skip examples build on CMake configuration:
+```sh
+cmake -B ./build -DBUILD_EXAMPLES=OFF
+```
