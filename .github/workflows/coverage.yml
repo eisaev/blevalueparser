@@ -78,7 +78,7 @@ jobs:
     runs-on: [ubuntu-20.04, self-hosted]
     permissions:
       pull-requests: write
-    if: ${{github.event.workflow_run.event == 'pull_request'}}
+    if: ${{github.event_name == 'pull_request'}}
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v3
