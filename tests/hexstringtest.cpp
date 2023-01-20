@@ -37,7 +37,6 @@ TEST_F(HexStringTest, Empty)
 TEST_F(HexStringTest, ToString)
 {
     constexpr char data[] = { '\x01', '\x02', '\x03', '\x0D', '\x0E', '\x0F' };
-    BLEValueParser bleValueParser;
     auto result = bleValueParser.make_value(CharacteristicType::SystemID,
                                             data, sizeof(data));
     EXPECT_NE(nullptr, result);
@@ -48,7 +47,6 @@ TEST_F(HexStringTest, ToString)
 TEST_F(HexStringTest, Configuration)
 {
     constexpr char data[] = { '\x01', '\x02', '\x03', '\x0D', '\x0E', '\x0F' };
-    BLEValueParser bleValueParser;
     bleValueParser.setStringPrefix("<< ");
     bleValueParser.setStringSuffix(" >>");
     bleValueParser.setHexPrefix("hex> ");

@@ -75,7 +75,7 @@ jobs:
         path: code-coverage-results.md
 
   comment:
-    name: Code Coverage PR Commit
+    name: Code Coverage PR Comment
     needs: coverage
     runs-on: [ubuntu-20.04, self-hosted]
     permissions:

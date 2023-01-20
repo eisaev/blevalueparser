@@ -37,7 +37,6 @@ TEST_F(TextStringTest, Empty)
 TEST_F(TextStringTest, ToString)
 {
     constexpr char data[] = { 'a', 'B', 'c', 'X', 'y', 'Z' };
-    BLEValueParser bleValueParser;
     auto result = bleValueParser.make_value(CharacteristicType::ModelNumberString,
                                             data, sizeof(data));
     EXPECT_NE(nullptr, result);

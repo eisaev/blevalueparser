@@ -344,7 +344,6 @@ TEST_F(HeartRateMeasurementTest, ToString)
 {
     constexpr char flags = 0b00011001;
     constexpr char data[] = { flags, '\xAA', '\x01', '\xBB', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01' };
-    BLEValueParser bleValueParser;
     auto result = bleValueParser.make_value(CharacteristicType::HeartRateMeasurement,
                                             data, sizeof(data));
     EXPECT_NE(nullptr, result);

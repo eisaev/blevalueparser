@@ -79,7 +79,6 @@ TEST_F(PnPIDTest, TooLong)
 TEST_F(PnPIDTest, ToString)
 {
     constexpr char data[] = { '\x02', '\x12', '\x00', '\x23', '\x01', '\xBC', '\xAA' };
-    BLEValueParser bleValueParser;
     auto result = bleValueParser.make_value(CharacteristicType::PnPID,
                                             data, sizeof(data));
     EXPECT_NE(nullptr, result);

@@ -51,7 +51,6 @@ TEST_F(LocalTimeInformationTest, TZ0_DST1h)
 TEST_F(LocalTimeInformationTest, ToString)
 {
     constexpr char data[] = { char(-42), '\x08' };
-    BLEValueParser bleValueParser;
     auto result = bleValueParser.make_value(CharacteristicType::LocalTimeInformation,
                                             data, sizeof(data));
     EXPECT_NE(nullptr, result);
