@@ -1478,6 +1478,7 @@ private:
             {
                 --maxRRCount;
             }
+            m_heartRateMeasurement.rrIntervals.reserve(maxRRCount);
 
             for (uint8_t i = 0; i < maxRRCount && !parser->atEnd(); ++i)
             {
