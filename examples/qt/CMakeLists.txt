@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.19)
 
 # vvv This part must be before project() vvv
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Bluetooth Core Quick QuickControls2 LinguistTools)
