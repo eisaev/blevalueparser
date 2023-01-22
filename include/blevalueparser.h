@@ -453,7 +453,7 @@ enum class CharacteristicType
 class BaseValue
 {
 public:
-    virtual ~BaseValue() {};
+    virtual ~BaseValue() {}
 
     struct Configuration
     {
@@ -477,13 +477,13 @@ public:
 
         std::stringstream ss;
         ss << m_configuration.stringPrefix;
-        toStringStream(&ss);
+        toStringStream(ss);
         ss << m_configuration.stringSuffix;
         return ss.str();
     }
 
 protected:
-    explicit BaseValue() {};
+    explicit BaseValue() {}
 
     bool m_isValid = false;
     Configuration m_configuration;
@@ -590,7 +590,7 @@ protected:
                 for (size_t i = 0; i < offsetDiff; ++i)
                 {
                     uint8_t b = m_data[m_offset];
-                    result += T(b) << 8 * i;
+                    result += static_cast<T>(b) << 8 * i;
                     ++m_offset;
                 }
             }
@@ -607,7 +607,7 @@ protected:
         }
 
         Parser parser{data, size};
-        m_isValid = parse(&parser) && !parser.outOfData();
+        m_isValid = parse(parser) && !parser.outOfData();
     }
 
     void create(const char *data, size_t size, const Configuration &configuration)
@@ -617,17 +617,14 @@ protected:
     }
 
     virtual bool checkSize(size_t size) = 0;
-    virtual bool parse(Parser *parser) = 0;
-    virtual void toStringStream(std::stringstream *ss) const = 0;
+    virtual bool parse(Parser &parser) = 0;
+    virtual void toStringStream(std::stringstream &ss) const = 0;
 };
 
 
 class TextString final : public BaseValue
 {
 public:
-    virtual ~TextString() {};
-
-    // Getters
     std::string textString() const
     {
         return m_textString;
@@ -647,15 +644,15 @@ private:
         return true;
     }
 
-    virtual bool parse(Parser *parser) override
+    virtual bool parse(Parser &parser) override
     {
-        m_textString = parser->parseString();
+        m_textString = parser.parseString();
         return true;
     }
 
-    virtual void toStringStream(std::stringstream *ss) const override
+    virtual void toStringStream(std::stringstream &ss) const override
     {
-        *ss << m_textString;
+        ss << m_textString;
     }
 };
 
@@ -663,9 +660,6 @@ private:
 class HexString final : public BaseValue
 {
 public:
-    virtual ~HexString() {};
-
-    // Getters
     std::string hexString() const
     {
         return m_hexString;
@@ -685,17 +679,17 @@ private:
         return true;
     }
 
-    virtual bool parse(Parser *parser) override
+    virtual bool parse(Parser &parser) override
     {
         std::stringstream ss;
         ss << m_configuration.hexPrefix;
-        while (!parser->atEnd())
+        while (!parser.atEnd())
         {
             ss << std::uppercase
                << std::setfill('0')
                << std::setw(2)
                << std::hex
-               << int(parser->parseUInt8())
+               << static_cast<int>(parser.parseUInt8())
                << m_configuration.hexSeparator;
         }
         m_hexString = ss.str();
@@ -704,9 +698,9 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream *ss) const override
+    virtual void toStringStream(std::stringstream &ss) const override
     {
-        *ss << m_hexString;
+        ss << m_hexString;
     }
 };
 
@@ -720,9 +714,6 @@ private:
 class BatteryLevel final : public BaseValue
 {
 public:
-    virtual ~BatteryLevel() {};
-
-    // Getters
     uint8_t level() const
     {
         return m_level;
@@ -742,9 +733,9 @@ private:
         return size == 1;
     }
 
-    virtual bool parse(Parser *parser) override
+    virtual bool parse(Parser &parser) override
     {
-        m_level = parser->parseUInt8();
+        m_level = parser.parseUInt8();
         if (m_level > 100)
         {
             return false;
@@ -753,9 +744,9 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream *ss) const override
+    virtual void toStringStream(std::stringstream &ss) const override
     {
-        *ss << int(m_level) << "%";
+        ss << static_cast<int>(m_level) << "%";
     }
 };
 
@@ -790,9 +781,6 @@ struct PnPIDStruct
 class PnPID final : public BaseValue
 {
 public:
-    virtual ~PnPID() {};
-
-    // Getters
     VendorIDSourceEnum vendorIdSource() const
     {
         return m_pnpId.vendorIdSource;
@@ -837,10 +825,10 @@ private:
         return size == 7;
     }
 
-    virtual bool parse(Parser *parser) override
+    virtual bool parse(Parser &parser) override
     {
         // 3.9.1.1 Vendor ID Source Field
-        m_pnpId.vendorIdSource = VendorIDSourceEnum(parser->parseUInt8());
+        m_pnpId.vendorIdSource = VendorIDSourceEnum(parser.parseUInt8());
         switch (m_pnpId.vendorIdSource)
         {
             case VendorIDSourceEnum::Unknown:
@@ -851,39 +839,39 @@ private:
                 break;
         }
         // 3.9.1.2 Vendor ID Field
-        m_pnpId.vendorId = parser->parseUInt16();
+        m_pnpId.vendorId = parser.parseUInt16();
         // 3.9.1.3 Product ID Field
-        m_pnpId.productId = parser->parseUInt16();
+        m_pnpId.productId = parser.parseUInt16();
 
         // 3.9.1.4 Product Version Field
         // The value of the field value is 0xJJMN for version JJ.M.N
         // (JJ – major version number, M – minor version number, N – sub-minor version number)
-        m_pnpId.productVersion = parser->parseUInt16();
+        m_pnpId.productVersion = parser.parseUInt16();
 
         return true;
     }
 
-    virtual void toStringStream(std::stringstream *ss) const override
+    virtual void toStringStream(std::stringstream &ss) const override
     {
-        *ss << "(";
+        ss << "(";
         switch (m_pnpId.vendorIdSource)
         {
         case VendorIDSourceEnum::Unknown:
-                *ss << "<Unknown>";
+                ss << "<Unknown>";
                 break;
         case VendorIDSourceEnum::Bluetooth:
-                *ss << "Bluetooth";
+                ss << "Bluetooth";
                 break;
         case VendorIDSourceEnum::USB:
-                *ss << "USB";
+                ss << "USB";
                 break;
         }
-        *ss << ") ";
-        auto originalFlags = ss->flags();
-        *ss << "VID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_pnpId.vendorId << ", ";
-        *ss << "PID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_pnpId.productId << ", ";
-        ss->flags(originalFlags);
-        *ss << "Version: " << int(majorVersion()) << "." << int(minorVersion()) << "." << int(subMinorVersion());
+        ss << ") ";
+        auto originalFlags = ss.flags();
+        ss << "VID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_pnpId.vendorId << ", ";
+        ss << "PID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_pnpId.productId << ", ";
+        ss.flags(originalFlags);
+        ss << "Version: " << static_cast<int>(majorVersion()) << "." << static_cast<int>(minorVersion()) << "." << static_cast<int>(subMinorVersion());
     }
 };
 
@@ -1094,9 +1082,6 @@ struct LocalTimeInformationStruct
 class CurrentTime final : public BaseValue
 {
 public:
-    virtual ~CurrentTime() {};
-
-    // Getters
     uint16_t year() const
     {
         return m_currentTime.exactTime256.dayDateTime.dateTime.year;
@@ -1144,22 +1129,22 @@ public:
 
     bool isManuallyAdjusted() const
     {
-        return (m_currentTime.adjustReason & CTS_FLAG_MANUAL) > 0;
+        return (m_currentTime.adjustReason & CTS_FLAG_MANUAL) != 0;
     }
 
     bool isExternalReference() const
     {
-        return (m_currentTime.adjustReason & CTS_FLAG_EXTERNAL) > 0;
+        return (m_currentTime.adjustReason & CTS_FLAG_EXTERNAL) != 0;
     }
 
     bool isTZChanged() const
     {
-        return (m_currentTime.adjustReason & CTS_FLAG_TZ_CHANGED) > 0;
+        return (m_currentTime.adjustReason & CTS_FLAG_TZ_CHANGED) != 0;
     }
 
     bool isDSTChanged() const
     {
-        return (m_currentTime.adjustReason & CTS_FLAG_DST_CHANGED) > 0;
+        return (m_currentTime.adjustReason & CTS_FLAG_DST_CHANGED) != 0;
     }
 
 private:
@@ -1176,83 +1161,82 @@ private:
         return size == 10;
     }
 
-    virtual bool parse(Parser *parser) override
+    virtual bool parse(Parser &parser) override
     {
         // Exact Time 256
-        m_currentTime.exactTime256.dayDateTime.dateTime.year = parser->parseUInt16();
-        m_currentTime.exactTime256.dayDateTime.dateTime.month = parser->parseUInt8();
-        m_currentTime.exactTime256.dayDateTime.dateTime.day = parser->parseUInt8();
-        m_currentTime.exactTime256.dayDateTime.dateTime.hour = parser->parseUInt8();
-        m_currentTime.exactTime256.dayDateTime.dateTime.minute = parser->parseUInt8();
-        m_currentTime.exactTime256.dayDateTime.dateTime.seconds = parser->parseUInt8();
-        m_currentTime.exactTime256.dayDateTime.dayOfWeek = DayOfWeekEnum(parser->parseUInt8());
-        m_currentTime.exactTime256.fractions256 = parser->parseUInt8();
+        m_currentTime.exactTime256.dayDateTime.dateTime.year = parser.parseUInt16();
+        m_currentTime.exactTime256.dayDateTime.dateTime.month = parser.parseUInt8();
+        m_currentTime.exactTime256.dayDateTime.dateTime.day = parser.parseUInt8();
+        m_currentTime.exactTime256.dayDateTime.dateTime.hour = parser.parseUInt8();
+        m_currentTime.exactTime256.dayDateTime.dateTime.minute = parser.parseUInt8();
+        m_currentTime.exactTime256.dayDateTime.dateTime.seconds = parser.parseUInt8();
+        m_currentTime.exactTime256.dayDateTime.dayOfWeek = DayOfWeekEnum(parser.parseUInt8());
+        m_currentTime.exactTime256.fractions256 = parser.parseUInt8();
 
         // 3.1.2.1 Manual Time Update
         // 3.1.2.2 External Reference Time Update
         // 3.1.2.3 Change of Time Zone
         // 3.1.2.4 Change of DST Offset
-        m_currentTime.adjustReason = parser->parseUInt8();
+        m_currentTime.adjustReason = parser.parseUInt8();
 
         return true;
     }
 
-    virtual void toStringStream(std::stringstream *ss) const override
+    virtual void toStringStream(std::stringstream &ss) const override
     {
         switch (m_currentTime.exactTime256.dayDateTime.dayOfWeek)
         {
             case DayOfWeekEnum::Monday:
-                *ss << "Mon ";
+                ss << "Mon ";
                 break;
             case DayOfWeekEnum::Tuesday:
-                *ss << "Tue ";
+                ss << "Tue ";
                 break;
             case DayOfWeekEnum::Wednesday:
-                *ss << "Wed ";
+                ss << "Wed ";
                 break;
             case DayOfWeekEnum::Thursday:
-                *ss << "Thu ";
+                ss << "Thu ";
                 break;
             case DayOfWeekEnum::Friday:
-                *ss << "Fri ";
+                ss << "Fri ";
                 break;
             case DayOfWeekEnum::Saturday:
-                *ss << "Sat ";
+                ss << "Sat ";
                 break;
             case DayOfWeekEnum::Sunday:
-                *ss << "Sun ";
+                ss << "Sun ";
                 break;
             case DayOfWeekEnum::Unknown:
-            default:
-                *ss << "<Unknown> ";
+                ss << "<Unknown> ";
                 break;
         }
 
-        *ss << std::setfill('0') << std::setw(2) << int(day()) << ".";
-        *ss << std::setfill('0') << std::setw(2) << int(month()) << ".";
-        *ss << std::setfill('0') << std::setw(4) << int(year()) << " ";
-        *ss << std::setfill('0') << std::setw(2) << int(hour()) << ":";
-        *ss << std::setfill('0') << std::setw(2) << int(minute()) << ":";
-        *ss << std::setfill('0') << std::setw(2) << int(seconds()) << ".";
-        *ss << std::setfill('0') << std::setw(3) << int(milliseconds()) << " ";
-        *ss << "(adjust reason:";
+        ss << std::setfill('0') << std::setw(2) << static_cast<int>(day()) << ".";
+        ss << std::setfill('0') << std::setw(2) << static_cast<int>(month()) << ".";
+        ss << std::setfill('0') << std::setw(4) << static_cast<int>(year()) << " ";
+        ss << std::setfill('0') << std::setw(2) << static_cast<int>(hour()) << ":";
+        ss << std::setfill('0') << std::setw(2) << static_cast<int>(minute()) << ":";
+        ss << std::setfill('0') << std::setw(2) << static_cast<int>(seconds()) << ".";
+        ss << std::setfill('0') << std::setw(3) << static_cast<int>(milliseconds()) << " ";
+        ss << "(adjust reason:";
         if (isManuallyAdjusted())
         {
-            *ss << " ManuallyAdjusted";
+            ss << " ManuallyAdjusted";
         }
         if (isExternalReference())
         {
-            *ss << " ExternalReference";
+            ss << " ExternalReference";
         }
         if (isTZChanged())
         {
-            *ss << " TZChanged";
+            ss << " TZChanged";
         }
         if (isDSTChanged())
         {
-            *ss << " DSTChanged";
+            ss << " DSTChanged";
         }
-        *ss << " )";
+        ss << " )";
     }
 };
 
@@ -1260,9 +1244,6 @@ private:
 class LocalTimeInformation final : public BaseValue
 {
 public:
-    virtual ~LocalTimeInformation() {};
-
-    // Getters
     TimeZoneEnum timeZone() const
     {
         return m_localTimeInformation.timeZone;
@@ -1287,29 +1268,29 @@ private:
         return size == 2;
     }
 
-    virtual bool parse(Parser *parser) override
+    virtual bool parse(Parser &parser) override
     {
-        m_localTimeInformation.timeZone = TimeZoneEnum(parser->parseInt8());
+        m_localTimeInformation.timeZone = TimeZoneEnum(parser.parseInt8());
         switch (m_localTimeInformation.timeZone)
         {
-        case TimeZoneEnum::Minus48 ... TimeZoneEnum::Plus56:
-        case TimeZoneEnum::Unknown:
+            case TimeZoneEnum::Minus48 ... TimeZoneEnum::Plus56:
+            case TimeZoneEnum::Unknown:
                 break;
-        default:
+            default:
                 m_localTimeInformation.timeZone = TimeZoneEnum::Unknown;
                 break;
         }
 
-        m_localTimeInformation.dstOffset = DSTOffsetEnum(parser->parseUInt8());
+        m_localTimeInformation.dstOffset = DSTOffsetEnum(parser.parseUInt8());
         switch (m_localTimeInformation.dstOffset)
         {
-        case DSTOffsetEnum::StandardTime:
-        case DSTOffsetEnum::HalfAnHourDaylightTime0_5h:
-        case DSTOffsetEnum::DaylightTime1h:
-        case DSTOffsetEnum::DoubleDaylightTime2h:
-        case DSTOffsetEnum::Unknown:
+            case DSTOffsetEnum::StandardTime:
+            case DSTOffsetEnum::HalfAnHourDaylightTime0_5h:
+            case DSTOffsetEnum::DaylightTime1h:
+            case DSTOffsetEnum::DoubleDaylightTime2h:
+            case DSTOffsetEnum::Unknown:
                 break;
-        default:
+            default:
                 m_localTimeInformation.dstOffset = DSTOffsetEnum::Unknown;
                 break;
         }
@@ -1317,35 +1298,35 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream *ss) const override
+    virtual void toStringStream(std::stringstream &ss) const override
     {
-        *ss << "TZ: ";
+        ss << "TZ: ";
         if (TimeZoneEnum::Unknown == m_localTimeInformation.timeZone)
         {
-            *ss << "<Unknown>";
+            ss << "<Unknown>";
         }
         else
         {
-            *ss << int(m_localTimeInformation.timeZone);
+            ss << static_cast<int>(m_localTimeInformation.timeZone);
         }
 
-        *ss << ", DST: ";
+        ss << ", DST: ";
         switch (m_localTimeInformation.dstOffset)
         {
             case DSTOffsetEnum::StandardTime:
-                *ss << "Standard Time";
+                ss << "Standard Time";
                 break;
             case DSTOffsetEnum::HalfAnHourDaylightTime0_5h:
-                *ss << "Half an Hour Daylight Time (+0.5h)";
+                ss << "Half an Hour Daylight Time (+0.5h)";
                 break;
             case DSTOffsetEnum::DaylightTime1h:
-                *ss << "Daylight Time (+1h)";
+                ss << "Daylight Time (+1h)";
                 break;
             case DSTOffsetEnum::DoubleDaylightTime2h:
-                *ss << "Double Daylight Time (+2h)";
+                ss << "Double Daylight Time (+2h)";
                 break;
             case DSTOffsetEnum::Unknown:
-                *ss << "<Unknown>";
+                ss << "<Unknown>";
                 break;
         }
     }
@@ -1399,17 +1380,14 @@ constexpr auto HRS_FLAG_RESERVER3       = 0b10000000;
 class HeartRateMeasurement final : public BaseValue
 {
 public:
-    virtual ~HeartRateMeasurement() {};
-
-    // Getters
     bool isContactSupported() const
     {
-        return (m_heartRateMeasurement.flags & HRS_FLAG_CONTACT_SUPPORT) > 0;
+        return (m_heartRateMeasurement.flags & HRS_FLAG_CONTACT_SUPPORT) != 0;
     }
 
     bool isContacted() const
     {
-        return (m_heartRateMeasurement.flags & HRS_FLAG_CONTACT_STATUS) > 0;
+        return (m_heartRateMeasurement.flags & HRS_FLAG_CONTACT_STATUS) != 0;
     }
 
     uint16_t heartRate() const
@@ -1419,7 +1397,7 @@ public:
 
     bool hasEnergyExpended() const
     {
-        return (m_heartRateMeasurement.flags & HRS_FLAG_ENERGY_EXPENDED) > 0;
+        return (m_heartRateMeasurement.flags & HRS_FLAG_ENERGY_EXPENDED) != 0;
     }
 
     uint16_t energyExpended() const
@@ -1447,23 +1425,23 @@ private:
         return size > 1 && size < 21;
     }
 
-    virtual bool parse(Parser *parser) override
+    virtual bool parse(Parser &parser) override
     {
         // 3.1.1.1 Flags Field
-        m_heartRateMeasurement.flags = parser->parseUInt8();
+        m_heartRateMeasurement.flags = parser.parseUInt8();
 
         // 3.1.1.2 Heart Rate Measurement Value Field
         if (isWideFormat())
         {
-            m_heartRateMeasurement.heartRate = parser->parseUInt16();
+            m_heartRateMeasurement.heartRate = parser.parseUInt16();
         } else {
-            m_heartRateMeasurement.heartRate = parser->parseUInt8();
+            m_heartRateMeasurement.heartRate = parser.parseUInt8();
         }
 
         // 3.1.1.3 Energy Expended Field
         if (hasEnergyExpended())
         {
-            m_heartRateMeasurement.energyExpended = parser->parseUInt16();
+            m_heartRateMeasurement.energyExpended = parser.parseUInt16();
         }
 
         // 3.1.1.4 RR-Interval Field
@@ -1480,55 +1458,55 @@ private:
             }
             m_heartRateMeasurement.rrIntervals.reserve(maxRRCount);
 
-            for (uint8_t i = 0; i < maxRRCount && !parser->atEnd(); ++i)
+            for (uint8_t i = 0; i < maxRRCount && !parser.atEnd(); ++i)
             {
-                m_heartRateMeasurement.rrIntervals.push_back(parser->parseUInt16());
+                m_heartRateMeasurement.rrIntervals.push_back(parser.parseUInt16());
             }
         }
 
         return true;
     }
 
-    virtual void toStringStream(std::stringstream *ss) const override
+    virtual void toStringStream(std::stringstream &ss) const override
     {
         if (isContactSupported())
         {
             if (isContacted())
             {
-                *ss << "(connected) ";
+                ss << "(connected) ";
             }
             else
             {
-                *ss << "(disconnected) ";
+                ss << "(disconnected) ";
             }
         }
 
-        *ss << "HR: " << m_heartRateMeasurement.heartRate << "bpm";
+        ss << "HR: " << m_heartRateMeasurement.heartRate << "bpm";
 
         if (hasEnergyExpended())
         {
-            *ss << ", EE: " << m_heartRateMeasurement.energyExpended << "kJ";
+            ss << ", EE: " << m_heartRateMeasurement.energyExpended << "kJ";
         }
 
         if (!m_heartRateMeasurement.rrIntervals.empty())
         {
-            *ss << ", RR: { ";
+            ss << ", RR: { ";
             for (auto rrInterval : m_heartRateMeasurement.rrIntervals)
             {
-                *ss << rrInterval << "ms; ";
+                ss << rrInterval << "ms; ";
             }
-            *ss << "}";
+            ss << "}";
         }
     }
 
     bool isWideFormat() const
     {
-        return (m_heartRateMeasurement.flags & HRS_FLAG_VALUE_FORMAT) > 0;
+        return (m_heartRateMeasurement.flags & HRS_FLAG_VALUE_FORMAT) != 0;
     }
 
     bool hasRRIntervals() const
     {
-        return (m_heartRateMeasurement.flags & HRS_FLAG_RR_INTERVALS) > 0;
+        return (m_heartRateMeasurement.flags & HRS_FLAG_RR_INTERVALS) != 0;
     }
 };
 
@@ -1536,9 +1514,6 @@ private:
 class BodySensorLocation final : public BaseValue
 {
 public:
-    virtual ~BodySensorLocation() {};
-
-    // Getters
     BodySensorLocationEnum location() const
     {
         return m_location;
@@ -1558,11 +1533,11 @@ private:
         return size == 1;
     }
 
-    virtual bool parse(Parser *parser) override
+    virtual bool parse(Parser &parser) override
     {
         // GATT_Specification_Supplement_v8.pdf
         // 3.35 Body Sensor Location
-        m_location = BodySensorLocationEnum(parser->parseUInt8());
+        m_location = BodySensorLocationEnum(parser.parseUInt8());
         switch (m_location)
         {
             case BodySensorLocationEnum::Unknown:
@@ -1575,18 +1550,18 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream *ss) const override
+    virtual void toStringStream(std::stringstream &ss) const override
     {
         switch (m_location)
         {
-            case BodySensorLocationEnum::Unknown: *ss << "<Unknown>"; break;
-            case BodySensorLocationEnum::Other:   *ss << "Other"; break;
-            case BodySensorLocationEnum::Chest:   *ss << "Chest"; break;
-            case BodySensorLocationEnum::Wrist:   *ss << "Wrist"; break;
-            case BodySensorLocationEnum::Finger:  *ss << "Finger"; break;
-            case BodySensorLocationEnum::Hand:    *ss << "Hand"; break;
-            case BodySensorLocationEnum::EarLobe: *ss << "Ear Lobe"; break;
-            case BodySensorLocationEnum::Foot:    *ss << "Foot"; break;
+            case BodySensorLocationEnum::Unknown: ss << "<Unknown>"; break;
+            case BodySensorLocationEnum::Other:   ss << "Other"; break;
+            case BodySensorLocationEnum::Chest:   ss << "Chest"; break;
+            case BodySensorLocationEnum::Wrist:   ss << "Wrist"; break;
+            case BodySensorLocationEnum::Finger:  ss << "Finger"; break;
+            case BodySensorLocationEnum::Hand:    ss << "Hand"; break;
+            case BodySensorLocationEnum::EarLobe: ss << "Ear Lobe"; break;
+            case BodySensorLocationEnum::Foot:    ss << "Foot"; break;
         }
     }
 };
