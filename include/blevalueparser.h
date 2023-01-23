@@ -581,21 +581,21 @@ protected:
         template <typename T>
         T parseInt()
         {
-            T result = 0;
+            uint64_t result = 0;
 
-            constexpr size_t offsetDiff = sizeof(result);
+            constexpr size_t offsetDiff = sizeof(T);
             m_outOfData = m_offset + offsetDiff > m_size;
             if (!m_outOfData)
             {
                 for (size_t i = 0; i < offsetDiff; ++i)
                 {
                     uint8_t b = m_data[m_offset];
-                    result += static_cast<T>(b) << 8 * i;
+                    result += static_cast<uint64_t>(b) << 8 * i;
                     ++m_offset;
                 }
             }
 
-            return result;
+            return static_cast<T>(result);
         }
     };
 
