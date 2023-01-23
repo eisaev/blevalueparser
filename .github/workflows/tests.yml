@@ -14,8 +14,10 @@ jobs:
         RUNNER:
           - RUNS_ON: [ubuntu-20.04, self-hosted]
             OS: ubuntu-20.04
+            CLANG_TIDY: '-DCMAKE_CXX_CLANG_TIDY="clang-tidy;--export-fixes=clang-tidy.fixes;--fix;--warnings-as-errors=*"'
           - RUNS_ON: [macos-12, self-hosted]
             OS: macos-12
+            CLANG_TIDY: ''
 
     name: Test ${{matrix.RUNNER.OS}} - ${{matrix.BUILD_TYPE}}
     runs-on: ${{matrix.RUNNER.RUNS_ON}}
@@ -29,11 +31,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Install xsltproc
+    - name: Install System Dependencies
       if: ${{matrix.RUNNER.OS == 'ubuntu-20.04'}}
       uses: awalsh128/cache-apt-pkgs-action@v1
       with:
-        packages: xsltproc
+        packages: xsltproc clang-tidy
         debug: false
 
     - name: Install Ninja
@@ -42,7 +44,7 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -G Ninja -B ${{env.BUILD_DIR}} -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}}
+      run: cmake -G Ninja -B ${{env.BUILD_DIR}} -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} ${{matrix.RUNNER.CLANG_TIDY}}
 
     - name: Build
       # Build your program with the given configuration
@@ -55,9 +57,16 @@ jobs:
       #run: ctest -C ${{matrix.BUILD_TYPE}} --no-compress-output --test-output-size-passed 0 --test-output-size-failed 0 --output-junit junit-${{matrix.OS}}-${{matrix.BUILD_TYPE}}.xml
       run: GTEST_OUTPUT=xml:junit-${{matrix.RUNNER.OS}}-${{matrix.BUILD_TYPE}}.xml ./bvptest --gtest_output=xml:gtest-${{matrix.RUNNER.OS}}-${{matrix.BUILD_TYPE}}.xml
 
-    - name: Test
+    - name: Convert GTest XML to JUnit
       working-directory: ${{env.TESTS_DIR}}
       run: xsltproc --output junit-${{matrix.RUNNER.OS}}-${{matrix.BUILD_TYPE}}.xml ${{env.THIRDPARTY_DIR}}/gtest_to_junit.xsl gtest-${{matrix.RUNNER.OS}}-${{matrix.BUILD_TYPE}}.xml
+
+    - name: Upload Clang Tidy Artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: clang-tidy-fixes
+        path: ${{env.BUILD_DIR}}/clang-tidy.fixes
 
     - name: Upload Test Report Artifacts
       uses: actions/upload-artifact@v3
@@ -70,22 +79,23 @@ jobs:
     name: Test Report
     needs: test
     runs-on: [ubuntu-20.04, self-hosted]
+
     permissions:
       contents: read
       checks: write
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
 
-      - name: Download Artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: test-report
+    - name: Download Artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: test-report
 
-      - name: Publish Test Results
-        uses: dorny/test-reporter@v1
-        with:
-          name: Google Test JUnit
-          path: 'junit-*.xml'
-          reporter: jest-junit
-
+    - name: Publish Test Results
+      uses: dorny/test-reporter@v1
+      with:
+        name: Google Test JUnit
+        path: 'junit-*.xml'
+        reporter: jest-junit
