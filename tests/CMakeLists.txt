@@ -15,15 +15,16 @@ FetchContent_MakeAvailable(gtest)
 
 set(TEST_SOURCES
     tests.cpp
-    internalparsertest.cpp
-    textstringtest.cpp
-    hexstringtest.cpp
     batteryleveltest.cpp
-    pnpidtest.cpp
-    currenttimetest.cpp
-    localtimeinformationtest.cpp
     bodysensorlocationtest.cpp
+    currenttimetest.cpp
     heartratemeasurementtest.cpp
+    hexstringtest.cpp
+    internalparsertest.cpp
+    localtimeinformationtest.cpp
+    pnpidtest.cpp
+    textstringtest.cpp
+    unsupportedtest.cpp
 )
 
 add_executable(${PROJECT_NAME} ${TEST_SOURCES})

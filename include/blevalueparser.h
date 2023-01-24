@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iomanip>
 #include <vector>
+#include <locale>
 
 
 namespace bvp
@@ -710,13 +711,25 @@ private:
  * BAS_V1.1.pdf
  */
 
+// GATT_Specification_Supplement_v8.pdf
+// 3.27 Battery Level
+struct BatteryLevelStruct
+{
+    uint8_t batteryLevel = 0;
+};
+
 // 3.1 Battery Level
 class BatteryLevel final : public BaseValue
 {
 public:
+    BatteryLevelStruct getBtSpecObject() const
+    {
+        return m_batteryLevel;
+    }
+
     uint8_t level() const
     {
-        return m_level;
+        return m_batteryLevel.batteryLevel;
     }
 
 private:
@@ -726,7 +739,7 @@ private:
         create(data, size, configuration);
     }
 
-    uint8_t m_level = 0;
+    BatteryLevelStruct m_batteryLevel;
 
     virtual bool checkSize(size_t size) override
     {
@@ -735,8 +748,8 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_level = parser.parseUInt8();
-        if (m_level > 100)
+        m_batteryLevel.batteryLevel = parser.parseUInt8();
+        if (m_batteryLevel.batteryLevel > 100)
         {
             return false;
         }
@@ -746,7 +759,7 @@ private:
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        ss << static_cast<int>(m_level) << "%";
+        ss << static_cast<int>(m_batteryLevel.batteryLevel) << "%";
     }
 };
 
@@ -757,33 +770,44 @@ private:
  */
 
 // 3.9.1.1 Vendor ID Source Field (Table 3.2)
-enum class VendorIDSourceEnum
+// GATT_Specification_Supplement_v8.pdf
+// 3.169.1 Vendor ID Source field (Table 3.267)
+enum class VendorIdSourceEnum
 {
     Unknown     = 0,  // 0, 3–255 - Reserved for Future Use
     Bluetooth   = 1,
     USB         = 2
 };
 
-namespace
+// GATT_Specification_Supplement_v8.pdf
+// 3.169.1 Vendor ID Source field
+struct VendorIdSourceStruct
 {
+    VendorIdSourceEnum vendorIdSource = VendorIdSourceEnum::Unknown;
+};
+
 // GATT_Specification_Supplement_v8.pdf
 // 3.169 PnP ID
 struct PnPIDStruct
 {
-    VendorIDSourceEnum vendorIdSource = VendorIDSourceEnum::Unknown;
+    VendorIdSourceStruct vendorIdSource;
     uint16_t vendorId = 0;
     uint16_t productId = 0;
     uint16_t productVersion = 0;
 };
-}
 
 // 3.9 PnPID
 class PnPID final : public BaseValue
 {
 public:
-    VendorIDSourceEnum vendorIdSource() const
+    PnPIDStruct getBtSpecObject() const
     {
-        return m_pnpId.vendorIdSource;
+        return m_pnpId;
+    }
+
+    VendorIdSourceEnum vendorIdSource() const
+    {
+        return m_pnpId.vendorIdSource.vendorIdSource;
     }
 
     uint16_t vendorId() const
@@ -828,14 +852,14 @@ private:
     virtual bool parse(Parser &parser) override
     {
         // 3.9.1.1 Vendor ID Source Field
-        m_pnpId.vendorIdSource = VendorIDSourceEnum(parser.parseUInt8());
-        switch (m_pnpId.vendorIdSource)
+        m_pnpId.vendorIdSource.vendorIdSource = VendorIdSourceEnum(parser.parseUInt8());
+        switch (m_pnpId.vendorIdSource.vendorIdSource)
         {
-            case VendorIDSourceEnum::Unknown:
-            case VendorIDSourceEnum::Bluetooth ... VendorIDSourceEnum::USB:
+            case VendorIdSourceEnum::Unknown:
+            case VendorIdSourceEnum::Bluetooth ... VendorIdSourceEnum::USB:
                 break;
             default:
-                m_pnpId.vendorIdSource = VendorIDSourceEnum::Unknown;
+                m_pnpId.vendorIdSource.vendorIdSource = VendorIdSourceEnum::Unknown;
                 break;
         }
         // 3.9.1.2 Vendor ID Field
@@ -854,15 +878,15 @@ private:
     virtual void toStringStream(std::stringstream &ss) const override
     {
         ss << "(";
-        switch (m_pnpId.vendorIdSource)
+        switch (m_pnpId.vendorIdSource.vendorIdSource)
         {
-        case VendorIDSourceEnum::Unknown:
+        case VendorIdSourceEnum::Unknown:
                 ss << "<Unknown>";
                 break;
-        case VendorIDSourceEnum::Bluetooth:
+        case VendorIdSourceEnum::Bluetooth:
                 ss << "Bluetooth";
                 break;
-        case VendorIDSourceEnum::USB:
+        case VendorIdSourceEnum::USB:
                 ss << "USB";
                 break;
         }
@@ -882,7 +906,7 @@ private:
  */
 
 // GATT_Specification_Supplement_v8.pdf
-// 3.73 Day of Week
+// 3.73 Day of Week (Table 3.130)
 enum class DayOfWeekEnum
 {
     Unknown = 0,
@@ -896,7 +920,64 @@ enum class DayOfWeekEnum
 };
 
 // GATT_Specification_Supplement_v8.pdf
-// 3.232 Time Zone
+// 3.73 Day of Week
+struct DayOfWeekStruct
+{
+    DayOfWeekEnum dayOfWeek = DayOfWeekEnum::Unknown;
+};
+
+// GATT_Specification_Supplement_v8.pdf
+// 3.70 Date Time
+struct DateTimeStruct
+{
+    uint16_t year = 0;
+    uint8_t month = 0;
+    uint8_t day = 0;
+    uint8_t hour = 0;
+    uint8_t minute = 0;
+    uint8_t seconds = 0;
+};
+
+// GATT_Specification_Supplement_v8.pdf
+// 3.72 Day Date Time
+struct DayDateTimeStruct
+{
+    DateTimeStruct dateTime;
+    DayOfWeekStruct dayOfWeek;
+};
+
+// GATT_Specification_Supplement_v8.pdf
+// 3.90 Exact Time 256
+struct ExactTime256Struct
+{
+    DayDateTimeStruct dayDateTime;
+    uint8_t fractions256 = 0;
+};
+
+// GATT_Specification_Supplement_v8.pdf
+// 3.62 Current Time
+// Table 3.106: Structure of the Current Time characteristic
+// Adjust Reason
+constexpr uint8_t CTS_FLAG_MANUAL      = 0b00000001;
+constexpr uint8_t CTS_FLAG_EXTERNAL    = 0b00000010;
+constexpr uint8_t CTS_FLAG_TZ_CHANGED  = 0b00000100;
+constexpr uint8_t CTS_FLAG_DST_CHANGED = 0b00001000;
+constexpr uint8_t CTS_FLAG_RESERVED1   = 0b00010000;
+constexpr uint8_t CTS_FLAG_RESERVED2   = 0b00100000;
+constexpr uint8_t CTS_FLAG_RESERVED3   = 0b01000000;
+constexpr uint8_t CTS_FLAG_RESERVED4   = 0b10000000;
+
+// GATT_Specification_Supplement_v8.pdf
+// 3.62 Current Time
+struct CurrentTimeStruct
+{
+    ExactTime256Struct exactTime256;
+    // See CTS_FLAG_*
+    uint8_t adjustReason = 0;
+};
+
+// GATT_Specification_Supplement_v8.pdf
+// 3.232 Time Zone (Table 3.345)
 enum class TimeZoneEnum
 {
     Unknown = -128,
@@ -1008,7 +1089,14 @@ enum class TimeZoneEnum
 };
 
 // GATT_Specification_Supplement_v8.pdf
-// 3.76 DST Offset
+// 3.232 Time Zone (Table 3.345)
+struct TimeZoneStruct
+{
+    TimeZoneEnum timeZone = TimeZoneEnum::Unknown;
+};
+
+// GATT_Specification_Supplement_v8.pdf
+// 3.76 DST Offset (Table 3.134)
 enum class DSTOffsetEnum
 {
     StandardTime = 0,
@@ -1018,70 +1106,30 @@ enum class DSTOffsetEnum
     Unknown = 255
 };
 
-namespace
-{
 // GATT_Specification_Supplement_v8.pdf
-// 3.70 Date Time
-struct DateTimeStruct
+// 3.76 DST Offset
+struct DSTOffsetStruct
 {
-    uint16_t year = 0;
-    uint8_t month = 0;
-    uint8_t day = 0;
-    uint8_t hour = 0;
-    uint8_t minute = 0;
-    uint8_t seconds = 0;
-};
-
-// GATT_Specification_Supplement_v8.pdf
-// 3.72 Day Date Time
-struct DayDateTimeStruct
-{
-    DateTimeStruct dateTime;
-    DayOfWeekEnum dayOfWeek = DayOfWeekEnum::Unknown;
-};
-
-// GATT_Specification_Supplement_v8.pdf
-// 3.90 Exact Time 256
-struct ExactTime256Struct
-{
-    DayDateTimeStruct dayDateTime;
-    uint8_t fractions256 = 0;
-};
-
-// GATT_Specification_Supplement_v8.pdf
-// 3.62 Current Time
-// Table 3.106: Structure of the Current Time characteristic
-// Adjust Reason
-constexpr auto CTS_FLAG_MANUAL      = 0b00000001;
-constexpr auto CTS_FLAG_EXTERNAL    = 0b00000010;
-constexpr auto CTS_FLAG_TZ_CHANGED  = 0b00000100;
-constexpr auto CTS_FLAG_DST_CHANGED = 0b00001000;
-constexpr auto CTS_FLAG_RESERVED1   = 0b00010000;
-constexpr auto CTS_FLAG_RESERVED2   = 0b00100000;
-constexpr auto CTS_FLAG_RESERVED3   = 0b01000000;
-constexpr auto CTS_FLAG_RESERVED4   = 0b10000000;
-
-// GATT_Specification_Supplement_v8.pdf
-// 3.62 Current Time
-struct CurrentTimeStruct
-{
-    ExactTime256Struct exactTime256;
-    uint8_t adjustReason = 0;
+    DSTOffsetEnum dstOffset = DSTOffsetEnum::Unknown;
 };
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.135 Local Time Information
 struct LocalTimeInformationStruct
 {
-    TimeZoneEnum timeZone = TimeZoneEnum::Unknown;
-    DSTOffsetEnum dstOffset = DSTOffsetEnum::Unknown;
+    TimeZoneStruct timeZone;
+    DSTOffsetStruct dstOffset;
 };
-}  // namespace
 
 // 3.1 Current Time
 class CurrentTime final : public BaseValue
 {
 public:
+    CurrentTimeStruct getBtSpecObject() const
+    {
+        return m_currentTime;
+    }
+
     uint16_t year() const
     {
         return m_currentTime.exactTime256.dayDateTime.dateTime.year;
@@ -1114,7 +1162,7 @@ public:
 
     DayOfWeekEnum dayOfWeek() const
     {
-        return m_currentTime.exactTime256.dayDateTime.dayOfWeek;
+        return m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek;
     }
 
     uint8_t fractionsOfSeconds() const
@@ -1170,7 +1218,16 @@ private:
         m_currentTime.exactTime256.dayDateTime.dateTime.hour = parser.parseUInt8();
         m_currentTime.exactTime256.dayDateTime.dateTime.minute = parser.parseUInt8();
         m_currentTime.exactTime256.dayDateTime.dateTime.seconds = parser.parseUInt8();
-        m_currentTime.exactTime256.dayDateTime.dayOfWeek = DayOfWeekEnum(parser.parseUInt8());
+        m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek = DayOfWeekEnum(parser.parseUInt8());
+        switch (m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek)
+        {
+        case DayOfWeekEnum::Monday ... DayOfWeekEnum::Sunday:
+        case DayOfWeekEnum::Unknown:
+                break;
+        default:
+                m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek = DayOfWeekEnum::Unknown;
+                break;
+        }
         m_currentTime.exactTime256.fractions256 = parser.parseUInt8();
 
         // 3.1.2.1 Manual Time Update
@@ -1184,7 +1241,7 @@ private:
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        switch (m_currentTime.exactTime256.dayDateTime.dayOfWeek)
+        switch (m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek)
         {
             case DayOfWeekEnum::Monday:
                 ss << "Mon ";
@@ -1208,7 +1265,6 @@ private:
                 ss << "Sun ";
                 break;
             case DayOfWeekEnum::Unknown:
-                ss << "<Unknown> ";
                 break;
         }
 
@@ -1244,14 +1300,19 @@ private:
 class LocalTimeInformation final : public BaseValue
 {
 public:
+    LocalTimeInformationStruct getBtSpecObject() const
+    {
+        return m_localTimeInformation;
+    }
+
     TimeZoneEnum timeZone() const
     {
-        return m_localTimeInformation.timeZone;
+        return m_localTimeInformation.timeZone.timeZone;
     }
 
     DSTOffsetEnum dstOffset() const
     {
-        return m_localTimeInformation.dstOffset;
+        return m_localTimeInformation.dstOffset.dstOffset;
     }
 
 private:
@@ -1270,19 +1331,19 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_localTimeInformation.timeZone = TimeZoneEnum(parser.parseInt8());
-        switch (m_localTimeInformation.timeZone)
+        m_localTimeInformation.timeZone.timeZone = TimeZoneEnum(parser.parseInt8());
+        switch (m_localTimeInformation.timeZone.timeZone)
         {
             case TimeZoneEnum::Minus48 ... TimeZoneEnum::Plus56:
             case TimeZoneEnum::Unknown:
                 break;
             default:
-                m_localTimeInformation.timeZone = TimeZoneEnum::Unknown;
+                m_localTimeInformation.timeZone.timeZone = TimeZoneEnum::Unknown;
                 break;
         }
 
-        m_localTimeInformation.dstOffset = DSTOffsetEnum(parser.parseUInt8());
-        switch (m_localTimeInformation.dstOffset)
+        m_localTimeInformation.dstOffset.dstOffset = DSTOffsetEnum(parser.parseUInt8());
+        switch (m_localTimeInformation.dstOffset.dstOffset)
         {
             case DSTOffsetEnum::StandardTime:
             case DSTOffsetEnum::HalfAnHourDaylightTime0_5h:
@@ -1291,7 +1352,7 @@ private:
             case DSTOffsetEnum::Unknown:
                 break;
             default:
-                m_localTimeInformation.dstOffset = DSTOffsetEnum::Unknown;
+                m_localTimeInformation.dstOffset.dstOffset = DSTOffsetEnum::Unknown;
                 break;
         }
 
@@ -1301,17 +1362,17 @@ private:
     virtual void toStringStream(std::stringstream &ss) const override
     {
         ss << "TZ: ";
-        if (TimeZoneEnum::Unknown == m_localTimeInformation.timeZone)
+        if (TimeZoneEnum::Unknown == m_localTimeInformation.timeZone.timeZone)
         {
             ss << "<Unknown>";
         }
         else
         {
-            ss << static_cast<int>(m_localTimeInformation.timeZone);
+            ss << static_cast<int>(m_localTimeInformation.timeZone.timeZone);
         }
 
         ss << ", DST: ";
-        switch (m_localTimeInformation.dstOffset)
+        switch (m_localTimeInformation.dstOffset.dstOffset)
         {
             case DSTOffsetEnum::StandardTime:
                 ss << "Standard Time";
@@ -1339,7 +1400,7 @@ private:
  */
 
 // GATT_Specification_Supplement_v8.pdf
-// 3.35.1 Body Sensor Location field
+// 3.35.1 Body Sensor Location field (Table 3.59)
 enum class BodySensorLocationEnum
 {
     Unknown     = 0xFF,  // 0x07–0xFF - Reserved for Future Use
@@ -1352,8 +1413,13 @@ enum class BodySensorLocationEnum
     Foot        = 6
 };
 
-namespace
+// GATT_Specification_Supplement_v8.pdf
+// 3.35 Body Sensor Location
+struct BodySensorLocationStruct
 {
+    BodySensorLocationEnum bodySensorLocation = BodySensorLocationEnum::Unknown;
+};
+
 // GATT_Specification_Supplement_v8.pdf
 // 3.113 Heart Rate Measurement
 struct HeartRateMeasurementStruct
@@ -1366,20 +1432,24 @@ struct HeartRateMeasurementStruct
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.113.1 Flags field
-constexpr auto HRS_FLAG_VALUE_FORMAT    = 0b00000001;
-constexpr auto HRS_FLAG_CONTACT_STATUS  = 0b00000010;
-constexpr auto HRS_FLAG_CONTACT_SUPPORT = 0b00000100;
-constexpr auto HRS_FLAG_ENERGY_EXPENDED = 0b00001000;
-constexpr auto HRS_FLAG_RR_INTERVALS    = 0b00010000;
-constexpr auto HRS_FLAG_RESERVER1       = 0b00100000;
-constexpr auto HRS_FLAG_RESERVER2       = 0b01000000;
-constexpr auto HRS_FLAG_RESERVER3       = 0b10000000;
-}
+constexpr uint8_t HRS_FLAG_VALUE_FORMAT    = 0b00000001;
+constexpr uint8_t HRS_FLAG_CONTACT_STATUS  = 0b00000010;
+constexpr uint8_t HRS_FLAG_CONTACT_SUPPORT = 0b00000100;
+constexpr uint8_t HRS_FLAG_ENERGY_EXPENDED = 0b00001000;
+constexpr uint8_t HRS_FLAG_RR_INTERVALS    = 0b00010000;
+constexpr uint8_t HRS_FLAG_RESERVER1       = 0b00100000;
+constexpr uint8_t HRS_FLAG_RESERVER2       = 0b01000000;
+constexpr uint8_t HRS_FLAG_RESERVER3       = 0b10000000;
 
 // 3.1 Heart Rate Measurement
 class HeartRateMeasurement final : public BaseValue
 {
 public:
+    HeartRateMeasurementStruct getBtSpecObject() const
+    {
+        return m_heartRateMeasurement;
+    }
+
     bool isContactSupported() const
     {
         return (m_heartRateMeasurement.flags & HRS_FLAG_CONTACT_SUPPORT) != 0;
@@ -1514,9 +1584,14 @@ private:
 class BodySensorLocation final : public BaseValue
 {
 public:
+    BodySensorLocationStruct getBtSpecObject() const
+    {
+        return m_bodySensorLocation;
+    }
+
     BodySensorLocationEnum location() const
     {
-        return m_location;
+        return m_bodySensorLocation.bodySensorLocation;
     }
 
 private:
@@ -1526,7 +1601,7 @@ private:
         create(data, size, m_configuration);
     }
 
-    BodySensorLocationEnum m_location = BodySensorLocationEnum::Unknown;
+    BodySensorLocationStruct m_bodySensorLocation;
 
     virtual bool checkSize(size_t size) override
     {
@@ -1537,14 +1612,14 @@ private:
     {
         // GATT_Specification_Supplement_v8.pdf
         // 3.35 Body Sensor Location
-        m_location = BodySensorLocationEnum(parser.parseUInt8());
-        switch (m_location)
+        m_bodySensorLocation.bodySensorLocation = BodySensorLocationEnum(parser.parseUInt8());
+        switch (m_bodySensorLocation.bodySensorLocation)
         {
             case BodySensorLocationEnum::Unknown:
             case BodySensorLocationEnum::Other ... BodySensorLocationEnum::Foot:
                 break;
             default:
-                m_location = BodySensorLocationEnum::Unknown;
+                m_bodySensorLocation.bodySensorLocation = BodySensorLocationEnum::Unknown;
         }
 
         return true;
@@ -1552,7 +1627,7 @@ private:
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        switch (m_location)
+        switch (m_bodySensorLocation.bodySensorLocation)
         {
             case BodySensorLocationEnum::Unknown: ss << "<Unknown>"; break;
             case BodySensorLocationEnum::Other:   ss << "Other"; break;
@@ -2110,12 +2185,29 @@ public:
                 break;
         }
 
+        if (isPrintable(data, size))
+        {
+            return std::unique_ptr<TextString>(new TextString(data, size, m_configuration));
+        }
+
         return std::unique_ptr<HexString>(new HexString(data, size, m_configuration));
-//        return std::unique_ptr<TextString>(new TextString(data, size, m_configuration));
     }
 
 private:
     BaseValue::Configuration m_configuration;
+
+    bool isPrintable(const char *data, size_t size) const
+    {
+        for (size_t i = 0; i < size; ++i)
+        {
+            if (!std::isprint(data[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 };
 
 }  // namespace bvp
