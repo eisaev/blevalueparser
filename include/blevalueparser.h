@@ -1504,7 +1504,9 @@ private:
         if (isWideFormat())
         {
             m_heartRateMeasurement.heartRate = parser.parseUInt16();
-        } else {
+        }
+        else
+        {
             m_heartRateMeasurement.heartRate = parser.parseUInt8();
         }
 

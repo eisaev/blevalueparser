@@ -12,7 +12,8 @@ BleServiceInfo::BleServiceInfo(const QBluetoothUuid &source, int index, QObject 
     // 0000SSSS-0000-1000-8000-00805f9b34fb
     auto serviceClassUuid = static_cast<QBluetoothUuid::ServiceClassUuid>(serviceClassUuidShort);
     m_description = source.serviceClassToString(serviceClassUuid);
-    if (m_description.isEmpty()) {
+    if (m_description.isEmpty())
+    {
         m_description = "<Unknown>";
     }
     qDebug() << m_description;

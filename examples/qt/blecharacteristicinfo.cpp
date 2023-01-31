@@ -7,7 +7,8 @@ BleCharacteristicInfo::BleCharacteristicInfo(const QLowEnergyCharacteristic& sou
     m_characteristic{source},
     m_description{source.name()}
 {
-    if (m_description.isEmpty()) {
+    if (m_description.isEmpty())
+    {
         m_description = "<Unknown>";
     }
     qDebug() << m_description;
