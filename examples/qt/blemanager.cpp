@@ -652,7 +652,8 @@ void BLEManager::updateServiceState(QLowEnergyService::ServiceState newState)
         {
 //            qDebug() << "vvv Included Services vvv";
 //            auto services = m_service->includedServices();
-//            for (auto service : services) {
+//            for (auto service : services)
+//            {
 //                auto s = BleServiceInfo(service);
 //            }
 //            qDebug() << "^^^ Included Services ^^^";
