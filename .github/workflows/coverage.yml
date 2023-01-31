@@ -82,9 +82,6 @@ jobs:
       pull-requests: write
     if: ${{github.event_name == 'pull_request'}}
     steps:
-      - name: Test1
-        run: pwd && ls -la
-
       - name: Download Artifacts
         uses: actions/download-artifact@v3
         with:
