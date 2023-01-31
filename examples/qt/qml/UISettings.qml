@@ -29,4 +29,6 @@ Item {
 
     readonly property int normalLine: fontSizeNormal / 10.0
     readonly property int doubleLine: normalLine * 2
+
+    readonly property int adjustDelay: 0
 }

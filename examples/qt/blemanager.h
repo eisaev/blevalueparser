@@ -134,6 +134,9 @@ private slots:
     void descriptorWritten(const QLowEnergyDescriptor &info, const QByteArray &value);
 
 private:
+    static const QByteArray s_enableNotification;
+    static const QByteArray s_disableNotification;
+
     bvp::BLEValueParser m_bleValueParser;
 
     mutable QString m_statusString;

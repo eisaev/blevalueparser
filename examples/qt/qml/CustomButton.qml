@@ -10,13 +10,50 @@ Button {
 
     property bool square: false
 
-    function adjustSize() {
-        if (square) {
-            padding = UISettings.halfSpacer
-            width = height
+    Timer {
+        id: timer
+    }
+
+    function setHighlighted(highlighted) {
+        if (highlighted) {
+            if (control.enabled) {
+                bg.color = UISettings.colorHighlight
+                bg.border.width = UISettings.doubleLine
+            }
         } else {
-            verticalPadding = UISettings.normalSpacer
-            horizontalPadding = UISettings.doubleSpacer
+            bg.color = UISettings.colorBg
+            bg.border.width = UISettings.normalLine
+        }
+    }
+
+    function adjustSize() {
+        // Workaround: when software renderer is used, we get an outdated width/height/etc if we request it immediately
+        runDelayed(timer, UISettings.adjustDelay, function() {
+            if (square) {
+                padding = UISettings.halfSpacer
+                implicitWidth = implicitHeight
+            } else {
+                verticalPadding = UISettings.normalSpacer
+                horizontalPadding = UISettings.doubleSpacer
+            }
+            setHighlighted(hovered)
+        })
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+
+        onClicked: {
+            control.clicked()
+        }
+
+        onEntered: {
+            setHighlighted(true)
+        }
+
+        onExited: {
+            setHighlighted(false)
         }
     }
 
@@ -34,10 +71,11 @@ Button {
     }
 
     background: Rectangle {
+        id: bg
         opacity: enabled ? 1.0 : 0.5
-        color: control.hovered && control.enabled ? UISettings.colorHighlight : UISettings.colorBg
+        color: UISettings.colorBg
         border.color: UISettings.colorLine
-        border.width: control.hovered && control.enabled ? UISettings.doubleLine : UISettings.normalLine
+        border.width: UISettings.normalLine
         radius: UISettings.cornerRadius
     }
 

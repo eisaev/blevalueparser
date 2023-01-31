@@ -4,10 +4,17 @@ import QtQuick.Layouts 1.14
 
 ColumnLayout {
     id: itemLayout
-    width: parent.width
+
+    Timer {
+        id: timer
+    }
 
     function adjustSize() {
-        parent.height = height
+        // Workaround: when software renderer is used, we get an outdated width/height/etc if we request it immediately
+        runDelayed(timer, UISettings.adjustDelay, function() {
+            width = parent.width
+            parent.height = height
+        })
     }
 
     Component.onCompleted: {
