@@ -18,6 +18,12 @@ target_include_directories(${PROJECT_NAME} INTERFACE
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
+# https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+# -Og           Optimize debugging experience
+# -fno-inline   Do not expand any functions inline apart from those marked with the always_inline attribute
+set(CMAKE_C_FLAGS_DEBUG   " -Og -fno-inline ${CMAKE_C_FLAGS_DEBUG} ")
+set(CMAKE_CXX_FLAGS_DEBUG " -Og -fno-inline ${CMAKE_CXX_FLAGS_DEBUG} ")
+
 if(BUILD_TESTS)
     add_subdirectory("tests")
 endif()
