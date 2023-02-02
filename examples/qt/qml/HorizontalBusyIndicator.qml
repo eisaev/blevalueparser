@@ -7,9 +7,16 @@ Item {
     property bool running: false
     property color color: UISettings.colorLine
 
+    Timer {
+        id: timer
+    }
+
     function adjustSize() {
-        implicitHeight = UISettings.doubleLine
-        busyAnimation.restart()
+        // Workaround: when software renderer is used, we get an outdated width/height/etc if we request it immediately
+        runDelayed(timer, UISettings.adjustDelay, function() {
+            implicitHeight = UISettings.doubleLine
+            busyAnimation.restart()
+        })
     }
 
     Component.onCompleted: {

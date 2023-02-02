@@ -11,9 +11,10 @@
 namespace
 {
 constexpr int discoveryTimeout = 10000;
-constexpr const char enableNotification[2] = { '\x01', '\x00' };
-constexpr const char disableNotification[2] = { '\x00', '\x00' };
 }
+
+const QByteArray BLEManager::s_enableNotification{QByteArray::fromHex("0100")};
+const QByteArray BLEManager::s_disableNotification{QByteArray::fromHex("0000")};
 
 BLEManager::BLEManager(QObject *parent) : QObject{parent}
 {
@@ -207,7 +208,7 @@ bool BLEManager::isSubscribed() const
     qDebug() << __FUNCTION__;
     if (m_notificationDescriptor.isValid() &&
         m_service &&
-        m_notificationDescriptor.value() == enableNotification)
+        m_notificationDescriptor.value() == s_enableNotification)
     {
         return true;
     }
@@ -778,9 +779,7 @@ void BLEManager::connectToCharacteristic(int index)
     }
     auto properties = m_characteristic->properties();
     qDebug() << "properties:" << properties;
-    //
-    QObject *object = m_availableCharacteristics.at(index);
-    m_characteristicName = qobject_cast<BleCharacteristicInfo *>(object)->description();
+    m_characteristicName = bleCharacteristicInfo->description();
     qDebug() << m_characteristicName;
     m_characteristicValue = m_characteristic->value();
     qDebug() << m_characteristicValue;
@@ -797,7 +796,7 @@ void BLEManager::unsubscribeFromNotifications()
     qDebug() << __FUNCTION__;
     if (isSubscribed())
     {
-        m_service->writeDescriptor(m_notificationDescriptor, disableNotification);
+        m_service->writeDescriptor(m_notificationDescriptor, s_disableNotification);
     }
 }
 
@@ -828,7 +827,7 @@ void BLEManager::subscribeToNotifications()
             descriptor.type() == QBluetoothUuid::DescriptorType::ClientCharacteristicConfiguration)
         {
             m_notificationDescriptor = descriptor;
-            m_service->writeDescriptor(m_notificationDescriptor, enableNotification);
+            m_service->writeDescriptor(m_notificationDescriptor, s_enableNotification);
             //emit isSubscribedUpdated();
             break;
         }
@@ -849,7 +848,7 @@ void BLEManager::descriptorWritten(const QLowEnergyDescriptor &info, const QByte
     qDebug() << __FUNCTION__;
     if (info.isValid() &&
         info == m_notificationDescriptor &&
-        value == enableNotification || value == disableNotification)
+        value == s_enableNotification || value == s_disableNotification)
     {
         emit isSubscribedUpdated();
     }

@@ -1,7 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Window 2.14
 import QtQuick.Controls 2.14
-import QtQuick.VirtualKeyboard 2.14
 import dev.eisaev.blemanager 1.0
 
 
@@ -34,6 +33,13 @@ ApplicationWindow {
 
     onHeightChanged: {
         sizeChanged()
+    }
+
+    function runDelayed(timer, delayMs, cb) {
+        timer.interval = delayMs;
+        timer.triggered.connect(cb);
+        timer.repeat = false;
+        timer.start();
     }
 
     function goBack() {
