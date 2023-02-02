@@ -1477,7 +1477,16 @@ public:
 
     std::vector<uint16_t> rrIntervals() const
     {
-        return m_heartRateMeasurement.rrIntervals;
+        std::vector<uint16_t> result;
+        result.reserve(m_heartRateMeasurement.rrIntervals.size());
+        // GATT_Specification_Supplement_v8.pdf
+        // 3.113.2 RR-Interval field
+        // Each RR-Interval value is represented by a uint16 with 1/1024 second as the unit.
+        for (auto rrInterval : m_heartRateMeasurement.rrIntervals)
+        {
+            result.push_back(rrInterval * 1000 / 1024);
+        }
+        return result;
     }
 
 private:
@@ -1563,7 +1572,7 @@ private:
         if (!m_heartRateMeasurement.rrIntervals.empty())
         {
             ss << ", RR: { ";
-            for (auto rrInterval : m_heartRateMeasurement.rrIntervals)
+            for (auto rrInterval : rrIntervals())
             {
                 ss << rrInterval << "ms; ";
             }
