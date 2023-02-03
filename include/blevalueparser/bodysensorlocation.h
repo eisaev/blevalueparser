@@ -80,11 +80,11 @@ private:
         m_bodySensorLocation.bodySensorLocation = BodySensorLocationEnum(parser.parseUInt8());
         switch (m_bodySensorLocation.bodySensorLocation)
         {
-        case BodySensorLocationEnum::Unknown:
-        case BodySensorLocationEnum::Other ... BodySensorLocationEnum::Foot:
-            break;
-        default:
-            m_bodySensorLocation.bodySensorLocation = BodySensorLocationEnum::Unknown;
+            case BodySensorLocationEnum::Unknown:
+            case BodySensorLocationEnum::Other ... BodySensorLocationEnum::Foot:
+                break;
+            default:
+                m_bodySensorLocation.bodySensorLocation = BodySensorLocationEnum::Unknown;
         }
 
         return true;

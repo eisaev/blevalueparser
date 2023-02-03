@@ -440,7 +440,8 @@ enum class CharacteristicType
     BatteryLevelStatus = 0x2BED,
     BatteryTimeStatus = 0x2BEE,
     EstimatedServiceDate = 0x2BEF,
-    BatteryEnergyStatus = 0x2BF0
+    BatteryEnergyStatus = 0x2BF0,
+    Unknown = 0xFFFF
 };
 
 }  // namespace bvp

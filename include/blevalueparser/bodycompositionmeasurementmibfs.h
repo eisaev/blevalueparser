@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+
 #include "bodycompositionmeasurementbase.h"
 
 
