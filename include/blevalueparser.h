@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <vector>
 #include <locale>
+#include <map>
 
 
 namespace bvp
@@ -151,6 +152,7 @@ enum class CharacteristicType
     UserIndex = 0x2A9A,
     BodyCompositionFeature = 0x2A9B,
     BodyCompositionMeasurement = 0x2A9C,
+    BodyCompositionMeasurementMIBFS = 0x00012A9C,
     WeightMeasurement = 0x2A9D,
     WeightScaleFeature = 0x2A9E,
     UserControlPoint = 0x2A9F,
@@ -450,19 +452,68 @@ enum class CharacteristicType
     BatteryEnergyStatus = 0x2BF0
 };
 
+// GATT_Specification_Supplement_v8.pdf
+// 3.34.1 Flags field (Table 3.57: Flags field, 1st bit)
+// See also 3.250.1 Flags field (Table 3.366: Flags field, 1st bit)
+enum class MeasurementUnitsEnum
+{
+    SI          = 0, // kg & m
+    Imperial    = 1  // lb & in
+};
+
+
+struct Configuration
+{
+    std::string stringPrefix = "";
+    std::string stringSuffix = "";
+    std::string hexPrefix = "0x ";
+    std::string hexSeparator = ":";
+    MeasurementUnitsEnum measurementUnits = MeasurementUnitsEnum::SI;
+
+    float massToUnits(uint16_t value) const
+    {
+        static const std::map<MeasurementUnitsEnum, float> massCoeff{
+            { MeasurementUnitsEnum::SI, 0.005},
+            { MeasurementUnitsEnum::Imperial, 0.01 }
+        };
+        return massCoeff.at(measurementUnits) * value;
+    }
+
+    std::string massUnits() const
+    {
+        static const std::map<MeasurementUnitsEnum, std::string> massAbbr{
+            { MeasurementUnitsEnum::SI, "kg" },
+            { MeasurementUnitsEnum::Imperial, "lb" }
+        };
+        return massAbbr.at(measurementUnits);
+    }
+
+    float lenghtToUnits(uint16_t value) const
+    {
+        static const std::map<MeasurementUnitsEnum, float> lenghtCoeff{
+            { MeasurementUnitsEnum::SI, 0.001},
+            { MeasurementUnitsEnum::Imperial, 0.1 }
+        };
+        return lenghtCoeff.at(measurementUnits) * value;
+    }
+
+    std::string lenghtUnits() const
+    {
+        static const std::map<MeasurementUnitsEnum, std::string> lenghtAbbr{
+            { MeasurementUnitsEnum::SI, "m" },
+            { MeasurementUnitsEnum::Imperial, "in" }
+        };
+        return lenghtAbbr.at(measurementUnits);
+    }
+};
+
 
 class BaseValue
 {
 public:
-    virtual ~BaseValue() {}
+    virtual ~BaseValue() = default;
 
-    struct Configuration
-    {
-        std::string stringPrefix = "";
-        std::string stringSuffix = "";
-        std::string hexPrefix = "0x ";
-        std::string hexSeparator = ":";
-    };
+    Configuration configuration;
 
     bool isValid() const
     {
@@ -477,20 +528,23 @@ public:
         }
 
         std::stringstream ss;
-        ss << m_configuration.stringPrefix;
+        ss << configuration.stringPrefix;
         toStringStream(ss);
-        ss << m_configuration.stringSuffix;
+        ss << configuration.stringSuffix;
         return ss.str();
     }
 
 protected:
-    explicit BaseValue() {}
+    explicit BaseValue(const Configuration &configuration) :
+        configuration{configuration}
+    {}
 
-    bool m_isValid = false;
-    Configuration m_configuration;
+    bool m_isValid{false};
 
     // For testing protected Parser class
     friend class InternalParserTest;
+    friend class InternalParserTest_Raw_Test;
+    friend class InternalParserTest_String_Test;
     friend class InternalParserTest_UInt8_Test;
     friend class InternalParserTest_UInt16_Test;
     friend class InternalParserTest_UInt32_Test;
@@ -499,7 +553,8 @@ protected:
     friend class InternalParserTest_Int16_Test;
     friend class InternalParserTest_Int32_Test;
     friend class InternalParserTest_Int64_Test;
-    friend class InternalParserTest_String_Test;
+    friend class InternalParserTest_Raw_OutOfData_Test;
+    friend class InternalParserTest_Int_OutOfData_Test;
 
     class Parser
     {
@@ -524,6 +579,14 @@ protected:
         bool outOfData() const
         {
             return m_outOfData;
+        }
+
+        const char *getRawData(size_t size)
+        {
+            const char *result = m_data + m_offset;
+            m_outOfData = m_offset + size > m_size;
+            m_offset += size;
+            return result;
         }
 
         std::string parseString()
@@ -611,12 +674,6 @@ protected:
         m_isValid = parse(parser) && !parser.outOfData();
     }
 
-    void create(const char *data, size_t size, const Configuration &configuration)
-    {
-        m_configuration = configuration;
-        create(data, size);
-    }
-
     virtual bool checkSize(size_t size) = 0;
     virtual bool parse(Parser &parser) = 0;
     virtual void toStringStream(std::stringstream &ss) const = 0;
@@ -633,9 +690,10 @@ public:
 
 private:
     friend class BLEValueParser;
-    explicit TextString(const char *data, size_t size, const Configuration &configuration)
+    explicit TextString(const char *data, size_t size, const Configuration &configuration) :
+        BaseValue{configuration}
     {
-        create(data, size, configuration);
+        create(data, size);
     }
 
     std::string m_textString;
@@ -668,9 +726,10 @@ public:
 
 private:
     friend class BLEValueParser;
-    explicit HexString(const char *data, size_t size, const Configuration &configuration)
+    explicit HexString(const char *data, size_t size, const Configuration &configuration) :
+        BaseValue{configuration}
     {
-        create(data, size, configuration);
+        create(data, size);
     }
 
     std::string m_hexString;
@@ -683,7 +742,7 @@ private:
     virtual bool parse(Parser &parser) override
     {
         std::stringstream ss;
-        ss << m_configuration.hexPrefix;
+        ss << configuration.hexPrefix;
         while (!parser.atEnd())
         {
             ss << std::uppercase
@@ -691,7 +750,7 @@ private:
                << std::setw(2)
                << std::hex
                << static_cast<int>(parser.parseUInt8())
-               << m_configuration.hexSeparator;
+               << configuration.hexSeparator;
         }
         m_hexString = ss.str();
         m_hexString.pop_back();
@@ -702,6 +761,75 @@ private:
     virtual void toStringStream(std::stringstream &ss) const override
     {
         ss << m_hexString;
+    }
+};
+
+
+// GATT_Specification_Supplement_v8.pdf
+// 3.239 User Index
+struct UserIndexStruct
+{
+    uint8_t userIndex = 0;
+};
+
+class UserIndex final : public BaseValue
+{
+public:
+    friend class BodyCompositionMeasurement;
+
+    UserIndexStruct getBtSpecObject() const
+    {
+        return m_userIndex;
+    }
+
+    uint8_t userIndex() const
+    {
+        return m_userIndex.userIndex;
+    }
+
+private:
+    friend class BLEValueParser;
+    explicit UserIndex(const char *data, size_t size, const Configuration &configuration) :
+        BaseValue{configuration}
+    {
+        create(data, size);
+    }
+
+    explicit UserIndex(const UserIndexStruct &btSpecObject, const Configuration &configuration) :
+        BaseValue{configuration},
+        m_userIndex{btSpecObject}
+    {
+        m_isValid = true;
+    }
+
+    UserIndexStruct m_userIndex;
+
+    static size_t expectedSize()
+    {
+        return 1;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == expectedSize();
+    }
+
+    virtual bool parse(Parser &parser) override
+    {
+        m_userIndex.userIndex = parser.parseUInt8();
+
+        return true;
+    }
+
+    virtual void toStringStream(std::stringstream &ss) const override
+    {
+        if (0xFF == m_userIndex.userIndex)
+        {
+            ss << "<Unknown User>";
+            return;
+        }
+
+        ss << static_cast<int>(m_userIndex.userIndex);
     }
 };
 
@@ -734,16 +862,29 @@ public:
 
 private:
     friend class BLEValueParser;
-    explicit BatteryLevel(const char *data, size_t size, const Configuration &configuration)
+    explicit BatteryLevel(const char *data, size_t size, const Configuration &configuration) :
+        BaseValue{configuration}
     {
-        create(data, size, configuration);
+        create(data, size);
+    }
+
+    explicit BatteryLevel(const BatteryLevelStruct &btSpecObject, const Configuration &configuration) :
+        BaseValue{configuration},
+        m_batteryLevel{btSpecObject}
+    {
+        m_isValid = true;
     }
 
     BatteryLevelStruct m_batteryLevel;
 
+    static size_t expectedSize()
+    {
+        return 1;
+    }
+
     virtual bool checkSize(size_t size) override
     {
-        return size == 1;
+        return size == expectedSize();
     }
 
     virtual bool parse(Parser &parser) override
@@ -837,16 +978,29 @@ public:
 
 private:
     friend class BLEValueParser;
-    explicit PnPID(const char *data, size_t size, const Configuration &configuration)
+    explicit PnPID(const char *data, size_t size, const Configuration &configuration) :
+        BaseValue{configuration}
     {
-        create(data, size, configuration);
+        create(data, size);
+    }
+
+    explicit PnPID(const PnPIDStruct &btSpecObject, const Configuration &configuration) :
+        BaseValue{configuration},
+        m_pnpId{btSpecObject}
+    {
+        m_isValid = true;
     }
 
     PnPIDStruct m_pnpId;
 
+    static size_t expectedSize()
+    {
+        return 7;
+    }
+
     virtual bool checkSize(size_t size) override
     {
-        return size == 7;
+        return size == expectedSize();
     }
 
     virtual bool parse(Parser &parser) override
@@ -938,6 +1092,101 @@ struct DateTimeStruct
     uint8_t seconds = 0;
 };
 
+// 3.1 Date Time
+class DateTime final : public BaseValue
+{
+public:
+    friend class CurrentTime;
+    friend class BodyCompositionMeasurement;
+    friend class BodyCompositionMeasurementMIBFS;
+
+    DateTimeStruct getBtSpecObject() const
+    {
+        return m_dateTime;
+    }
+
+    uint16_t year() const
+    {
+        return m_dateTime.year;
+    }
+
+    uint8_t month() const
+    {
+        return m_dateTime.month;
+    }
+
+    uint8_t day() const
+    {
+        return m_dateTime.day;
+    }
+
+    uint8_t hour() const
+    {
+        return m_dateTime.hour;
+    }
+
+    uint8_t minute() const
+    {
+        return m_dateTime.minute;
+    }
+
+    uint8_t seconds() const
+    {
+        return m_dateTime.seconds;
+    }
+
+private:
+    friend class BLEValueParser;
+    explicit DateTime(const char *data, size_t size, const Configuration &configuration) :
+        BaseValue{configuration}
+    {
+        create(data, size);
+    }
+
+    explicit DateTime(const DateTimeStruct &btSpecObject, const Configuration &configuration) :
+        BaseValue{configuration},
+        m_dateTime{btSpecObject}
+    {
+        m_isValid = true;
+    }
+
+    DateTimeStruct m_dateTime;
+
+    static size_t expectedSize()
+    {
+        return 7;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == expectedSize();
+    }
+
+    virtual bool parse(Parser &parser) override
+    {
+        // GATT_Specification_Supplement_v8.pdf
+        // 3.70 Date Time
+        m_dateTime.year = parser.parseUInt16();
+        m_dateTime.month = parser.parseUInt8();
+        m_dateTime.day = parser.parseUInt8();
+        m_dateTime.hour = parser.parseUInt8();
+        m_dateTime.minute = parser.parseUInt8();
+        m_dateTime.seconds = parser.parseUInt8();
+
+        return true;
+    }
+
+    virtual void toStringStream(std::stringstream &ss) const override
+    {
+        ss << std::setfill('0') << std::setw(2) << static_cast<int>(day()) << ".";
+        ss << std::setfill('0') << std::setw(2) << static_cast<int>(month()) << ".";
+        ss << std::setfill('0') << std::setw(4) << static_cast<int>(year()) << " ";
+        ss << std::setfill('0') << std::setw(2) << static_cast<int>(hour()) << ":";
+        ss << std::setfill('0') << std::setw(2) << static_cast<int>(minute()) << ":";
+        ss << std::setfill('0') << std::setw(2) << static_cast<int>(seconds());
+    }
+};
+
 // GATT_Specification_Supplement_v8.pdf
 // 3.72 Day Date Time
 struct DayDateTimeStruct
@@ -958,14 +1207,14 @@ struct ExactTime256Struct
 // 3.62 Current Time
 // Table 3.106: Structure of the Current Time characteristic
 // Adjust Reason
-constexpr uint8_t CTS_FLAG_MANUAL      = 0b00000001;
-constexpr uint8_t CTS_FLAG_EXTERNAL    = 0b00000010;
-constexpr uint8_t CTS_FLAG_TZ_CHANGED  = 0b00000100;
-constexpr uint8_t CTS_FLAG_DST_CHANGED = 0b00001000;
-constexpr uint8_t CTS_FLAG_RESERVED1   = 0b00010000;
-constexpr uint8_t CTS_FLAG_RESERVED2   = 0b00100000;
-constexpr uint8_t CTS_FLAG_RESERVED3   = 0b01000000;
-constexpr uint8_t CTS_FLAG_RESERVED4   = 0b10000000;
+constexpr uint8_t CTS_FLAG_MANUAL      = 1 << 0;
+constexpr uint8_t CTS_FLAG_EXTERNAL    = 1 << 1;
+constexpr uint8_t CTS_FLAG_TZ_CHANGED  = 1 << 2;
+constexpr uint8_t CTS_FLAG_DST_CHANGED = 1 << 3;
+constexpr uint8_t CTS_FLAG_RESERVED1   = 1 << 4;
+constexpr uint8_t CTS_FLAG_RESERVED2   = 1 << 5;
+constexpr uint8_t CTS_FLAG_RESERVED3   = 1 << 6;
+constexpr uint8_t CTS_FLAG_RESERVED4   = 1 << 7;
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.62 Current Time
@@ -1197,27 +1446,40 @@ public:
 
 private:
     friend class BLEValueParser;
-    explicit CurrentTime(const char *data, size_t size, const Configuration &configuration)
+    explicit CurrentTime(const char *data, size_t size, const Configuration &configuration) :
+        BaseValue{configuration}
     {
-        create(data, size, configuration);
+        create(data, size);
+    }
+
+    explicit CurrentTime(const CurrentTimeStruct &btSpecObject, const Configuration &configuration) :
+        BaseValue{configuration},
+        m_currentTime{btSpecObject}
+    {
+        m_isValid = true;
     }
 
     CurrentTimeStruct m_currentTime;
 
+    static size_t expectedSize()
+    {
+        return 10;
+    }
+
     virtual bool checkSize(size_t size) override
     {
-        return size == 10;
+        return size == expectedSize();
     }
 
     virtual bool parse(Parser &parser) override
     {
         // Exact Time 256
-        m_currentTime.exactTime256.dayDateTime.dateTime.year = parser.parseUInt16();
-        m_currentTime.exactTime256.dayDateTime.dateTime.month = parser.parseUInt8();
-        m_currentTime.exactTime256.dayDateTime.dateTime.day = parser.parseUInt8();
-        m_currentTime.exactTime256.dayDateTime.dateTime.hour = parser.parseUInt8();
-        m_currentTime.exactTime256.dayDateTime.dateTime.minute = parser.parseUInt8();
-        m_currentTime.exactTime256.dayDateTime.dateTime.seconds = parser.parseUInt8();
+        size_t dateTimeSize = DateTime::expectedSize();
+        const char *data = parser.getRawData(dateTimeSize);
+        assert(!parser.outOfData());
+        auto dateTime = DateTime(data, dateTimeSize, configuration);
+        m_currentTime.exactTime256.dayDateTime.dateTime = dateTime.getBtSpecObject();
+
         m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek = DayOfWeekEnum(parser.parseUInt8());
         switch (m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek)
         {
@@ -1268,31 +1530,32 @@ private:
                 break;
         }
 
-        ss << std::setfill('0') << std::setw(2) << static_cast<int>(day()) << ".";
-        ss << std::setfill('0') << std::setw(2) << static_cast<int>(month()) << ".";
-        ss << std::setfill('0') << std::setw(4) << static_cast<int>(year()) << " ";
-        ss << std::setfill('0') << std::setw(2) << static_cast<int>(hour()) << ":";
-        ss << std::setfill('0') << std::setw(2) << static_cast<int>(minute()) << ":";
-        ss << std::setfill('0') << std::setw(2) << static_cast<int>(seconds()) << ".";
-        ss << std::setfill('0') << std::setw(3) << static_cast<int>(milliseconds()) << " ";
-        ss << "(adjust reason:";
+        ss << DateTime(m_currentTime.exactTime256.dayDateTime.dateTime, configuration).toString();
+        ss << "." <<  std::setfill('0') << std::setw(3) << static_cast<int>(milliseconds());
+
+        std::stringstream ssAdjustReasons;
         if (isManuallyAdjusted())
         {
-            ss << " ManuallyAdjusted";
+            ssAdjustReasons << " ManuallyAdjusted";
         }
         if (isExternalReference())
         {
-            ss << " ExternalReference";
+            ssAdjustReasons << " ExternalReference";
         }
         if (isTZChanged())
         {
-            ss << " TZChanged";
+            ssAdjustReasons << " TZChanged";
         }
         if (isDSTChanged())
         {
-            ss << " DSTChanged";
+            ssAdjustReasons << " DSTChanged";
         }
-        ss << " )";
+        const std::string adjustReason = ssAdjustReasons.str();
+
+        if (!adjustReason.empty())
+        {
+            ss << " (adjust reason: {" << adjustReason << " })";
+        }
     }
 };
 
@@ -1317,16 +1580,29 @@ public:
 
 private:
     friend class BLEValueParser;
-    explicit LocalTimeInformation(const char *data, size_t size, const Configuration &configuration)
+    explicit LocalTimeInformation(const char *data, size_t size, const Configuration &configuration) :
+        BaseValue{configuration}
     {
-        create(data, size, configuration);
+        create(data, size);
+    }
+
+    explicit LocalTimeInformation(const LocalTimeInformationStruct &btSpecObject, const Configuration &configuration) :
+        BaseValue{configuration},
+        m_localTimeInformation{btSpecObject}
+    {
+        m_isValid = true;
     }
 
     LocalTimeInformationStruct m_localTimeInformation;
 
+    static size_t expectedSize()
+    {
+        return 2;
+    }
+
     virtual bool checkSize(size_t size) override
     {
-        return size == 2;
+        return size == expectedSize();
     }
 
     virtual bool parse(Parser &parser) override
@@ -1432,14 +1708,14 @@ struct HeartRateMeasurementStruct
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.113.1 Flags field
-constexpr uint8_t HRS_FLAG_VALUE_FORMAT    = 0b00000001;
-constexpr uint8_t HRS_FLAG_CONTACT_STATUS  = 0b00000010;
-constexpr uint8_t HRS_FLAG_CONTACT_SUPPORT = 0b00000100;
-constexpr uint8_t HRS_FLAG_ENERGY_EXPENDED = 0b00001000;
-constexpr uint8_t HRS_FLAG_RR_INTERVALS    = 0b00010000;
-constexpr uint8_t HRS_FLAG_RESERVER1       = 0b00100000;
-constexpr uint8_t HRS_FLAG_RESERVER2       = 0b01000000;
-constexpr uint8_t HRS_FLAG_RESERVER3       = 0b10000000;
+constexpr uint8_t HRS_FLAG_VALUE_FORMAT    = 1 << 0;
+constexpr uint8_t HRS_FLAG_CONTACT_STATUS  = 1 << 1;
+constexpr uint8_t HRS_FLAG_CONTACT_SUPPORT = 1 << 2;
+constexpr uint8_t HRS_FLAG_ENERGY_EXPENDED = 1 << 3;
+constexpr uint8_t HRS_FLAG_RR_INTERVALS    = 1 << 4;
+constexpr uint8_t HRS_FLAG_RESERVER1       = 1 << 5;
+constexpr uint8_t HRS_FLAG_RESERVER2       = 1 << 6;
+constexpr uint8_t HRS_FLAG_RESERVER3       = 1 << 7;
 
 // 3.1 Heart Rate Measurement
 class HeartRateMeasurement final : public BaseValue
@@ -1491,9 +1767,17 @@ public:
 
 private:
     friend class BLEValueParser;
-    explicit HeartRateMeasurement(const char *data, size_t size, const Configuration &configuration)
+    explicit HeartRateMeasurement(const char *data, size_t size, const Configuration &configuration) :
+        BaseValue{configuration}
     {
-        create(data, size, configuration);
+        create(data, size);
+    }
+
+    explicit HeartRateMeasurement(const HeartRateMeasurementStruct &btSpecObject, const Configuration &configuration) :
+        BaseValue{configuration},
+        m_heartRateMeasurement{btSpecObject}
+    {
+        m_isValid = true;
     }
 
     HeartRateMeasurementStruct m_heartRateMeasurement;
@@ -1607,16 +1891,29 @@ public:
 
 private:
     friend class BLEValueParser;
-    explicit BodySensorLocation(const char *data, size_t size, const Configuration &configuration)
+    explicit BodySensorLocation(const char *data, size_t size, const Configuration &configuration) :
+        BaseValue{configuration}
     {
-        create(data, size, m_configuration);
+        create(data, size);
+    }
+
+    explicit BodySensorLocation(const BodySensorLocationStruct &btSpecObject, const Configuration &configuration) :
+        BaseValue{configuration},
+        m_bodySensorLocation{btSpecObject}
+    {
+        m_isValid = true;
     }
 
     BodySensorLocationStruct m_bodySensorLocation;
 
+    static size_t expectedSize()
+    {
+        return 1;
+    }
+
     virtual bool checkSize(size_t size) override
     {
-        return size == 1;
+        return size == expectedSize();
     }
 
     virtual bool parse(Parser &parser) override
@@ -1653,35 +1950,765 @@ private:
 };
 
 
-class BLEValueParser
+/*
+ * Body Composition Service
+ * BCS_V1.0.0.pdf
+ */
+
+// GATT_Specification_Supplement_v8.pdf
+// 3.33 Body Composition Feature
+struct BodyCompositionFeatureStruct
+{
+    uint32_t flags = 0;
+};
+
+constexpr uint8_t BCS_FLAG_BCF_WEIGHT_RESOLUTION_SHIFT = 11;
+constexpr uint8_t BCS_FLAG_BCF_HEIGHT_RESOLUTION_SHIFT = 15;
+
+// GATT_Specification_Supplement_v8.pdf
+// 3.33.1 Body Composition Feature field
+constexpr uint32_t BCS_FLAG_BCF_TIME_STAMP_SUPPORTED        = 1 <<  0;
+constexpr uint32_t BCS_FLAG_BCF_MULTIPLE_USERS_SUPPORTED    = 1 <<  1;
+constexpr uint32_t BCS_FLAG_BCF_BASAL_METABOLISM_SUPPORTED  = 1 <<  2;
+constexpr uint32_t BCS_FLAG_BCF_MUSCLE_PERCENTAGE_SUPPORTED = 1 <<  3;
+constexpr uint32_t BCS_FLAG_BCF_MUSCLE_MASS_SUPPORTED       = 1 <<  4;
+constexpr uint32_t BCS_FLAG_BCF_FAT_FREE_MASS_SUPPORTED     = 1 <<  5;
+constexpr uint32_t BCS_FLAG_BCF_SOFT_LEAN_MASS_SUPPORTED    = 1 <<  6;
+constexpr uint32_t BCS_FLAG_BCF_BODY_WATER_MASS_SUPPORTED   = 1 <<  7;
+constexpr uint32_t BCS_FLAG_BCF_IMPEDANCE_SUPPORTED         = 1 <<  8;
+constexpr uint32_t BCS_FLAG_BCF_WEIGHT_SUPPORTED            = 1 <<  9;
+constexpr uint32_t BCS_FLAG_BCF_HEIGHT_SUPPORTED            = 1 << 10;
+constexpr uint32_t BCS_FLAG_BCF_WEIGHT_RESOLUTION0          = 1 << BCS_FLAG_BCF_WEIGHT_RESOLUTION_SHIFT;
+constexpr uint32_t BCS_FLAG_BCF_WEIGHT_RESOLUTION1          = 1 << 12;
+constexpr uint32_t BCS_FLAG_BCF_WEIGHT_RESOLUTION2          = 1 << 13;
+constexpr uint32_t BCS_FLAG_BCF_WEIGHT_RESOLUTION3          = 1 << 14;
+constexpr uint32_t BCS_FLAG_BCF_HEIGHT_RESOLUTION0          = 1 << BCS_FLAG_BCF_HEIGHT_RESOLUTION_SHIFT;
+constexpr uint32_t BCS_FLAG_BCF_HEIGHT_RESOLUTION1          = 1 << 16;
+constexpr uint32_t BCS_FLAG_BCF_HEIGHT_RESOLUTION2          = 1 << 17;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER1                   = 1 << 18;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER2                   = 1 << 19;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER3                   = 1 << 20;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER4                   = 1 << 21;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER5                   = 1 << 22;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER6                   = 1 << 23;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER7                   = 1 << 24;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER8                   = 1 << 25;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER9                   = 1 << 26;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER10                  = 1 << 27;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER11                  = 1 << 28;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER12                  = 1 << 29;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER13                  = 1 << 30;
+constexpr uint32_t BCS_FLAG_BCF_RESERVER14                  = 1 << 31;
+
+// GATT_Specification_Supplement_v8.pdf
+// 3.34 Body Composition Measurement
+struct BodyCompositionMeasurementStruct
+{
+    uint16_t flags = 0;
+    uint16_t bodyFatPercentage = 0;
+    DateTimeStruct timeStamp;
+    UserIndexStruct userID;
+    uint16_t basalMetabolism = 0;
+    uint16_t musclePercentage = 0;
+    uint16_t muscleMass = 0;
+    uint16_t fatFreeMass = 0;
+    uint16_t softLeanMass = 0;
+    uint16_t bodyWaterMass = 0;
+    uint16_t impedance = 0;
+    uint16_t weight = 0;
+    uint16_t height = 0;
+};
+
+// GATT_Specification_Supplement_v8.pdf
+// 3.34.1 Flags field
+constexpr uint16_t BCS_FLAG_BCM_MEASUREMENT_UNITS           = 1 <<   0;
+constexpr uint16_t BCS_FLAG_BCM_TIME_STAMP_PRESENT          = 1 <<   1;
+constexpr uint16_t BCS_FLAG_BCM_USER_ID_PRESENT             = 1 <<   2;
+constexpr uint16_t BCS_FLAG_BCM_BASAL_METABOLISM_PRESENT    = 1 <<   3;
+constexpr uint16_t BCS_FLAG_BCM_MUSCLE_PERCENTAGE_PRESENT   = 1 <<   4;
+constexpr uint16_t BCS_FLAG_BCM_MUSCLE_MASS_PRESENT         = 1 <<   5;
+constexpr uint16_t BCS_FLAG_BCM_FAT_FREE_MASS_PRESENT       = 1 <<   6;
+constexpr uint16_t BCS_FLAG_BCM_SOFT_LEAN_MASS_PRESENT      = 1 <<   7;
+constexpr uint16_t BCS_FLAG_BCM_BODY_WATER_MASS_PRESENT     = 1 <<   8;
+constexpr uint16_t BCS_FLAG_BCM_IMPEDANCE_PRESENT           = 1 <<   9;
+constexpr uint16_t BCS_FLAG_BCM_WEIGHT_PRESENT              = 1 <<  10;
+constexpr uint16_t BCS_FLAG_BCM_HEIGHT_PRESENT              = 1 <<  11;
+constexpr uint16_t BCS_FLAG_BCM_MULTIPLE_PACKET_MEASUREMENT = 1 <<  12;
+constexpr uint16_t BCS_FLAG_BCM_RESERVED1                   = 1 <<  13;
+constexpr uint16_t BCS_FLAG_BCM_RESERVED2                   = 1 <<  14;
+constexpr uint16_t BCS_FLAG_BCM_RESERVED3                   = 1 <<  15;
+// Non standard
+// Xiaomi Mi Body Composition Scale 2 (XMTZC05HM)
+constexpr uint16_t BCS_FLAG_BCM_MIBFS_STABILIZED = BCS_FLAG_BCM_RESERVED1;
+constexpr uint16_t BCS_FLAG_BCM_MIBFS_UNKNOWN1   = BCS_FLAG_BCM_RESERVED2;
+constexpr uint16_t BCS_FLAG_BCM_MIBFS_UNLOADED   = BCS_FLAG_BCM_RESERVED3;
+
+// 3.1 BodyCompositionFeature
+class BodyCompositionFeature final : public BaseValue
 {
 public:
-    explicit BLEValueParser() {}
-
-    void setStringPrefix(const std::string &prefix)
+    BodyCompositionFeatureStruct getBtSpecObject() const
     {
-        m_configuration.stringPrefix = prefix;
+        return m_bodyCompositionFeature;
     }
 
-    void setStringSuffix(const std::string &suffix)
+    bool isTimeStampSupported() const
     {
-        m_configuration.stringSuffix = suffix;
+        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_TIME_STAMP_SUPPORTED) != 0;
     }
 
-    void setHexPrefix(const std::string &suffix)
+    bool isMultipleUsersSupported() const
     {
-        m_configuration.hexPrefix = suffix;
+        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_MULTIPLE_USERS_SUPPORTED) != 0;
     }
 
-    void setHexSeparator(const std::string &separator)
+    bool isBasalMetabolismSupported() const
     {
-        m_configuration.hexSeparator = separator;
+        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_BASAL_METABOLISM_SUPPORTED) != 0;
     }
+
+    bool isMusclePercentageSupported() const
+    {
+        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_MUSCLE_PERCENTAGE_SUPPORTED) != 0;
+    }
+
+    bool isMuscleMassSupported() const
+    {
+        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_MUSCLE_MASS_SUPPORTED) != 0;
+    }
+
+    bool isFatFreeMassSupported() const
+    {
+        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_FAT_FREE_MASS_SUPPORTED) != 0;
+    }
+
+    bool isSoftLeanMassSupported() const
+    {
+        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_SOFT_LEAN_MASS_SUPPORTED) != 0;
+    }
+
+    bool isBodyWaterMassSupported() const
+    {
+        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_BODY_WATER_MASS_SUPPORTED) != 0;
+    }
+
+    bool isImpedanceSupported() const
+    {
+        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_IMPEDANCE_SUPPORTED) != 0;
+    }
+
+    bool isWeightSupported() const
+    {
+        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_WEIGHT_SUPPORTED) != 0;
+    }
+
+    bool isHeightSupported() const
+    {
+        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_HEIGHT_SUPPORTED) != 0;
+    }
+
+    uint16_t weightResolution() const
+    {
+        uint32_t resolution =
+            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_WEIGHT_RESOLUTION0) +
+            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_WEIGHT_RESOLUTION1) +
+            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_WEIGHT_RESOLUTION2) +
+            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_WEIGHT_RESOLUTION3);
+        resolution = resolution >> BCS_FLAG_BCF_WEIGHT_RESOLUTION_SHIFT;
+
+        switch (configuration.measurementUnits)
+        {
+            case MeasurementUnitsEnum::SI:
+            {
+                switch (resolution)
+                {
+                    case 0b0001: return 500;
+                    case 0b0010: return 200;
+                    case 0b0011: return 100;
+                    case 0b0100: return 50;
+                    case 0b0101: return 20;
+                    case 0b0110: return 10;
+                    case 0b0111: return 5;
+                }
+            }
+            case MeasurementUnitsEnum::Imperial:
+            {
+                switch (resolution)
+                {
+                    case 0b0001: return 1000;
+                    case 0b0010: return 500;
+                    case 0b0011: return 200;
+                    case 0b0100: return 100;
+                    case 0b0101: return 50;
+                    case 0b0110: return 20;
+                    case 0b0111: return 10;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    uint16_t heightResolution() const
+    {
+        uint32_t resolution =
+            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_HEIGHT_RESOLUTION0) +
+            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_HEIGHT_RESOLUTION1) +
+            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_HEIGHT_RESOLUTION2);
+        resolution = resolution >> BCS_FLAG_BCF_HEIGHT_RESOLUTION_SHIFT;
+
+        switch (configuration.measurementUnits)
+        {
+            case MeasurementUnitsEnum::SI:
+            {
+                switch (resolution)
+                {
+                    case 0b0001 : return 10;
+                    case 0b0010 : return 5;
+                    case 0b0011 : return 1;
+                }
+            }
+            case MeasurementUnitsEnum::Imperial:
+            {
+                switch (resolution)
+                {
+                    case 0b0001 : return 1000;
+                    case 0b0010 : return 500;
+                    case 0b0011 : return 100;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+private:
+    friend class BLEValueParser;
+    explicit BodyCompositionFeature(const char *data, size_t size, const Configuration &configuration) :
+        BaseValue{configuration}
+    {
+        create(data, size);
+    }
+
+    explicit BodyCompositionFeature(const BodyCompositionFeatureStruct &btSpecObject, const Configuration &configuration) :
+        BaseValue{configuration},
+        m_bodyCompositionFeature{btSpecObject}
+    {
+        m_isValid = true;
+    }
+
+    BodyCompositionFeatureStruct m_bodyCompositionFeature;
+
+    static size_t expectedSize()
+    {
+        return 4;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == expectedSize();
+    }
+
+    virtual bool parse(Parser &parser) override
+    {
+        // GATT_Specification_Supplement_v8.pdf
+        // 3.33.1 Body Composition Feature field
+        m_bodyCompositionFeature.flags = parser.parseUInt32();
+
+        return true;
+    }
+
+    virtual void toStringStream(std::stringstream &ss) const override
+    {
+        ss << "Features: {"
+           << (isTimeStampSupported() ?         " TimeStamp": "")
+           << (isMultipleUsersSupported() ?     " MultipleUsers": "")
+           << (isBasalMetabolismSupported() ?   " BasalMetabolism": "")
+           << (isMusclePercentageSupported() ?  " MusclePercentage": "")
+           << (isMuscleMassSupported() ?        " MuscleMass": "")
+           << (isFatFreeMassSupported() ?       " FatFreeMass": "")
+           << (isSoftLeanMassSupported() ?      " SoftLeanMass": "")
+           << (isBodyWaterMassSupported() ?     " BodyWaterMass": "")
+           << (isImpedanceSupported() ?         " Impedance": "")
+           << (isWeightSupported() ?            " Weight": "")
+           << (isHeightSupported() ?            " Height": "")
+           << " }";
+
+        if (isWeightSupported())
+        {
+            ss << ", WeightResolution: " << weightResolution() / 1000.0
+               << configuration.massUnits();
+        }
+
+        if (isHeightSupported())
+        {
+            ss << ", HeightResolution: " << heightResolution() / 1000.0
+               << configuration.lenghtUnits();
+        }
+    }
+};
+
+// 3.2 BodyCompositionMeasurement
+class BodyCompositionMeasurementBase : public BaseValue
+{
+public:
+    virtual ~BodyCompositionMeasurementBase() = default;
+
+    BodyCompositionMeasurementStruct getBtSpecObject() const
+    {
+        return m_bodyCompositionMeasurement;
+    }
+
+    bool isMeasurementUnsuccessful() const
+    {
+        return 0xFFFF == m_bodyCompositionMeasurement.bodyFatPercentage;
+    }
+
+    MeasurementUnitsEnum measurementUnits() const
+    {
+        return MeasurementUnitsEnum(m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_MEASUREMENT_UNITS);
+    }
+
+    bool isTimeStampPresent() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_TIME_STAMP_PRESENT) != 0;
+    }
+
+    bool isUserIDPresent() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_USER_ID_PRESENT) != 0;
+    }
+
+    bool isBasalMetabolismPresent() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_BASAL_METABOLISM_PRESENT) != 0;
+    }
+
+    bool isMusclePercentagePresent() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_MUSCLE_PERCENTAGE_PRESENT) != 0;
+    }
+
+    bool isMuscleMassPresent() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_MUSCLE_MASS_PRESENT) != 0;
+    }
+
+    bool isFatFreeMassPresent() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_FAT_FREE_MASS_PRESENT) != 0;
+    }
+
+    bool isSoftLeanMassPresent() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_SOFT_LEAN_MASS_PRESENT) != 0;
+    }
+
+    bool isBodyWaterMassPresent() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_BODY_WATER_MASS_PRESENT) != 0;
+    }
+
+    bool isImpedancePresent() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_IMPEDANCE_PRESENT) != 0;
+    }
+
+    bool isWeightPresent() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_WEIGHT_PRESENT) != 0;
+    }
+
+    bool isHeightPresent() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_HEIGHT_PRESENT) != 0;
+    }
+
+    bool isMultiplePacketMeasurement() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_MULTIPLE_PACKET_MEASUREMENT) != 0;
+    }
+
+    float bodyFatPercentage() const
+    {
+        return m_bodyCompositionMeasurement.bodyFatPercentage / 10.0;
+    }
+
+    uint16_t year() const
+    {
+        return m_bodyCompositionMeasurement.timeStamp.year;
+    }
+
+    uint8_t month() const
+    {
+        return m_bodyCompositionMeasurement.timeStamp.month;
+    }
+
+    uint8_t day() const
+    {
+        return m_bodyCompositionMeasurement.timeStamp.day;
+    }
+
+    uint8_t hour() const
+    {
+        return m_bodyCompositionMeasurement.timeStamp.hour;
+    }
+
+    uint8_t minute() const
+    {
+        return m_bodyCompositionMeasurement.timeStamp.minute;
+    }
+
+    uint8_t seconds() const
+    {
+        return m_bodyCompositionMeasurement.timeStamp.seconds;
+    }
+
+    uint8_t userID() const
+    {
+        return m_bodyCompositionMeasurement.userID.userIndex;
+    }
+
+    uint16_t basalMetabolism() const
+    {
+        return m_bodyCompositionMeasurement.basalMetabolism;
+    }
+
+    float musclePercentage() const
+    {
+        return m_bodyCompositionMeasurement.musclePercentage / 10.0;
+    }
+
+    float muscleMass() const
+    {
+        return configuration.massToUnits(m_bodyCompositionMeasurement.muscleMass);
+    }
+
+    float fatFreeMass() const
+    {
+        return configuration.massToUnits(m_bodyCompositionMeasurement.fatFreeMass);
+    }
+
+    float softLeanMass() const
+    {
+        return configuration.massToUnits(m_bodyCompositionMeasurement.softLeanMass);
+    }
+
+    float bodyWaterMass() const
+    {
+        return configuration.massToUnits(m_bodyCompositionMeasurement.bodyWaterMass);
+    }
+
+    float impedance() const
+    {
+        return m_bodyCompositionMeasurement.impedance / 10.0;
+    }
+
+    float weight() const
+    {
+        return configuration.massToUnits(m_bodyCompositionMeasurement.weight);
+    }
+
+    float height() const
+    {
+        return configuration.lenghtToUnits(m_bodyCompositionMeasurement.height);
+    }
+
+protected:
+    explicit BodyCompositionMeasurementBase(const Configuration &configuration) :
+        BaseValue{configuration}
+    {}
+
+    explicit BodyCompositionMeasurementBase(const BodyCompositionMeasurementStruct &btSpecObject, const Configuration &configuration) :
+        BaseValue{configuration},
+        m_bodyCompositionMeasurement{btSpecObject}
+    {
+        m_isValid = true;
+    }
+
+    BodyCompositionMeasurementStruct m_bodyCompositionMeasurement;
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size >= 4 && size <= 30;
+    }
+};
+
+// Standard
+class BodyCompositionMeasurement final : public BodyCompositionMeasurementBase
+{
+private:
+    friend class BLEValueParser;
+    explicit BodyCompositionMeasurement(const char *data, size_t size, const Configuration &configuration) :
+        BodyCompositionMeasurementBase{configuration}
+    {
+        create(data, size);
+    }
+
+    explicit BodyCompositionMeasurement(const BodyCompositionMeasurementStruct &btSpecObject, const Configuration &configuration) :
+        BodyCompositionMeasurementBase{btSpecObject, configuration}
+    {}
+
+    virtual bool parse(Parser &parser) override
+    {
+        // 3.2.1.1 Flags Field
+        m_bodyCompositionMeasurement.flags = parser.parseUInt16();
+
+        configuration.measurementUnits = measurementUnits();
+
+        // 3.2.1.2 Body Fat Percentage Field
+        // Unit is 1/10 of a percent
+        m_bodyCompositionMeasurement.bodyFatPercentage = parser.parseUInt16();
+        if (isMeasurementUnsuccessful())
+        {
+            return true;
+        }
+
+        // 3.2.1.3 Time Stamp Field
+        if (isTimeStampPresent())
+        {
+            size_t dateTimeSize = DateTime::expectedSize();
+            const char *data = parser.getRawData(dateTimeSize);
+            assert(!parser.outOfData());
+            auto dateTime = DateTime(data, dateTimeSize, configuration);
+            m_bodyCompositionMeasurement.timeStamp = dateTime.getBtSpecObject();
+        }
+
+        // 3.2.1.4 User ID Field
+        if (isUserIDPresent())
+        {
+            size_t userIDSize = UserIndex::expectedSize();
+            const char *data = parser.getRawData(userIDSize);
+            assert(!parser.outOfData());
+            auto userIndex = UserIndex(data, userIDSize, configuration);
+            m_bodyCompositionMeasurement.userID = userIndex.getBtSpecObject();
+        }
+
+        // 3.2.1.5 Basal Metabolism
+        // Unit is kilojoules
+        if (isBasalMetabolismPresent())
+        {
+            m_bodyCompositionMeasurement.basalMetabolism = parser.parseUInt16();
+        }
+
+        // 3.2.1.6 Muscle Percentage
+        // Unit is 1/10 of a percent
+        if (isMusclePercentagePresent())
+        {
+            m_bodyCompositionMeasurement.musclePercentage = parser.parseUInt16();
+        }
+
+        // 3.2.1.7 Muscle Mass
+        if (isMuscleMassPresent())
+        {
+            m_bodyCompositionMeasurement.muscleMass = parser.parseUInt16();
+        }
+
+        // 3.2.1.8 Fat Free Mass
+        if (isFatFreeMassPresent())
+        {
+            m_bodyCompositionMeasurement.fatFreeMass = parser.parseUInt16();
+        }
+
+        // 3.2.1.9 Soft Lean Mass
+        if (isSoftLeanMassPresent())
+        {
+            m_bodyCompositionMeasurement.softLeanMass = parser.parseUInt16();
+        }
+
+        // 3.2.1.10 Body Water Mass
+        if (isBodyWaterMassPresent())
+        {
+            m_bodyCompositionMeasurement.bodyWaterMass = parser.parseUInt16();
+        }
+
+        // 3.2.1.11 Impedance
+        // Unit is 1/10 of an Ohm
+        if (isImpedancePresent())
+        {
+            m_bodyCompositionMeasurement.impedance = parser.parseUInt16();
+        }
+
+        // 3.2.1.12 Weight
+        if (isWeightPresent())
+        {
+            m_bodyCompositionMeasurement.weight = parser.parseUInt16();
+        }
+
+        // 3.2.1.13 Height
+        if (isHeightPresent())
+        {
+            m_bodyCompositionMeasurement.height = parser.parseUInt16();
+        }
+
+        return true;
+    }
+
+    virtual void toStringStream(std::stringstream &ss) const override
+    {
+        if (isMeasurementUnsuccessful())
+        {
+            ss << "<MeasurementUnsuccessful>";
+            return;
+        }
+
+        ss << "BodyFatPercentage: " << bodyFatPercentage() << "%";
+
+        if (isTimeStampPresent())
+        {
+            ss << ", TimeStamp: "
+               << DateTime(m_bodyCompositionMeasurement.timeStamp, configuration).toString();
+        }
+
+        if (isUserIDPresent())
+        {
+            ss << ", UserID: "
+               << UserIndex(m_bodyCompositionMeasurement.userID, configuration).toString();
+        }
+
+        if (isBasalMetabolismPresent())
+        {
+            ss << ", BasalMetabolism: " << basalMetabolism() << "kJ";
+        }
+
+        if (isMusclePercentagePresent())
+        {
+            ss << ", MusclePercentage: " << musclePercentage() << "%";
+        }
+
+        if (isMuscleMassPresent())
+        {
+            ss << ", MuscleMass: " << muscleMass() << configuration.massUnits();
+        }
+
+        if (isFatFreeMassPresent())
+        {
+            ss << ", FatFreeMass: " << fatFreeMass() << configuration.massUnits();
+        }
+
+        if (isSoftLeanMassPresent())
+        {
+            ss << ", SoftLeanMass: " << softLeanMass() << configuration.massUnits();
+        }
+
+        if (isBodyWaterMassPresent())
+        {
+            ss << ", BodyWaterMass: " << bodyWaterMass() << configuration.massUnits();
+        }
+
+        if (isImpedancePresent())
+        {
+            ss << ", Impedance: " << impedance() << "Ω";
+        }
+
+        if (isWeightPresent())
+        {
+            ss << ", Weight: " << weight() << configuration.massUnits();
+        }
+
+        if (isHeightPresent())
+        {
+            ss << ", Height: " << height() << configuration.lenghtUnits();
+        }
+    }
+};
+
+// Non standard
+// Xiaomi Mi Body Composition Scale 2 (XMTZC05HM)
+class BodyCompositionMeasurementMIBFS final : public BodyCompositionMeasurementBase
+{
+public:
+    bool isStabilized() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_MIBFS_STABILIZED) != 0;
+    }
+
+    bool isUnknown1() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_MIBFS_UNKNOWN1) != 0;
+    }
+
+    bool isUnloaded() const
+    {
+        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_MIBFS_UNLOADED) != 0;
+    }
+
+private:
+    friend class BLEValueParser;
+    explicit BodyCompositionMeasurementMIBFS(const char *data, size_t size, const Configuration &configuration) :
+        BodyCompositionMeasurementBase{configuration}
+    {
+        create(data, size);
+    }
+
+    explicit BodyCompositionMeasurementMIBFS(const BodyCompositionMeasurementStruct &btSpecObject, const Configuration &configuration) :
+        BodyCompositionMeasurementBase{btSpecObject, configuration}
+    {}
+
+    virtual bool parse(Parser &parser) override
+    {
+        // 3.2.1.1 Flags Field
+        m_bodyCompositionMeasurement.flags = parser.parseUInt16();
+
+        configuration.measurementUnits = measurementUnits();
+
+        // 3.2.1.3 Time Stamp Field
+        if (isTimeStampPresent())
+        {
+            size_t dateTimeSize = DateTime::expectedSize();
+            const char *data = parser.getRawData(dateTimeSize);
+            assert(!parser.outOfData());
+            auto dateTime = DateTime(data, dateTimeSize, configuration);
+            m_bodyCompositionMeasurement.timeStamp = dateTime.getBtSpecObject();
+        }
+
+        // 3.2.1.11 Impedance
+        // Unit is 1/10 of an Ohm
+        // Always present in data on Xiaomi scales
+        m_bodyCompositionMeasurement.impedance = parser.parseUInt16();
+
+        // 3.2.1.12 Weight
+        if (isWeightPresent())
+        {
+            m_bodyCompositionMeasurement.weight = parser.parseUInt16();
+        }
+
+        return true;
+    }
+
+    virtual void toStringStream(std::stringstream &ss) const override
+    {
+        ss << (isUnloaded() ? "Unloaded" : isStabilized() ? "Stabilized" : "Unstable");
+
+        if (isTimeStampPresent())
+        {
+            ss << ", TimeStamp: "
+               << DateTime(m_bodyCompositionMeasurement.timeStamp, configuration).toString();
+        }
+
+        if (isImpedancePresent())
+        {
+            ss << ", Impedance: " << impedance() << "Ω";
+        }
+
+        if (isWeightPresent())
+        {
+            ss << ", Weight: " << weight() << configuration.massUnits();
+        }
+    }
+};
+
+
+class BLEValueParser final
+{
+public:
+    Configuration configuration;
 
     template <class T>
     std::unique_ptr<T> make_value(const char *data, size_t size) const
     {
-        return std::unique_ptr<T>(new T(data, size, m_configuration));
+        static_assert(std::is_final<T>(), "Error: Cannot make value for not final class.");
+        return std::unique_ptr<T>(new T(data, size, configuration));
     }
 
     std::unique_ptr<BaseValue> make_value(CharacteristicType characteristicType, const char *data, size_t size) const
@@ -1691,40 +2718,40 @@ public:
             // Device Information Service (DIS_SPEC_V11r00.pdf)
             // 3.1 Manufacturer Name String
             case CharacteristicType::ManufacturerNameString:
-                return std::unique_ptr<TextString>(new TextString(data, size, m_configuration));
+                return make_value<TextString>(data, size);
             // 3.2 Model Number String
             case CharacteristicType::ModelNumberString:
-                return std::unique_ptr<TextString>(new TextString(data, size, m_configuration));
+                return make_value<TextString>(data, size);
             // 3.3 Serial Number String
             case CharacteristicType::SerialNumberString:
-                return std::unique_ptr<TextString>(new TextString(data, size, m_configuration));
+                return make_value<TextString>(data, size);
             // 3.4 Hardware Revision String
             case CharacteristicType::HardwareRevisionString:
-                return std::unique_ptr<TextString>(new TextString(data, size, m_configuration));
+                return make_value<TextString>(data, size);
             // 3.5 Firmware Revision String
             case CharacteristicType::FirmwareRevisionString:
-                return std::unique_ptr<TextString>(new TextString(data, size, m_configuration));
+                return make_value<TextString>(data, size);
             // 3.6 Software Revision String
             case CharacteristicType::SoftwareRevisionString:
-                return std::unique_ptr<TextString>(new TextString(data, size, m_configuration));
+                return make_value<TextString>(data, size);
             // 3.7 System ID
             case CharacteristicType::SystemID:
-                return std::unique_ptr<HexString>(new HexString(data, size, m_configuration));
+                return make_value<HexString>(data, size);
             // 3.8 IEEE 11073-20601 Regulatory Certification Data List
             case CharacteristicType::IEEE1107320601RegulatoryCertificationDataList:
                 // TODO:
                 break;
             // 3.9 PnPID
             case CharacteristicType::PnPID:
-                return std::unique_ptr<PnPID>(new PnPID(data, size, m_configuration));
+                return make_value<PnPID>(data, size);
 
             // Current Time Service (CTS_SPEC_V1.1.0.pdf)
             // 3.1 Current Time
             case CharacteristicType::CurrentTime:
-                return std::unique_ptr<CurrentTime>(new CurrentTime(data, size, m_configuration));
+                return make_value<CurrentTime>(data, size);
             // 3.2 Local Time Information
             case CharacteristicType::LocalTimeInformation:
-                return std::unique_ptr<LocalTimeInformation>(new LocalTimeInformation(data, size, m_configuration));
+                return make_value<LocalTimeInformation>(data, size);
             // 3.3 Reference Time Information
             case CharacteristicType::ReferenceTimeInformation:
                 // TODO:
@@ -1733,7 +2760,7 @@ public:
             // Battery Service (BAS_V1.1.pdf)
             // 3.1 Battery Level
             case CharacteristicType::BatteryLevel:
-                return std::unique_ptr<BatteryLevel>(new BatteryLevel(data, size, m_configuration));
+                return make_value<BatteryLevel>(data, size);
             // 3.2 Battery Level Status
             case CharacteristicType::BatteryLevelStatus:
                 // TODO:
@@ -1776,14 +2803,32 @@ public:
             // Heart Rate Service (HRS_SPEC_V10.pdf)
             // 3.1 Heart Rate Measurement
             case CharacteristicType::HeartRateMeasurement:
-                return std::unique_ptr<HeartRateMeasurement>(new HeartRateMeasurement(data, size, m_configuration));
+                return make_value<HeartRateMeasurement>(data, size);
             // 3.2 Body Sensor Location
             case CharacteristicType::BodySensorLocation:
-                return std::unique_ptr<BodySensorLocation>(new BodySensorLocation(data, size, m_configuration));
+                return make_value<BodySensorLocation>(data, size);
             // 3.3 Heart Rate Control Point
             case CharacteristicType::HeartRateControlPoint:
                 // TODO:
                 break;
+
+            // Body Composition Service (BCS_V1.0.0.pdf)
+            // 3.1 BodyCompositionFeature
+            case CharacteristicType::BodyCompositionFeature:
+                return make_value<BodyCompositionFeature>(data, size);
+            // 3.2 BodyCompositionMeasurement
+            case CharacteristicType::BodyCompositionMeasurement:
+                return make_value<BodyCompositionMeasurement>(data, size);
+            // Non standard
+            // Xiaomi Mi Body Composition Scale 2 (XMTZC05HM)
+            case CharacteristicType::BodyCompositionMeasurementMIBFS:
+                return make_value<BodyCompositionMeasurementMIBFS>(data, size);
+
+            // Unsorted
+            case CharacteristicType::DateTime:
+                return make_value<DateTime>(data, size);
+            case CharacteristicType::UserIndex:
+                return make_value<UserIndex>(data, size);
 
             // Other
             case CharacteristicType::DeviceName:
@@ -1794,7 +2839,6 @@ public:
             case CharacteristicType::ServiceChanged:
             case CharacteristicType::AlertLevel:
             case CharacteristicType::TxPowerLevel:
-            case CharacteristicType::DateTime:
             case CharacteristicType::DayOfWeek:
             case CharacteristicType::DayDateTime:
             case CharacteristicType::ExactTime256:
@@ -1901,9 +2945,6 @@ public:
             case CharacteristicType::WaistCircumference:
             case CharacteristicType::Weight:
             case CharacteristicType::DatabaseChangeIncrement:
-            case CharacteristicType::UserIndex:
-            case CharacteristicType::BodyCompositionFeature:
-            case CharacteristicType::BodyCompositionMeasurement:
             case CharacteristicType::WeightMeasurement:
             case CharacteristicType::WeightScaleFeature:
             case CharacteristicType::UserControlPoint:
@@ -2198,15 +3239,13 @@ public:
 
         if (isPrintable(data, size))
         {
-            return std::unique_ptr<TextString>(new TextString(data, size, m_configuration));
+            return make_value<TextString>(data, size);
         }
 
-        return std::unique_ptr<HexString>(new HexString(data, size, m_configuration));
+        return make_value<HexString>(data, size);
     }
 
 private:
-    BaseValue::Configuration m_configuration;
-
     bool isPrintable(const char *data, size_t size) const
     {
         for (size_t i = 0; i < size; ++i)

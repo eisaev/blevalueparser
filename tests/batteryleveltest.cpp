@@ -23,6 +23,7 @@ TEST_F(BatteryLevelTest, Zero)
     constexpr char data[] = { '\x00' };
 
     auto result = bleValueParser.make_value<BatteryLevel>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_EQ(0, result->level());
 
@@ -37,6 +38,7 @@ TEST_F(BatteryLevelTest, Full)
     constexpr char data[] = { '\x64' };
 
     auto result = bleValueParser.make_value<BatteryLevel>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_EQ(100, result->level());
 
@@ -51,6 +53,7 @@ TEST_F(BatteryLevelTest, Unreal)
     constexpr char data[] = { '\x92' };
 
     auto result = bleValueParser.make_value<BatteryLevel>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_FALSE(result->isValid());
 
     auto btSpecObj = result->getBtSpecObject();

@@ -68,7 +68,7 @@ Item {
             }
 
             CustomButton {
-                visible: BLEManagerSingleton.characteristicIsNotify
+                visible: BLEManagerSingleton.characteristicIsNotify || BLEManagerSingleton.characteristicIsIndicate
                 enabled: isDeviceConnected && !isSubscribed
                 text: qsTr("Subscribe")
                 onClicked: BLEManagerSingleton.subscribeToNotifications()
