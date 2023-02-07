@@ -38,12 +38,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Install System Dependencies
+    - name: Install clang-tidy
       if: ${{matrix.RUNNER.OS == 'ubuntu-20.04'}}
-      uses: awalsh128/cache-apt-pkgs-action@v1
-      with:
-        packages: clang-tidy
-        debug: false
+      run: sudo apt install clang-tidy
 
     - name: Install Ninja
       uses: seanmiddleditch/gha-setup-ninja@v3

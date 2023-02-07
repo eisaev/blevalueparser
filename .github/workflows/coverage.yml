@@ -20,10 +20,8 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Install gcovr
-      uses: awalsh128/cache-apt-pkgs-action@v1
-      with:
-        packages: gcovr
-        debug: false
+      if: ${{matrix.RUNNER.OS == 'ubuntu-20.04'}}
+      run: sudo apt install gcovr
 
     - name: Install Ninja
       uses: seanmiddleditch/gha-setup-ninja@v3

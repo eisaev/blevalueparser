@@ -33,10 +33,7 @@ jobs:
 
     - name: Install System Dependencies
       if: ${{matrix.RUNNER.OS == 'ubuntu-20.04'}}
-      uses: awalsh128/cache-apt-pkgs-action@v1
-      with:
-        packages: xsltproc clang-tidy
-        debug: false
+      run: sudo apt install xsltproc clang-tidy
 
     - name: Install Ninja
       uses: seanmiddleditch/gha-setup-ninja@v3
