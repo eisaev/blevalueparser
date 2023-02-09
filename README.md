@@ -4,11 +4,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # BLE Value Parser
-This is a header only library for parsing characteristics of some standardized BLE services. At the moment, parsers are partially implemented for the following services:
-* Device Information Service v1.1
-* Current Time Service v1.1
-* Battery Service v1.1
-* Heart Rate Service v1.0
+This is a header only library for parsing characteristics of some standardized BLE services. At the moment, parsers are implemented for the following services:
+* Device Information Service v1.1 (partially)
+* Current Time Service v1.1 (partially)
+* Battery Service v1.1 (partially)
+* Heart Rate Service v1.0 (partially)
+* Body Composition Service v1.0 (full, with additional custom parser for Xiaomi Mi Body Composition Scale 2)
 
 This library is designed for rapid prototyping of BLE applications and isn't optimized for either performance or consumption. You can use the library code as example to implement a parser optimized for a specific platform/case. Also, usually you'll need a parser only for certain services, and not all implemented in the library.
 
