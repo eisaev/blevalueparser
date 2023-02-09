@@ -9,7 +9,7 @@
 #include <QLowEnergyController>
 #include <QLowEnergyService>
 
-#include "blevalueparser.h"
+#include "blevalueparser/bvp.h"
 
 
 class BLEManager : public QObject

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "blevalueparser.h"
+#include "blevalueparser/bvp.h"
 
 #define C(x) static_cast<char>(x)
 

@@ -8,7 +8,25 @@ option(BUILD_TESTS "Build tests" ON)
 include(GNUInstallDirs)
 
 set(LIBRARY_SOURCES
-    include/blevalueparser.h
+    include/blevalueparser/bvp.h
+    # common
+    include/blevalueparser/characteristictype.h
+    include/blevalueparser/basevalue.h
+    # characteristics
+    include/blevalueparser/batterylevel.h
+    include/blevalueparser/bodycompositionfeature.h
+    include/blevalueparser/bodycompositionmeasurementbase.h
+    include/blevalueparser/bodycompositionmeasurement.h
+    include/blevalueparser/bodycompositionmeasurementmibfs.h
+    include/blevalueparser/bodysensorlocation.h
+    include/blevalueparser/currenttime.h
+    include/blevalueparser/datetime.h
+    include/blevalueparser/heartratemeasurement.h
+    include/blevalueparser/hexstring.h
+    include/blevalueparser/localtimeinformation.h
+    include/blevalueparser/pnpid.h
+    include/blevalueparser/textstring.h
+    include/blevalueparser/userindex.h
 )
 
 add_library(${PROJECT_NAME} INTERFACE ${LIBRARY_SOURCES})
