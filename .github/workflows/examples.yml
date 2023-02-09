@@ -40,7 +40,7 @@ jobs:
 
     - name: Install clang-tidy
       if: ${{matrix.RUNNER.OS == 'ubuntu-20.04'}}
-      run: sudo apt install clang-tidy
+      run: sudo apt install -y clang-tidy
 
     - name: Install Ninja
       uses: seanmiddleditch/gha-setup-ninja@v3
