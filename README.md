@@ -16,7 +16,7 @@ This library is designed for rapid prototyping of BLE applications and isn't opt
 # Usage
 You just need to include the header file in your C++ file to use parsers. For example:
 ```c++
-#include "blevalueparser.h"
+#include "blevalueparser/bvp.h"
 
 [...]
 
@@ -35,7 +35,7 @@ void printBatteryLevel(const char *data, size_t size)
 ```
 If you need only a string representation of parsed data you can use the following code example:
 ```c++
-#include "blevalueparser.h"
+#include "blevalueparser/bvp.h"
 
 [...]
 

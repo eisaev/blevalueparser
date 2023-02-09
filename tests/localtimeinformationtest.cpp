@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "blevalueparser.h"
+#include "blevalueparser/bvp.h"
 
 
 namespace bvp
