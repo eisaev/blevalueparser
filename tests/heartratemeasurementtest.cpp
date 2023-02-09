@@ -24,6 +24,7 @@ TEST_F(HeartRateMeasurementTest, ContactsSupportedNotConnected)
     constexpr char data[] = { flags, '\xAA' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_TRUE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -46,6 +47,7 @@ TEST_F(HeartRateMeasurementTest, ContactsSupportedConnected)
     constexpr char data[] = { flags, '\xAA' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_TRUE(result->isContactSupported());
     EXPECT_TRUE(result->isContacted());
@@ -68,6 +70,7 @@ TEST_F(HeartRateMeasurementTest, HR8)
     constexpr char data[] = { flags, '\xAA' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_FALSE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -90,6 +93,7 @@ TEST_F(HeartRateMeasurementTest, HR16)
     constexpr char data[] = { flags, '\xAA', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_FALSE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -112,6 +116,7 @@ TEST_F(HeartRateMeasurementTest, HR8_EE)
     constexpr char data[] = { flags, '\xAA', '\xBB', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_FALSE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -135,6 +140,7 @@ TEST_F(HeartRateMeasurementTest, HR16_EE)
     constexpr char data[] = { flags, '\xAA', '\x01', '\xBB', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_FALSE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -158,6 +164,7 @@ TEST_F(HeartRateMeasurementTest, HR8_EE_RR1)
     constexpr char data[] = { flags, '\xAA', '\xBB', '\x01', '\xCC', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_FALSE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -185,6 +192,7 @@ TEST_F(HeartRateMeasurementTest, HR8_RR9)
     constexpr char data[] = { flags, '\xAA', '\x00', '\x00', '\x01', '\x00', '\x02', '\x00', '\x03', '\x00', '\xF3', '\x03', '\xFC', '\xFF', '\xFD', '\xFF', '\xFE', '\xFF', '\xFF', '\xFF' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_FALSE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -228,6 +236,7 @@ TEST_F(HeartRateMeasurementTest, HR8_RR10)
     constexpr char data[] = { flags, '\xAA', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01', '\xA8', '\x01', '\xA9', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_FALSE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -270,6 +279,7 @@ TEST_F(HeartRateMeasurementTest, HR8_EE_RR8)
     constexpr char data[] = { flags, '\xAA', '\xBB', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01', '\xA8', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_FALSE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -312,6 +322,7 @@ TEST_F(HeartRateMeasurementTest, HR8_EE_RR9)
     constexpr char data[] = { flags, '\xAA', '\xBB', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01', '\xA8', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_FALSE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -353,6 +364,7 @@ TEST_F(HeartRateMeasurementTest, HR16_RR8)
     constexpr char data[] = { flags, '\xAA', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01', '\xA8', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_FALSE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -394,6 +406,7 @@ TEST_F(HeartRateMeasurementTest, HR16_RR9)
     constexpr char data[] = { flags, '\xAA', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01', '\xA8', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_FALSE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -434,6 +447,7 @@ TEST_F(HeartRateMeasurementTest, HR16_EE_RR7)
     constexpr char data[] = { flags, '\xAA', '\x01', '\xBB', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_FALSE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -474,6 +488,7 @@ TEST_F(HeartRateMeasurementTest, HR16_EE_RR8)
     constexpr char data[] = { flags, '\xAA', '\x01', '\xBB', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_FALSE(result->isContactSupported());
     EXPECT_FALSE(result->isContacted());
@@ -513,6 +528,7 @@ TEST_F(HeartRateMeasurementTest, TooShort)
     constexpr char data[] = { flags };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_FALSE(result->isValid());
 
     EXPECT_EQ("<Invalid>", result->toString());
@@ -524,6 +540,7 @@ TEST_F(HeartRateMeasurementTest, TooLong)
     constexpr char data[] = { flags, '\xAA', '\x01', '\xBB', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01', '\xA8', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_FALSE(result->isValid());
 
     EXPECT_EQ("<Invalid>", result->toString());
@@ -535,6 +552,7 @@ TEST_F(HeartRateMeasurementTest, BrokenPacket)
     constexpr char data[] = { flags, '\xAA' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_FALSE(result->isValid());
 
     EXPECT_EQ("<Invalid>", result->toString());

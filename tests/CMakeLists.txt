@@ -16,8 +16,12 @@ FetchContent_MakeAvailable(gtest)
 set(TEST_SOURCES
     tests.cpp
     batteryleveltest.cpp
+    bodycompositionfeaturetest.cpp
+    bodycompositionmeasurementmibfstest.cpp
+    bodycompositionmeasurementtest.cpp
     bodysensorlocationtest.cpp
     currenttimetest.cpp
+    datetimetest.cpp
     heartratemeasurementtest.cpp
     hexstringtest.cpp
     internalparsertest.cpp
@@ -25,6 +29,7 @@ set(TEST_SOURCES
     pnpidtest.cpp
     textstringtest.cpp
     unsupportedtest.cpp
+    userindextest.cpp
 )
 
 add_executable(${PROJECT_NAME} ${TEST_SOURCES})

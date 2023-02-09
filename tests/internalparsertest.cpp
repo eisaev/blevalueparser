@@ -6,6 +6,22 @@
 namespace bvp
 {
 
+TEST(InternalParserTest, Raw)
+{
+    constexpr char data[] = { 'a', 'b', 'c', 'X', 'Y', 'Z' };
+    BaseValue::Parser parser{data, sizeof(data)};
+    parser.parseInt16();
+    size_t size = 3;
+    EXPECT_EQ("cXY", std::string(parser.getRawData(size), size));
+}
+
+TEST(InternalParserTest, String)
+{
+    constexpr char data[] = { 'a', 'b', 'c', 'X', 'Y', 'Z' };
+    BaseValue::Parser parser{data, sizeof(data)};
+    EXPECT_EQ("abcXYZ", parser.parseString());
+}
+
 TEST(InternalParserTest, UInt8)
 {
     constexpr char data[] = { '\x00', '\x7F', '\x80', '\xFF' };
@@ -104,11 +120,29 @@ TEST(InternalParserTest, Int64)
     EXPECT_EQ(-1, parser.parseInt64());
 }
 
-TEST(InternalParserTest, String)
+TEST(InternalParserTest, Raw_OutOfData)
 {
     constexpr char data[] = { 'a', 'b', 'c', 'X', 'Y', 'Z' };
     BaseValue::Parser parser{data, sizeof(data)};
-    EXPECT_EQ("abcXYZ", parser.parseString());
+    parser.parseInt16();
+    EXPECT_FALSE(parser.outOfData());
+    size_t size = 5;
+    parser.getRawData(size);
+    EXPECT_TRUE(parser.outOfData());
+}
+
+TEST(InternalParserTest, Int_OutOfData)
+{
+    constexpr char data[] = { '\x00', '\x7F', '\x80', '\xFF' };
+    BaseValue::Parser parser{data, sizeof(data) - 1};
+    EXPECT_EQ(0, parser.parseInt8());
+    EXPECT_FALSE(parser.outOfData());
+    EXPECT_EQ(INT8_MAX, parser.parseInt8());
+    EXPECT_FALSE(parser.outOfData());
+    EXPECT_EQ(INT8_MIN, parser.parseInt8());
+    EXPECT_FALSE(parser.outOfData());
+    parser.parseInt8();
+    EXPECT_TRUE(parser.outOfData());
 }
 
 }  // namespace bvp

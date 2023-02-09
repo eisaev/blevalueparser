@@ -23,6 +23,7 @@ TEST_F(LocalTimeInformationTest, TZUnknown_DSTUnknown)
     constexpr char data[] = { char(-128), '\xFF' };
 
     auto result = bleValueParser.make_value<LocalTimeInformation>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_EQ(TimeZoneEnum::Unknown, result->timeZone());
     EXPECT_EQ(DSTOffsetEnum::Unknown, result->dstOffset());
@@ -39,6 +40,7 @@ TEST_F(LocalTimeInformationTest, TZUnreal_DSTUnreal)
     constexpr char data[] = { 57, '\x2A' };
 
     auto result = bleValueParser.make_value<LocalTimeInformation>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_EQ(TimeZoneEnum::Unknown, result->timeZone());
     EXPECT_EQ(DSTOffsetEnum::Unknown, result->dstOffset());
@@ -55,6 +57,7 @@ TEST_F(LocalTimeInformationTest, TZPlus0_DST1h)
     constexpr char data[] = { '\x00', '\x04' };
 
     auto result = bleValueParser.make_value<LocalTimeInformation>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_EQ(TimeZoneEnum::Plus0, result->timeZone());
     EXPECT_EQ(DSTOffsetEnum::DaylightTime1h, result->dstOffset());
@@ -71,6 +74,7 @@ TEST_F(LocalTimeInformationTest, TZMinus48_DST0_5h)
     constexpr char data[] = { '\xD0', '\x02' };
 
     auto result = bleValueParser.make_value<LocalTimeInformation>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_EQ(TimeZoneEnum::Minus48, result->timeZone());
     EXPECT_EQ(DSTOffsetEnum::HalfAnHourDaylightTime0_5h, result->dstOffset());
@@ -87,6 +91,7 @@ TEST_F(LocalTimeInformationTest, TZPlus56_DST0)
     constexpr char data[] = { '\x38', '\x00' };
 
     auto result = bleValueParser.make_value<LocalTimeInformation>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
     EXPECT_EQ(TimeZoneEnum::Plus56, result->timeZone());
     EXPECT_EQ(DSTOffsetEnum::StandardTime, result->dstOffset());

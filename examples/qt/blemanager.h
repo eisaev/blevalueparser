@@ -38,6 +38,7 @@ class BLEManager : public QObject
     Q_PROPERTY(QVariant characteristicValueParsed READ characteristicValueParsed NOTIFY characteristicValueUpdated)
     Q_PROPERTY(QVariant characteristicIsRead READ characteristicIsRead CONSTANT)
     Q_PROPERTY(QVariant characteristicIsNotify READ characteristicIsNotify CONSTANT)
+    Q_PROPERTY(QVariant characteristicIsIndicate READ characteristicIsIndicate CONSTANT)
 
 public:
     explicit BLEManager(QObject *parent = nullptr);
@@ -63,6 +64,7 @@ public:
     QVariant characteristicValueParsed() const;
     QVariant characteristicIsRead() const;
     QVariant characteristicIsNotify() const;
+    QVariant characteristicIsIndicate() const;
 
 public slots:
     void startDevicesDiscovery();
@@ -146,6 +148,8 @@ private:
     QBluetoothDeviceDiscoveryAgent *m_discoveryAgent{nullptr};
     QObjectList m_availableDevices;
 
+    std::unique_ptr<bvp::PnPID> m_devicePnPID{nullptr};
+
     QLowEnergyController *m_controller{nullptr};
     QObjectList m_availableServices;
 
@@ -157,5 +161,6 @@ private:
     QByteArray m_characteristicValue;
     QLowEnergyDescriptor m_notificationDescriptor;
 
+    bvp::CharacteristicType fixupCharacteristicType(bvp::CharacteristicType characteristicType) const;
     void updateServiceState(QLowEnergyService::ServiceState newState);
 };

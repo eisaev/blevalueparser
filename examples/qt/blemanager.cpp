@@ -238,6 +238,20 @@ QVariant BLEManager::characteristicValue() const
     return QVariant::fromValue(m_characteristicValue.toHex(' '));
 }
 
+bvp::CharacteristicType BLEManager::fixupCharacteristicType(bvp::CharacteristicType characteristicType) const
+{
+    // Xiaomi Mi Body Composition Scale 2 (XMTZC05HM)
+    if (bvp::CharacteristicType::BodyCompositionMeasurement == characteristicType &&
+        m_devicePnPID &&
+        m_devicePnPID->vendorId() == 0x0157 &&
+        m_devicePnPID->productId() == 0x0019)
+    {
+        return bvp::CharacteristicType::BodyCompositionMeasurementMIBFS;
+    }
+
+    return characteristicType;
+}
+
 QVariant BLEManager::characteristicValueParsed() const
 {
     qDebug() << __FUNCTION__;
@@ -246,12 +260,12 @@ QVariant BLEManager::characteristicValueParsed() const
         return "";
     }
 
-    auto characteristicType = bvp::CharacteristicType(m_characteristic->uuid().toUInt32());
-    auto parsed = m_bleValueParser.make_value(characteristicType,
-                                              m_characteristicValue.constData(),
-                                              m_characteristicValue.size());
+    const auto characteristicType = bvp::CharacteristicType(m_characteristic->uuid().toUInt32());
+    const auto parsed = m_bleValueParser.make_value(fixupCharacteristicType(characteristicType),
+                                                    m_characteristicValue.constData(),
+                                                    m_characteristicValue.size());
 
-    QString parsedString = QString::fromStdString(parsed->toString());
+    const QString parsedString = QString::fromStdString(parsed->toString());
 
     return QVariant::fromValue(parsedString);
 }
@@ -276,6 +290,17 @@ QVariant BLEManager::characteristicIsNotify() const
     }
 
     return m_characteristic->properties().testFlag(QLowEnergyCharacteristic::PropertyType::Notify);
+}
+
+QVariant BLEManager::characteristicIsIndicate() const
+{
+    qDebug() << __FUNCTION__;
+    if (!m_characteristic)
+    {
+        return false;
+    }
+
+    return m_characteristic->properties().testFlag(QLowEnergyCharacteristic::PropertyType::Indicate);
 }
 
 void BLEManager::hostModeStateChanged(QBluetoothLocalDevice::HostMode state)
@@ -455,6 +480,9 @@ void BLEManager::deviceDiscoveryError(QBluetoothDeviceDiscoveryAgent::Error erro
 void BLEManager::disconnectFromDevice()
 {
     qDebug() << __FUNCTION__;
+
+    m_devicePnPID.release();
+
     if (m_controller)
     {
         m_controller->disconnectFromDevice();
@@ -473,7 +501,7 @@ void BLEManager::connectToDevice(int index)
     qDebug() << index;
     disconnectFromDevice();
 
-    auto bleDeviceInfo = qobject_cast<BleDeviceInfo *>(m_availableDevices.at(index));
+    const auto bleDeviceInfo = qobject_cast<BleDeviceInfo *>(m_availableDevices.at(index));
     if (!bleDeviceInfo)
     {
         m_statusString = tr("Error: Invalid device info");
@@ -484,7 +512,7 @@ void BLEManager::connectToDevice(int index)
     m_statusString = tr("Connecting to '%1' (%2)...").arg(bleDeviceInfo->name(), bleDeviceInfo->address());
     emit statusStringUpdated();
 
-    auto deviceInfo = bleDeviceInfo->getDeviceInfo();
+    const QBluetoothDeviceInfo deviceInfo = bleDeviceInfo->getDeviceInfo();
     qDebug() << deviceInfo.name();
     qDebug() << deviceInfo.deviceUuid();
     m_controller = QLowEnergyController::createCentral(deviceInfo, this);
@@ -569,7 +597,11 @@ void BLEManager::serviceDiscovered(const QBluetoothUuid &gatt)
 {
     qDebug() << __FUNCTION__;
     qDebug() << gatt.toString();
-    m_availableServices.append(new BleServiceInfo(gatt, m_availableServices.size()));
+    const size_t index = m_availableServices.size();
+    m_availableServices.append(new BleServiceInfo(gatt, index));
+    if (QBluetoothUuid(QBluetoothUuid::ServiceClassUuid::DeviceInformation) == gatt) {
+        connectToService(index);
+    }
 }
 
 void BLEManager::serviceDiscoveryFinished()
@@ -651,19 +683,27 @@ void BLEManager::updateServiceState(QLowEnergyService::ServiceState newState)
         case QLowEnergyService::RemoteServiceDiscovered:
 #endif
         {
-//            qDebug() << "vvv Included Services vvv";
-//            auto services = m_service->includedServices();
-//            for (auto service : services)
-//            {
-//                auto s = BleServiceInfo(service);
-//            }
-//            qDebug() << "^^^ Included Services ^^^";
+#if 0
+            qDebug() << "vvv Included Services vvv";
+            const QList<QBluetoothUuid> services = m_service->includedServices();
+            for (const auto &service : services)
+            {
+                const auto s = BleServiceInfo(service);
+                qDebug() << s.description();
+            }
+            qDebug() << "^^^ Included Services ^^^";
+#endif
 
             qDebug() << "vvv Characteristics vvv";
-            auto characteristics = m_service->characteristics();
+            const QList<QLowEnergyCharacteristic> characteristics = m_service->characteristics();
             for (const auto &characteristic : characteristics)
             {
                 m_availableCharacteristics.append(new BleCharacteristicInfo(characteristic, m_availableCharacteristics.size()));
+                if (QBluetoothUuid(QBluetoothUuid::CharacteristicType::PnPID) == characteristic.uuid())
+                {
+                    const QByteArray data = characteristic.value();
+                    m_devicePnPID = m_bleValueParser.make_value<bvp::PnPID>(data, data.size());
+                }
             }
             emit isCharacteristicsDiscoveryInProgressUpdated();
             emit availableCharacteristicsUpdated();
@@ -699,7 +739,7 @@ void BLEManager::connectToService(int index)
     qDebug() << index;
     disconnectFromService();
 
-    auto bleServiceInfo = qobject_cast<BleServiceInfo *>(m_availableServices.at(index));
+    const auto bleServiceInfo = qobject_cast<BleServiceInfo *>(m_availableServices.at(index));
     if (!bleServiceInfo)
     {
         m_statusString = tr("Error: Invalid service info");
@@ -707,7 +747,7 @@ void BLEManager::connectToService(int index)
         return;
     }
 
-    auto serviceUuid = bleServiceInfo->getServiceClassUuid();
+    const QBluetoothUuid serviceUuid = bleServiceInfo->getServiceClassUuid();
     qDebug() << serviceUuid;
     m_service = m_controller->createServiceObject(serviceUuid, this);
 
@@ -763,7 +803,7 @@ void BLEManager::connectToCharacteristic(int index)
     qDebug() << index;
     disconnectFromCharacteristic();
 
-    auto bleCharacteristicInfo = qobject_cast<BleCharacteristicInfo *>(m_availableCharacteristics.at(index));
+    const auto bleCharacteristicInfo = qobject_cast<BleCharacteristicInfo *>(m_availableCharacteristics.at(index));
     if (!bleCharacteristicInfo)
     {
         m_statusString = tr("Error: Invalid characteristic info");
@@ -772,12 +812,12 @@ void BLEManager::connectToCharacteristic(int index)
     }
 
     m_characteristic = std::make_unique<QLowEnergyCharacteristic>(bleCharacteristicInfo->getServiceCharacteristic());
-    auto descriptors = m_characteristic->descriptors();
+    const QList<QLowEnergyDescriptor> descriptors = m_characteristic->descriptors();
     for (const auto &descriptor : descriptors)
     {
         qDebug() << "descriptor:" << descriptor.name() << descriptor.type() << descriptor.value();
     }
-    auto properties = m_characteristic->properties();
+    const QLowEnergyCharacteristic::PropertyTypes properties = m_characteristic->properties();
     qDebug() << "properties:" << properties;
     m_characteristicName = bleCharacteristicInfo->description();
     qDebug() << m_characteristicName;
@@ -804,35 +844,19 @@ void BLEManager::subscribeToNotifications()
 {
     qDebug() << __FUNCTION__;
 
-#if 0
-    auto isValidCccd = [](QLowEnergyDescriptor descriptor)
-    {
-        return descriptor.isValid() &&
-               descriptor.type() == QBluetoothUuid::DescriptorType::ClientCharacteristicConfiguration;
-    };
-    auto descriptors = m_characteristic->descriptors();
-    auto descriptor = std::find_if(std::begin(descriptors), std::end(descriptors), isValidCccd);
-
-    if (descriptor == std::end(descriptors))
-    {
-        return;
-    }
-
-    m_notificationDescriptor = *descriptor;
-    m_service->writeDescriptor(m_notificationDescriptor, enableNotification);
-#else
-    for (const auto &descriptor : m_characteristic->descriptors())
-    {
-        if (descriptor.isValid() &&
-            descriptor.type() == QBluetoothUuid::DescriptorType::ClientCharacteristicConfiguration)
+    const QList<QLowEnergyDescriptor> descriptors = m_characteristic->descriptors();
+    const auto descriptor = std::find_if(std::begin(descriptors), std::end(descriptors), [](const auto &descriptor)
         {
-            m_notificationDescriptor = descriptor;
-            m_service->writeDescriptor(m_notificationDescriptor, s_enableNotification);
-            //emit isSubscribedUpdated();
-            break;
+            return (descriptor.isValid() &&
+                    descriptor.type() == QBluetoothUuid::DescriptorType::ClientCharacteristicConfiguration);
         }
+    );
+
+    if (descriptor != std::end(descriptors))
+    {
+        m_notificationDescriptor = *descriptor;
+        m_service->writeDescriptor(m_notificationDescriptor, s_enableNotification);
     }
-#endif
 }
 
 void BLEManager::characteristicChanged(const QLowEnergyCharacteristic &info, const QByteArray &value)
