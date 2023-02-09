@@ -677,6 +677,12 @@ protected:
     virtual bool checkSize(size_t size) = 0;
     virtual bool parse(Parser &parser) = 0;
     virtual void toStringStream(std::stringstream &ss) const = 0;
+
+    friend std::ostream& operator<<(std::ostream &os, const BaseValue& rhs)
+    {
+        os << rhs.toString();
+        return os;
+    }
 };
 
 
@@ -1530,7 +1536,7 @@ private:
                 break;
         }
 
-        ss << DateTime(m_currentTime.exactTime256.dayDateTime.dateTime, configuration).toString();
+        ss << DateTime(m_currentTime.exactTime256.dayDateTime.dateTime, configuration);
         ss << "." <<  std::setfill('0') << std::setw(3) << static_cast<int>(milliseconds());
 
         std::stringstream ssAdjustReasons;
@@ -2556,14 +2562,12 @@ private:
 
         if (isTimeStampPresent())
         {
-            ss << ", TimeStamp: "
-               << DateTime(m_bodyCompositionMeasurement.timeStamp, configuration).toString();
+            ss << ", TimeStamp: " << DateTime(m_bodyCompositionMeasurement.timeStamp, configuration);
         }
 
         if (isUserIDPresent())
         {
-            ss << ", UserID: "
-               << UserIndex(m_bodyCompositionMeasurement.userID, configuration).toString();
+            ss << ", UserID: " << UserIndex(m_bodyCompositionMeasurement.userID, configuration);
         }
 
         if (isBasalMetabolismPresent())
@@ -2682,8 +2686,7 @@ private:
 
         if (isTimeStampPresent())
         {
-            ss << ", TimeStamp: "
-               << DateTime(m_bodyCompositionMeasurement.timeStamp, configuration).toString();
+            ss << ", TimeStamp: " << DateTime(m_bodyCompositionMeasurement.timeStamp, configuration);
         }
 
         if (isImpedancePresent())
