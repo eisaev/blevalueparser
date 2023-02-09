@@ -20,7 +20,6 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Install gcovr
-      if: ${{matrix.RUNNER.OS == 'ubuntu-20.04'}}
       run: sudo apt install gcovr
 
     - name: Install Ninja
