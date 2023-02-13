@@ -23,6 +23,11 @@ jobs:
             HOST: mac
             ARCH: clang_64
             CLANG_TIDY: ''
+          - RUNS_ON: [macos-13, self-hosted]
+            OS: macos-13
+            HOST: mac
+            ARCH: clang_64
+            CLANG_TIDY: ''
         include:
           - QT_VERSION: 6.2.4
             QT_MODULES: qtconnectivity

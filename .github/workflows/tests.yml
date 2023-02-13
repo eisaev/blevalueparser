@@ -18,6 +18,9 @@ jobs:
           - RUNS_ON: [macos-12, self-hosted]
             OS: macos-12
             CLANG_TIDY: ''
+          - RUNS_ON: [macos-13, self-hosted]
+            OS: macos-13
+            CLANG_TIDY: ''
 
     name: Test ${{matrix.RUNNER.OS}} - ${{matrix.BUILD_TYPE}}
     runs-on: ${{matrix.RUNNER.RUNS_ON}}
