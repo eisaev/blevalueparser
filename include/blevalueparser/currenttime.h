@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+
 #include "basevalue.h"
 #include "datetime.h"
 
@@ -184,12 +186,12 @@ private:
         m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek = DayOfWeekEnum(parser.parseUInt8());
         switch (m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek)
         {
-        case DayOfWeekEnum::Monday ... DayOfWeekEnum::Sunday:
-        case DayOfWeekEnum::Unknown:
-            break;
-        default:
-            m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek = DayOfWeekEnum::Unknown;
-            break;
+            case DayOfWeekEnum::Monday ... DayOfWeekEnum::Sunday:
+            case DayOfWeekEnum::Unknown:
+                break;
+            default:
+                m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek = DayOfWeekEnum::Unknown;
+                break;
         }
         m_currentTime.exactTime256.fractions256 = parser.parseUInt8();
 
@@ -206,29 +208,29 @@ private:
     {
         switch (m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek)
         {
-        case DayOfWeekEnum::Monday:
-            ss << "Mon ";
-            break;
-        case DayOfWeekEnum::Tuesday:
-            ss << "Tue ";
-            break;
-        case DayOfWeekEnum::Wednesday:
-            ss << "Wed ";
-            break;
-        case DayOfWeekEnum::Thursday:
-            ss << "Thu ";
-            break;
-        case DayOfWeekEnum::Friday:
-            ss << "Fri ";
-            break;
-        case DayOfWeekEnum::Saturday:
-            ss << "Sat ";
-            break;
-        case DayOfWeekEnum::Sunday:
-            ss << "Sun ";
-            break;
-        case DayOfWeekEnum::Unknown:
-            break;
+            case DayOfWeekEnum::Monday:
+                ss << "Mon ";
+                break;
+            case DayOfWeekEnum::Tuesday:
+                ss << "Tue ";
+                break;
+            case DayOfWeekEnum::Wednesday:
+                ss << "Wed ";
+                break;
+            case DayOfWeekEnum::Thursday:
+                ss << "Thu ";
+                break;
+            case DayOfWeekEnum::Friday:
+                ss << "Fri ";
+                break;
+            case DayOfWeekEnum::Saturday:
+                ss << "Sat ";
+                break;
+            case DayOfWeekEnum::Sunday:
+                ss << "Sun ";
+                break;
+            case DayOfWeekEnum::Unknown:
+                break;
         }
 
         ss << DateTime(m_currentTime.exactTime256.dayDateTime.dateTime, configuration);

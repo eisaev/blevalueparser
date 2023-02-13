@@ -5,13 +5,17 @@ project(blevalueparser VERSION 0.1 LANGUAGES CXX)
 option(BUILD_EXAMPLES "Build examples" ON)
 option(BUILD_TESTS "Build tests" ON)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
 include(GNUInstallDirs)
 
 set(LIBRARY_SOURCES
     include/blevalueparser/bvp.h
     # common
-    include/blevalueparser/characteristictype.h
     include/blevalueparser/basevalue.h
+    include/blevalueparser/blenames.h
+    include/blevalueparser/characteristictype.h
+    include/blevalueparser/servicetype.h
     # characteristics
     include/blevalueparser/batterylevel.h
     include/blevalueparser/bodycompositionfeature.h

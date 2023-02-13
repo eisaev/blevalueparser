@@ -131,32 +131,32 @@ public:
 
         switch (configuration.measurementUnits)
         {
-        case MeasurementUnitsEnum::SI:
-        {
-            switch (resolution)
+            case MeasurementUnitsEnum::SI:
             {
-            case 0b0001: return 500;
-            case 0b0010: return 200;
-            case 0b0011: return 100;
-            case 0b0100: return 50;
-            case 0b0101: return 20;
-            case 0b0110: return 10;
-            case 0b0111: return 5;
+                switch (resolution)
+                {
+                case 0b0001: return 500;
+                case 0b0010: return 200;
+                case 0b0011: return 100;
+                case 0b0100: return 50;
+                case 0b0101: return 20;
+                case 0b0110: return 10;
+                case 0b0111: return 5;
+                }
             }
-        }
-        case MeasurementUnitsEnum::Imperial:
-        {
-            switch (resolution)
+            case MeasurementUnitsEnum::Imperial:
             {
-            case 0b0001: return 1000;
-            case 0b0010: return 500;
-            case 0b0011: return 200;
-            case 0b0100: return 100;
-            case 0b0101: return 50;
-            case 0b0110: return 20;
-            case 0b0111: return 10;
+                switch (resolution)
+                {
+                case 0b0001: return 1000;
+                case 0b0010: return 500;
+                case 0b0011: return 200;
+                case 0b0100: return 100;
+                case 0b0101: return 50;
+                case 0b0110: return 20;
+                case 0b0111: return 10;
+                }
             }
-        }
         }
 
         return 0;
@@ -172,24 +172,24 @@ public:
 
         switch (configuration.measurementUnits)
         {
-        case MeasurementUnitsEnum::SI:
-        {
-            switch (resolution)
+            case MeasurementUnitsEnum::SI:
             {
-            case 0b0001 : return 10;
-            case 0b0010 : return 5;
-            case 0b0011 : return 1;
+                switch (resolution)
+                {
+                case 0b0001 : return 10;
+                case 0b0010 : return 5;
+                case 0b0011 : return 1;
+                }
             }
-        }
-        case MeasurementUnitsEnum::Imperial:
-        {
-            switch (resolution)
+            case MeasurementUnitsEnum::Imperial:
             {
-            case 0b0001 : return 1000;
-            case 0b0010 : return 500;
-            case 0b0011 : return 100;
+                switch (resolution)
+                {
+                case 0b0001 : return 1000;
+                case 0b0010 : return 500;
+                case 0b0011 : return 100;
+                }
             }
-        }
         }
 
         return 0;

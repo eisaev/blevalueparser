@@ -208,26 +208,26 @@ private:
         m_localTimeInformation.timeZone.timeZone = TimeZoneEnum(parser.parseInt8());
         switch (m_localTimeInformation.timeZone.timeZone)
         {
-        case TimeZoneEnum::Minus48 ... TimeZoneEnum::Plus56:
-        case TimeZoneEnum::Unknown:
-            break;
-        default:
-            m_localTimeInformation.timeZone.timeZone = TimeZoneEnum::Unknown;
-            break;
+            case TimeZoneEnum::Minus48 ... TimeZoneEnum::Plus56:
+            case TimeZoneEnum::Unknown:
+                break;
+            default:
+                m_localTimeInformation.timeZone.timeZone = TimeZoneEnum::Unknown;
+                break;
         }
 
         m_localTimeInformation.dstOffset.dstOffset = DSTOffsetEnum(parser.parseUInt8());
         switch (m_localTimeInformation.dstOffset.dstOffset)
         {
-        case DSTOffsetEnum::StandardTime:
-        case DSTOffsetEnum::HalfAnHourDaylightTime0_5h:
-        case DSTOffsetEnum::DaylightTime1h:
-        case DSTOffsetEnum::DoubleDaylightTime2h:
-        case DSTOffsetEnum::Unknown:
-            break;
-        default:
-            m_localTimeInformation.dstOffset.dstOffset = DSTOffsetEnum::Unknown;
-            break;
+            case DSTOffsetEnum::StandardTime:
+            case DSTOffsetEnum::HalfAnHourDaylightTime0_5h:
+            case DSTOffsetEnum::DaylightTime1h:
+            case DSTOffsetEnum::DoubleDaylightTime2h:
+            case DSTOffsetEnum::Unknown:
+                break;
+            default:
+                m_localTimeInformation.dstOffset.dstOffset = DSTOffsetEnum::Unknown;
+                break;
         }
 
         return true;
@@ -248,21 +248,21 @@ private:
         ss << ", DST: ";
         switch (m_localTimeInformation.dstOffset.dstOffset)
         {
-        case DSTOffsetEnum::StandardTime:
-            ss << "Standard Time";
-            break;
-        case DSTOffsetEnum::HalfAnHourDaylightTime0_5h:
-            ss << "Half an Hour Daylight Time (+0.5h)";
-            break;
-        case DSTOffsetEnum::DaylightTime1h:
-            ss << "Daylight Time (+1h)";
-            break;
-        case DSTOffsetEnum::DoubleDaylightTime2h:
-            ss << "Double Daylight Time (+2h)";
-            break;
-        case DSTOffsetEnum::Unknown:
-            ss << "<Unknown>";
-            break;
+            case DSTOffsetEnum::StandardTime:
+                ss << "Standard Time";
+                break;
+            case DSTOffsetEnum::HalfAnHourDaylightTime0_5h:
+                ss << "Half an Hour Daylight Time (+0.5h)";
+                break;
+            case DSTOffsetEnum::DaylightTime1h:
+                ss << "Daylight Time (+1h)";
+                break;
+            case DSTOffsetEnum::DoubleDaylightTime2h:
+                ss << "Double Daylight Time (+2h)";
+                break;
+            case DSTOffsetEnum::Unknown:
+                ss << "<Unknown>";
+                break;
         }
     }
 };

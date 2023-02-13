@@ -112,12 +112,12 @@ private:
         m_pnpId.vendorIdSource.vendorIdSource = VendorIdSourceEnum(parser.parseUInt8());
         switch (m_pnpId.vendorIdSource.vendorIdSource)
         {
-        case VendorIdSourceEnum::Unknown:
-        case VendorIdSourceEnum::Bluetooth ... VendorIdSourceEnum::USB:
-            break;
-        default:
-            m_pnpId.vendorIdSource.vendorIdSource = VendorIdSourceEnum::Unknown;
-            break;
+            case VendorIdSourceEnum::Unknown:
+            case VendorIdSourceEnum::Bluetooth ... VendorIdSourceEnum::USB:
+                break;
+            default:
+                m_pnpId.vendorIdSource.vendorIdSource = VendorIdSourceEnum::Unknown;
+                break;
         }
         // 3.9.1.2 Vendor ID Field
         m_pnpId.vendorId = parser.parseUInt16();
@@ -137,15 +137,15 @@ private:
         ss << "(";
         switch (m_pnpId.vendorIdSource.vendorIdSource)
         {
-        case VendorIdSourceEnum::Unknown:
-            ss << "<Unknown>";
-            break;
-        case VendorIdSourceEnum::Bluetooth:
-            ss << "Bluetooth";
-            break;
-        case VendorIdSourceEnum::USB:
-            ss << "USB";
-            break;
+            case VendorIdSourceEnum::Unknown:
+                ss << "<Unknown>";
+                break;
+            case VendorIdSourceEnum::Bluetooth:
+                ss << "Bluetooth";
+                break;
+            case VendorIdSourceEnum::USB:
+                ss << "USB";
+                break;
         }
         ss << ") ";
         auto originalFlags = ss.flags();

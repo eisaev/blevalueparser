@@ -48,8 +48,8 @@ else()
     qt5_add_translation(QM_FILES ${TS_FILES})
 
     add_executable(${PROJECT_NAME}
-      ${PROJECT_SOURCES}
-      ${QM_FILES}
+        ${PROJECT_SOURCES}
+        ${QM_FILES}
     )
 endif()
 
@@ -74,7 +74,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 install(TARGETS ${PROJECT_NAME}
     BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
 
 if(${QT_VERSION_MAJOR} EQUAL 6)
     qt_import_qml_plugins(${PROJECT_NAME})
