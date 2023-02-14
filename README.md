@@ -111,9 +111,18 @@ cmake -B ./build -DBUILD_TESTS=OFF
 ```
 
 # Examples
-Currently there is only one example in the project. This demo application uses Qt framework.
+There are two examples in the project. First demo is GUI application and it uses Qt framework. Second one is TUI application which uses SimpleBLE library.
 
-You can skip examples build on CMake configuration:
+You can skip build of specific example on CMake configuration step:
+```sh
+cmake -B ./build -DBUILD_GUI_EXAMPLE=OFF
+```
+or
+```sh
+cmake -B ./build -DBUILD_TUI_EXAMPLE=OFF
+```
+
+Also you can skip examples build at all:
 ```sh
 cmake -B ./build -DBUILD_EXAMPLES=OFF
 ```

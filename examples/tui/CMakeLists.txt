@@ -13,8 +13,6 @@ set_target_properties(simpleble-c PROPERTIES CXX_CLANG_TIDY "")
 
 set(PROJECT_SOURCES
     main.cpp
-    utils.cpp
-    utils.hpp
     demoapplication.cpp
     demoapplication.h
     blemanager.cpp

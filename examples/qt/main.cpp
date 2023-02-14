@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
     const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
-                     &app, [url](const QObject *obj, const QUrl &objUrl) {
+                     &app, [&url](const QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);

@@ -114,7 +114,7 @@ bool BLEManager::discoveryDevices(int timeout_ms)
         return false;
     }
 
-    m_adapter->set_callback_on_scan_start([]() { std::cout << "Scanning." << std::flush;;  });
+    m_adapter->set_callback_on_scan_start([] { std::cout << "Scanning." << std::flush; });
 
     m_adapter->set_callback_on_scan_found(
         [&](SimpleBLE::Safe::Peripheral peripheral)
@@ -124,7 +124,7 @@ bool BLEManager::discoveryDevices(int timeout_ms)
         }
     );
 
-    m_adapter->set_callback_on_scan_stop([]() { std::cout << " Done" << std::endl; });
+    m_adapter->set_callback_on_scan_stop([] { std::cout << " Done" << std::endl; });
 
     m_adapter->scan_for(timeout_ms);
 
