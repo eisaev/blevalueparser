@@ -1,7 +1,7 @@
 #include "bleserviceinfo.h"
 
 
-BleServiceInfo::BleServiceInfo(const QBluetoothUuid &source, int index, QObject *parent) :
+BleServiceInfo::BleServiceInfo(const QBluetoothUuid &source, size_t index, QObject *parent) :
     QObject{parent},
     m_index{index},
     m_uuid{source}

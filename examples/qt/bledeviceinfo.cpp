@@ -1,7 +1,7 @@
 #include "bledeviceinfo.h"
 
 
-BleDeviceInfo::BleDeviceInfo(const QBluetoothDeviceInfo &source, int index, QObject *parent) :
+BleDeviceInfo::BleDeviceInfo(const QBluetoothDeviceInfo &source, size_t index, QObject *parent) :
     QObject{parent},
     m_index{index},
     m_device{source}

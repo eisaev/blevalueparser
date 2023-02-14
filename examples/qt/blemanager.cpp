@@ -495,7 +495,7 @@ void BLEManager::disconnectFromDevice()
     emit availableServicesUpdated();
 }
 
-void BLEManager::connectToDevice(int index)
+void BLEManager::connectToDevice(size_t index)
 {
     qDebug() << __FUNCTION__;
     qDebug() << index;
@@ -733,7 +733,7 @@ void BLEManager::disconnectFromService()
     emit availableCharacteristicsUpdated();
 }
 
-void BLEManager::connectToService(int index)
+void BLEManager::connectToService(size_t index)
 {
     qDebug() << __FUNCTION__;
     qDebug() << index;
@@ -797,7 +797,7 @@ void BLEManager::disconnectFromCharacteristic()
     m_characteristicName.clear();
 }
 
-void BLEManager::connectToCharacteristic(int index)
+void BLEManager::connectToCharacteristic(size_t index)
 {
     qDebug() << __FUNCTION__;
     qDebug() << index;
@@ -872,7 +872,7 @@ void BLEManager::descriptorWritten(const QLowEnergyDescriptor &info, const QByte
     qDebug() << __FUNCTION__;
     if (info.isValid() &&
         info == m_notificationDescriptor &&
-        value == s_enableNotification || value == s_disableNotification)
+        (value == s_enableNotification || value == s_disableNotification))
     {
         emit isSubscribedUpdated();
     }

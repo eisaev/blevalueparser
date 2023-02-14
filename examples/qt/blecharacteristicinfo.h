@@ -12,7 +12,7 @@ class BleCharacteristicInfo : public QObject
     Q_PROPERTY(QString description READ description CONSTANT)
 
 public:
-    explicit BleCharacteristicInfo(const QLowEnergyCharacteristic& source, int index = -1, QObject *parent = nullptr);
+    explicit BleCharacteristicInfo(const QLowEnergyCharacteristic& source, size_t index, QObject *parent = nullptr);
 
     QString uuid() const {
         return m_characteristic.uuid().toString();
@@ -27,7 +27,7 @@ public:
     }
 
 private:
-    int m_index;
+    size_t m_index;
     QLowEnergyCharacteristic m_characteristic;
     QString m_description;
 };

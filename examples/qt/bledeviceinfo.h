@@ -14,7 +14,7 @@ class BleDeviceInfo : public QObject {
     Q_PROPERTY(qint16 rssi READ rssi CONSTANT)
 
 public:
-    explicit BleDeviceInfo(const QBluetoothDeviceInfo& source, int index = -1, QObject *parent = nullptr);
+    explicit BleDeviceInfo(const QBluetoothDeviceInfo& source, size_t index, QObject *parent = nullptr);
 
     QString name() const {
         return m_device.name();
@@ -40,6 +40,6 @@ public:
     bool update(const QBluetoothDeviceInfo &source);
 
 private:
-    int m_index;
+    size_t m_index;
     QBluetoothDeviceInfo m_device;
 };

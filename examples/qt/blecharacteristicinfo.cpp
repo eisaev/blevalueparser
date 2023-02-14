@@ -1,7 +1,7 @@
 #include "blecharacteristicinfo.h"
 
 
-BleCharacteristicInfo::BleCharacteristicInfo(const QLowEnergyCharacteristic& source, int index, QObject *parent) :
+BleCharacteristicInfo::BleCharacteristicInfo(const QLowEnergyCharacteristic& source, size_t index, QObject *parent) :
     QObject{parent},
     m_index{index},
     m_characteristic{source},
