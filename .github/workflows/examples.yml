@@ -61,6 +61,7 @@ jobs:
         modules: ${{matrix.QT_MODULES}}
         setup-python: false
         cache: true
+        cache-key-prefix: 'install-qt-action-${{ runner.name }}'
         extra: '--external 7z'
 
     - name: Configure CMake
