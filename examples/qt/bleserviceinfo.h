@@ -12,7 +12,7 @@ class BleServiceInfo : public QObject
     Q_PROPERTY(QString description READ description CONSTANT)
 
 public:
-    explicit BleServiceInfo(const QBluetoothUuid& source, int index = -1, QObject *parent = nullptr);
+    explicit BleServiceInfo(const QBluetoothUuid& source, size_t index, QObject *parent = nullptr);
 
     QString uuid() const {
         return m_uuid.toString();
@@ -27,7 +27,7 @@ public:
     }
 
 private:
-    int m_index;
+    size_t m_index;
     QBluetoothUuid m_uuid;
     QString m_description;
 };
