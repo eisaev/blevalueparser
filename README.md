@@ -93,6 +93,15 @@ cmake -G Xcode -B ./build
 ### QtCreator
 Open top level `CMakeList.txt` in QtCreator, select target, build.
 
+## iOS
+NB: Only Qt6 is supported. You must specify path to toolchain file (see example below).
+
+1. Generate project:
+```sh
+cmake -G Xcode -B build -DCMAKE_TOOLCHAIN_FILE=${HOME}/Qt/6.2.4/ios/lib/cmake/Qt6/qt.toolchain.cmake
+```
+2. Open generated project in Xcode, select target, build.
+
 ## Linux
 
 ### Console
@@ -111,7 +120,7 @@ cmake -B ./build -DBUILD_TESTS=OFF
 ```
 
 # Examples
-There are two examples in the project. First demo is GUI application and it uses Qt framework. Second one is TUI application which uses SimpleBLE library.
+There are two examples in the project. First demo is GUI application and it uses Qt framework. Second one is TUI application (only for macOS & Linux) which uses SimpleBLE library.
 
 You can skip build of specific example on CMake configuration step:
 ```sh
