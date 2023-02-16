@@ -27,7 +27,7 @@ jobs:
 
     env:
       BUILD_DIR: ${{github.workspace}}/build
-      TESTS_DIR: ${{github.workspace}}/build/tests
+      TESTS_DIR: ${{github.workspace}}/build/tests/bvptest.app/Contents/MacOS
       THIRDPARTY_DIR: ${{github.workspace}}/3rdparty
 
     steps:
