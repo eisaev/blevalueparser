@@ -9,7 +9,9 @@ if(APPLE AND (${QT_VERSION_MAJOR} LESS 6))
 endif()
 # ^^^ This part must be before project() ^^^
 
-project(bvpqt VERSION 0.1 LANGUAGES CXX)
+project(bvpqt VERSION 0.1 DESCRIPTION "BLE Value Parser Library GUI Demo Application" LANGUAGES CXX)
+set(COMPANY_NAME eisaev)
+set(COMPANY_TLD dev)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -63,14 +65,38 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    XCODE_SCHEME_ENVIRONMENT "OS_ACTIVITY_MODE=disable"
-    MACOSX_BUNDLE_GUI_IDENTIFIER bvpqt.eisaev.dev
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/Info.plist"
-    MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
+    MACOSX_BUNDLE TRUE
 )
+
+if (APPLE)
+    set(BUNDLE_IDENTIFIER "${COMPANY_TLD}.${COMPANY_NAME}.${PROJECT_NAME}")
+
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "${BUNDLE_IDENTIFIER}"
+        XCODE_ATTRIBUTE_MARKETING_VERSION "${PROJECT_VERSION}"
+        XCODE_ATTRIBUTE_INFOPLIST_KEY_CFBundleDisplayName "${PROJECT_DESCRIPTION}"
+        XCODE_ATTRIBUTE_INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription "This application wants to access your Bluetooth adapter"
+        XCODE_ATTRIBUTE_INFOPLIST_KEY_LSApplicationCategoryType "public.app-category.utilities"
+    )
+
+    if (IOS)
+        set(DEPLOYMENT_TARGET "13.0")
+        set_target_properties(${PROJECT_NAME} PROPERTIES
+            XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET "${DEPLOYMENT_TARGET}"
+            MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/Info.ios.plist"
+        )
+    else()
+        set(DEPLOYMENT_TARGET "12.6")
+        set_target_properties(${PROJECT_NAME} PROPERTIES
+            XCODE_GENERATE_SCHEME ON
+            # https://developer.apple.com/forums/thread/696140
+            XCODE_SCHEME_ENABLE_GPU_API_VALIDATION "0"
+            XCODE_ATTRIBUTE_MACOSX_DEPLOYMENT_TARGET "${DEPLOYMENT_TARGET}"
+            MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/Info.macos.plist"
+        )
+    endif()
+endif()
 
 install(TARGETS ${PROJECT_NAME}
     BUNDLE DESTINATION .

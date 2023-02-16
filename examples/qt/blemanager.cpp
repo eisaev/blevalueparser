@@ -38,14 +38,7 @@ BLEManager::BLEManager(QObject *parent) : QObject{parent}
             this, &BLEManager::localDeviceError);
 #endif
 
-    if (isActive())
-    {
-        startDevicesDiscovery();
-    }
-    else
-    {
-        m_statusString = tr("Error: No active BT adapters found");
-    }
+    startDevicesDiscovery();
 }
 
 BLEManager::~BLEManager()
@@ -62,7 +55,14 @@ BLEManager::~BLEManager()
 bool BLEManager::isActive() const
 {
     qDebug() << __FUNCTION__;
+#if TARGET_OS_IPHONE
+    // https://doc.qt.io/qt-6/qbluetoothlocaldevice.html
+    // QBluetoothLocalDevice: On iOS, this class cannot be used because the platform does not
+    // expose any data or API which may provide information on the local Bluetooth device.
+    return true;
+#else
     return m_localDevice.isValid() && m_localDevice.hostMode() != QBluetoothLocalDevice::HostPoweredOff;
+#endif
 }
 
 void BLEManager::startDevicesDiscovery()
