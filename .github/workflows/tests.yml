@@ -15,19 +15,22 @@ jobs:
           - RUNS_ON: [ubuntu-20.04, self-hosted]
             OS: ubuntu-20.04
             CLANG_TIDY: '-DCMAKE_CXX_CLANG_TIDY="clang-tidy;--export-fixes=clang-tidy.fixes;--fix;--warnings-as-errors=*"'
+            TEST_BUNDLE_PATH: ''
           - RUNS_ON: [macos-12, self-hosted]
             OS: macos-12
             CLANG_TIDY: ''
+            TEST_BUNDLE_PATH: '/tests/bvptest.app/Contents/MacOS'
           - RUNS_ON: [macos-13, self-hosted]
             OS: macos-13
             CLANG_TIDY: ''
+            TEST_BUNDLE_PATH: '/tests/bvptest.app/Contents/MacOS'
 
     name: Test ${{matrix.RUNNER.OS}} - ${{matrix.BUILD_TYPE}}
     runs-on: ${{matrix.RUNNER.RUNS_ON}}
 
     env:
       BUILD_DIR: ${{github.workspace}}/build
-      TESTS_DIR: ${{github.workspace}}/build/tests/bvptest.app/Contents/MacOS
+      TESTS_DIR: ${{github.workspace}}/build${{matrix.RUNNER.TEST_BUNDLE_PATH}}
       THIRDPARTY_DIR: ${{github.workspace}}/3rdparty
 
     steps:
