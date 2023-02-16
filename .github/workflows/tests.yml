@@ -15,15 +15,15 @@ jobs:
           - RUNS_ON: [ubuntu-20.04, self-hosted]
             OS: ubuntu-20.04
             CLANG_TIDY: '-DCMAKE_CXX_CLANG_TIDY="clang-tidy;--export-fixes=clang-tidy.fixes;--fix;--warnings-as-errors=*"'
-            TESTS_DIR: ${{github.workspace}}/build/tests
+            TESTS_DIR: build/tests
           - RUNS_ON: [macos-12, self-hosted]
             OS: macos-12
             CLANG_TIDY: ''
-            TESTS_DIR: ${{github.workspace}}/build/tests/bvptest.app/Contents/MacOS
+            TESTS_DIR: build/tests/bvptest.app/Contents/MacOS
           - RUNS_ON: [macos-13, self-hosted]
             OS: macos-13
             CLANG_TIDY: ''
-            TESTS_DIR: ${{github.workspace}}/build/tests/bvptest.app/Contents/MacOS
+            TESTS_DIR: build/tests/bvptest.app/Contents/MacOS
 
     name: Test ${{matrix.RUNNER.OS}} - ${{matrix.BUILD_TYPE}}
     runs-on: ${{matrix.RUNNER.RUNS_ON}}
@@ -53,14 +53,14 @@ jobs:
       run: cmake --build ${{env.BUILD_DIR}} --config ${{matrix.BUILD_TYPE}}
 
     - name: Test
-      working-directory: ${{matrix.RUNNER.TESTS_DIR}}
+      working-directory: ${{github.workspace}}/${{matrix.RUNNER.TESTS_DIR}}
       # Execute tests defined by the CMake configuration.
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       #run: ctest -C ${{matrix.BUILD_TYPE}} --no-compress-output --test-output-size-passed 0 --test-output-size-failed 0 --output-junit junit-${{matrix.OS}}-${{matrix.BUILD_TYPE}}.xml
       run: GTEST_OUTPUT=xml:junit-${{matrix.RUNNER.OS}}-${{matrix.BUILD_TYPE}}.xml ./bvptest --gtest_output=xml:gtest-${{matrix.RUNNER.OS}}-${{matrix.BUILD_TYPE}}.xml
 
     - name: Convert GTest XML to JUnit
-      working-directory: ${{matrix.RUNNER.TESTS_DIR}}
+      working-directory: ${{github.workspace}}/${{matrix.RUNNER.TESTS_DIR}}
       run: xsltproc --output junit-${{matrix.RUNNER.OS}}-${{matrix.BUILD_TYPE}}.xml ${{env.THIRDPARTY_DIR}}/gtest_to_junit.xsl gtest-${{matrix.RUNNER.OS}}-${{matrix.BUILD_TYPE}}.xml
 
     - name: Upload Clang Tidy Artifacts
@@ -74,7 +74,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: test-report
-        path: ${{matrix.RUNNER.TESTS_DIR}}/junit-*.xml
+        path: ${{github.workspace}}/${{matrix.RUNNER.TESTS_DIR}}/junit-*.xml
         if-no-files-found: error
 
   report:
