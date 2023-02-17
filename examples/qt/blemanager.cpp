@@ -495,10 +495,16 @@ void BLEManager::disconnectFromDevice()
     emit availableServicesUpdated();
 }
 
-void BLEManager::connectToDevice(size_t index)
+void BLEManager::connectToDevice(qsizetype index)
 {
     qDebug() << __FUNCTION__;
     qDebug() << index;
+
+    if (index >= m_availableDevices.size())
+    {
+        return;
+    }
+
     disconnectFromDevice();
 
     const auto bleDeviceInfo = qobject_cast<BleDeviceInfo *>(m_availableDevices.at(index));
@@ -597,7 +603,7 @@ void BLEManager::serviceDiscovered(const QBluetoothUuid &gatt)
 {
     qDebug() << __FUNCTION__;
     qDebug() << gatt.toString();
-    const size_t index = m_availableServices.size();
+    const qsizetype index = m_availableServices.size();
     m_availableServices.append(new BleServiceInfo(gatt, index));
     if (QBluetoothUuid(QBluetoothUuid::ServiceClassUuid::DeviceInformation) == gatt) {
         connectToService(index);
@@ -733,10 +739,16 @@ void BLEManager::disconnectFromService()
     emit availableCharacteristicsUpdated();
 }
 
-void BLEManager::connectToService(size_t index)
+void BLEManager::connectToService(qsizetype index)
 {
     qDebug() << __FUNCTION__;
     qDebug() << index;
+
+    if (index >= m_availableServices.size())
+    {
+        return;
+    }
+
     disconnectFromService();
 
     const auto bleServiceInfo = qobject_cast<BleServiceInfo *>(m_availableServices.at(index));
@@ -800,10 +812,16 @@ void BLEManager::disconnectFromCharacteristic()
     m_characteristicName.clear();
 }
 
-void BLEManager::connectToCharacteristic(size_t index)
+void BLEManager::connectToCharacteristic(qsizetype index)
 {
     qDebug() << __FUNCTION__;
     qDebug() << index;
+
+    if (index >= m_availableCharacteristics.size())
+    {
+        return;
+    }
+
     disconnectFromCharacteristic();
 
     const auto bleCharacteristicInfo = qobject_cast<BleCharacteristicInfo *>(m_availableCharacteristics.at(index));

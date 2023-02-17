@@ -71,13 +71,13 @@ public slots:
     void stopDevicesDiscovery();
 
     void disconnectFromDevice();
-    void connectToDevice(size_t index);
+    void connectToDevice(qsizetype index);
 
     void disconnectFromService();
-    void connectToService(size_t index);
+    void connectToService(qsizetype index);
 
     void disconnectFromCharacteristic();
-    void connectToCharacteristic(size_t index);
+    void connectToCharacteristic(qsizetype index);
 
     void readCharacteristicValue();
     void unsubscribeFromNotifications();
