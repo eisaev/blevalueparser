@@ -135,27 +135,29 @@ public:
             {
                 switch (resolution)
                 {
-                case 0b0001: return 500;
-                case 0b0010: return 200;
-                case 0b0011: return 100;
-                case 0b0100: return 50;
-                case 0b0101: return 20;
-                case 0b0110: return 10;
-                case 0b0111: return 5;
+                    case 0b0001: return 500;
+                    case 0b0010: return 200;
+                    case 0b0011: return 100;
+                    case 0b0100: return 50;
+                    case 0b0101: return 20;
+                    case 0b0110: return 10;
+                    case 0b0111: return 5;
                 }
+                break;
             }
             case MeasurementUnitsEnum::Imperial:
             {
                 switch (resolution)
                 {
-                case 0b0001: return 1000;
-                case 0b0010: return 500;
-                case 0b0011: return 200;
-                case 0b0100: return 100;
-                case 0b0101: return 50;
-                case 0b0110: return 20;
-                case 0b0111: return 10;
+                    case 0b0001: return 1000;
+                    case 0b0010: return 500;
+                    case 0b0011: return 200;
+                    case 0b0100: return 100;
+                    case 0b0101: return 50;
+                    case 0b0110: return 20;
+                    case 0b0111: return 10;
                 }
+                break;
             }
         }
 
@@ -176,19 +178,21 @@ public:
             {
                 switch (resolution)
                 {
-                case 0b0001 : return 10;
-                case 0b0010 : return 5;
-                case 0b0011 : return 1;
+                    case 0b0001 : return 10;
+                    case 0b0010 : return 5;
+                    case 0b0011 : return 1;
                 }
+                break;
             }
             case MeasurementUnitsEnum::Imperial:
             {
                 switch (resolution)
                 {
-                case 0b0001 : return 1000;
-                case 0b0010 : return 500;
-                case 0b0011 : return 100;
+                    case 0b0001 : return 1000;
+                    case 0b0010 : return 500;
+                    case 0b0011 : return 100;
                 }
+                break;
             }
         }
 

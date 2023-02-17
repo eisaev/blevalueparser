@@ -81,7 +81,13 @@ private:
         switch (m_bodySensorLocation.bodySensorLocation)
         {
             case BodySensorLocationEnum::Unknown:
-            case BodySensorLocationEnum::Other ... BodySensorLocationEnum::Foot:
+            case BodySensorLocationEnum::Other:
+            case BodySensorLocationEnum::Chest:
+            case BodySensorLocationEnum::Wrist:
+            case BodySensorLocationEnum::Finger:
+            case BodySensorLocationEnum::Hand:
+            case BodySensorLocationEnum::EarLobe:
+            case BodySensorLocationEnum::Foot:
                 break;
             default:
                 m_bodySensorLocation.bodySensorLocation = BodySensorLocationEnum::Unknown;

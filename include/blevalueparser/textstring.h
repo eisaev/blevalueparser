@@ -26,6 +26,7 @@ private:
 
     virtual bool checkSize(size_t size) override
     {
+        (void)size;
         return true;
     }
 

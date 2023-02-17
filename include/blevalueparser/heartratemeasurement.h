@@ -110,7 +110,7 @@ private:
         // 3.1.1.1 Flags Field
         m_heartRateMeasurement.flags = parser.parseUInt8();
 
-               // 3.1.1.2 Heart Rate Measurement Value Field
+        // 3.1.1.2 Heart Rate Measurement Value Field
         if (isWideFormat())
         {
             m_heartRateMeasurement.heartRate = parser.parseUInt16();
@@ -120,13 +120,13 @@ private:
             m_heartRateMeasurement.heartRate = parser.parseUInt8();
         }
 
-               // 3.1.1.3 Energy Expended Field
+        // 3.1.1.3 Energy Expended Field
         if (hasEnergyExpended())
         {
             m_heartRateMeasurement.energyExpended = parser.parseUInt16();
         }
 
-               // 3.1.1.4 RR-Interval Field
+        // 3.1.1.4 RR-Interval Field
         if (hasRRIntervals())
         {
             uint8_t maxRRCount = 9;

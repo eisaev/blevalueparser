@@ -775,6 +775,7 @@ void BLEManager::serviceStateChanged(QLowEnergyService::ServiceState newState)
 void BLEManager::characteristicRead(const QLowEnergyCharacteristic &info,
                                     const QByteArray &value)
 {
+    (void)info;
     qDebug() << __FUNCTION__;
     m_characteristicValue = value;
     emit characteristicValueUpdated();
@@ -783,6 +784,8 @@ void BLEManager::characteristicRead(const QLowEnergyCharacteristic &info,
 void BLEManager::characteristicWritten(const QLowEnergyCharacteristic &info,
                                        const QByteArray &value)
 {
+    (void)info;
+    (void)value;
     qDebug() << __FUNCTION__;
 }
 
@@ -861,6 +864,7 @@ void BLEManager::subscribeToNotifications()
 
 void BLEManager::characteristicChanged(const QLowEnergyCharacteristic &info, const QByteArray &value)
 {
+    (void)info;
     qDebug() << __FUNCTION__;
     qDebug() << value;
     m_characteristicValue = value;

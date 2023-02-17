@@ -140,9 +140,7 @@ TEST_F(BodySensorLocationTest, Unknown)
 
 TEST_F(BodySensorLocationTest, Empty)
 {
-    constexpr char data[] = {};
-
-    auto result = bleValueParser.make_value<BodySensorLocation>(data, sizeof(data));
+    auto result = bleValueParser.make_value<BodySensorLocation>({}, 0);
     EXPECT_NE(nullptr, result);
     EXPECT_FALSE(result->isValid());
     EXPECT_EQ(BodySensorLocationEnum::Unknown, result->location());
