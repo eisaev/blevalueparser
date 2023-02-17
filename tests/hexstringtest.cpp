@@ -31,9 +31,7 @@ TEST_F(HexStringTest, Basic)
 
 TEST_F(HexStringTest, Empty)
 {
-    constexpr char data[] = {};
-
-    auto result = bleValueParser.make_value<HexString>(data, sizeof(data));
+    auto result = bleValueParser.make_value<HexString>({}, 0);
     EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
 

@@ -113,7 +113,8 @@ private:
         switch (m_pnpId.vendorIdSource.vendorIdSource)
         {
             case VendorIdSourceEnum::Unknown:
-            case VendorIdSourceEnum::Bluetooth ... VendorIdSourceEnum::USB:
+            case VendorIdSourceEnum::Bluetooth:
+            case VendorIdSourceEnum::USB:
                 break;
             default:
                 m_pnpId.vendorIdSource.vendorIdSource = VendorIdSourceEnum::Unknown;
@@ -124,9 +125,9 @@ private:
         // 3.9.1.3 Product ID Field
         m_pnpId.productId = parser.parseUInt16();
 
-               // 3.9.1.4 Product Version Field
-               // The value of the field value is 0xJJMN for version JJ.M.N
-               // (JJ – major version number, M – minor version number, N – sub-minor version number)
+        // 3.9.1.4 Product Version Field
+        // The value of the field value is 0xJJMN for version JJ.M.N
+        // (JJ – major version number, M – minor version number, N – sub-minor version number)
         m_pnpId.productVersion = parser.parseUInt16();
 
         return true;

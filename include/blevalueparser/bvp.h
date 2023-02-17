@@ -66,8 +66,8 @@ public:
             case CharacteristicType::PnPID:
                 return make_value<PnPID>(data, size);
 
-                       // Current Time Service (CTS_SPEC_V1.1.0.pdf)
-                       // 3.1 Current Time
+            // Current Time Service (CTS_SPEC_V1.1.0.pdf)
+            // 3.1 Current Time
             case CharacteristicType::CurrentTime:
                 return make_value<CurrentTime>(data, size);
             // 3.2 Local Time Information
@@ -78,8 +78,8 @@ public:
                 // TODO:
                 break;
 
-                       // Battery Service (BAS_V1.1.pdf)
-                       // 3.1 Battery Level
+            // Battery Service (BAS_V1.1.pdf)
+            // 3.1 Battery Level
             case CharacteristicType::BatteryLevel:
                 return make_value<BatteryLevel>(data, size);
             // 3.2 Battery Level Status
@@ -114,15 +114,15 @@ public:
             case CharacteristicType::BatteryInformation:
                 // TODO:
                 break;
-                // 3.10 Manufacturer Name String
-                // Implemented for Device Information Service (see ManufacturerNameString)
-                // 3.11 Model Number String
-                // Implemented for Device Information Service (ModelNumberString)
-                // 3.12 Serial Number String
-                // Implemented for Device Information Service (SerialNumberString)
+            // 3.10 Manufacturer Name String
+            // Implemented for Device Information Service (see ManufacturerNameString)
+            // 3.11 Model Number String
+            // Implemented for Device Information Service (ModelNumberString)
+            // 3.12 Serial Number String
+            // Implemented for Device Information Service (SerialNumberString)
 
-                       // Heart Rate Service (HRS_SPEC_V10.pdf)
-                       // 3.1 Heart Rate Measurement
+            // Heart Rate Service (HRS_SPEC_V10.pdf)
+            // 3.1 Heart Rate Measurement
             case CharacteristicType::HeartRateMeasurement:
                 return make_value<HeartRateMeasurement>(data, size);
             // 3.2 Body Sensor Location
@@ -133,8 +133,8 @@ public:
                 // TODO:
                 break;
 
-                       // Body Composition Service (BCS_V1.0.0.pdf)
-                       // 3.1 BodyCompositionFeature
+            // Body Composition Service (BCS_V1.0.0.pdf)
+            // 3.1 BodyCompositionFeature
             case CharacteristicType::BodyCompositionFeature:
                 return make_value<BodyCompositionFeature>(data, size);
             // 3.2 BodyCompositionMeasurement
@@ -145,13 +145,13 @@ public:
             case CharacteristicType::BodyCompositionMeasurementMIBFS:
                 return make_value<BodyCompositionMeasurementMIBFS>(data, size);
 
-                       // Unsorted
+            // Unsorted
             case CharacteristicType::DateTime:
                 return make_value<DateTime>(data, size);
             case CharacteristicType::UserIndex:
                 return make_value<UserIndex>(data, size);
 
-                       // Other
+            // Other
             case CharacteristicType::DeviceName:
             case CharacteristicType::Appearance:
             case CharacteristicType::PeripheralPrivacyFlag:

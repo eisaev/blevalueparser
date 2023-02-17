@@ -31,9 +31,7 @@ TEST_F(TextStringTest, Basic)
 
 TEST_F(TextStringTest, Empty)
 {
-    constexpr char data[] = {};
-
-    auto result = bleValueParser.make_value<TextString>(data, sizeof(data));
+    auto result = bleValueParser.make_value<TextString>({}, 0);
     EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
 

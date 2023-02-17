@@ -30,6 +30,13 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     simpleble::simpleble
 )
 
+target_compile_options(${PROJECT_NAME} PRIVATE
+    -Wall
+    -Wextra
+    -Wpedantic
+    -Werror
+)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
     WIN32_EXECUTABLE TRUE
     MACOSX_BUNDLE TRUE

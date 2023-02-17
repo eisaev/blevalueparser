@@ -95,7 +95,7 @@ protected:
 
     bool m_isValid{false};
 
-           // For testing protected Parser class
+    // For testing protected Parser class
     friend class InternalParserTest;
     friend class InternalParserTest_Raw_Test;
     friend class InternalParserTest_String_Test;

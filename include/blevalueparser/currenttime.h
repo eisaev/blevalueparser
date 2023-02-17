@@ -186,8 +186,14 @@ private:
         m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek = DayOfWeekEnum(parser.parseUInt8());
         switch (m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek)
         {
-            case DayOfWeekEnum::Monday ... DayOfWeekEnum::Sunday:
             case DayOfWeekEnum::Unknown:
+            case DayOfWeekEnum::Monday:
+            case DayOfWeekEnum::Tuesday:
+            case DayOfWeekEnum::Wednesday:
+            case DayOfWeekEnum::Thursday:
+            case DayOfWeekEnum::Friday:
+            case DayOfWeekEnum::Saturday:
+            case DayOfWeekEnum::Sunday:
                 break;
             default:
                 m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek = DayOfWeekEnum::Unknown;
@@ -195,10 +201,10 @@ private:
         }
         m_currentTime.exactTime256.fractions256 = parser.parseUInt8();
 
-               // 3.1.2.1 Manual Time Update
-               // 3.1.2.2 External Reference Time Update
-               // 3.1.2.3 Change of Time Zone
-               // 3.1.2.4 Change of DST Offset
+        // 3.1.2.1 Manual Time Update
+        // 3.1.2.2 External Reference Time Update
+        // 3.1.2.3 Change of Time Zone
+        // 3.1.2.4 Change of DST Offset
         m_currentTime.adjustReason = parser.parseUInt8();
 
         return true;

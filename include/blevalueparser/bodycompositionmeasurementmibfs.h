@@ -53,7 +53,7 @@ private:
 
         configuration.measurementUnits = measurementUnits();
 
-               // 3.2.1.3 Time Stamp Field
+        // 3.2.1.3 Time Stamp Field
         if (isTimeStampPresent())
         {
             size_t dateTimeSize = DateTime::expectedSize();
@@ -63,12 +63,12 @@ private:
             m_bodyCompositionMeasurement.timeStamp = dateTime.getBtSpecObject();
         }
 
-               // 3.2.1.11 Impedance
-               // Unit is 1/10 of an Ohm
-               // Always present in data on Xiaomi scales
+        // 3.2.1.11 Impedance
+        // Unit is 1/10 of an Ohm
+        // Always present in data on Xiaomi scales
         m_bodyCompositionMeasurement.impedance = parser.parseUInt16();
 
-               // 3.2.1.12 Weight
+        // 3.2.1.12 Weight
         if (isWeightPresent())
         {
             m_bodyCompositionMeasurement.weight = parser.parseUInt16();
