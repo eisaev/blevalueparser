@@ -7,7 +7,7 @@ on:
     branches: ['main']
 
 jobs:
-  build:
+  build_gui:
     strategy:
       matrix:
         BUILD_TYPE: [Debug, MinSizeRel]
@@ -32,7 +32,7 @@ jobs:
           - QT_VERSION: 6.2.4
             QT_MODULES: qtconnectivity
 
-    name: Build Examples ${{matrix.RUNNER.OS}} - ${{matrix.BUILD_TYPE}}
+    name: Build GUI Example (Qt${{matrix.QT_VERSION}}) ${{matrix.RUNNER.OS}} - ${{matrix.BUILD_TYPE}}
     runs-on: ${{matrix.RUNNER.RUNS_ON}}
 
     env:
@@ -42,9 +42,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Install clang-tidy
+    - name: Install System Dependencies
       if: ${{matrix.RUNNER.OS == 'ubuntu-20.04'}}
-      run: sudo apt install -y clang-tidy libdbus-1-dev
+      run: sudo apt install -y clang-tidy
 
     - name: Install Ninja
       uses: seanmiddleditch/gha-setup-ninja@v3
@@ -63,21 +63,66 @@ jobs:
         cache-key-prefix: 'install-qt-action-${{runner.name}}'
         extra: '--external 7z'
 
-    - name: Configure CMake (GUI only)
+    - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: cmake -G Ninja -B ${{env.BUILD_DIR}}/gui -DBUILD_TESTS=OFF -DBUILD_TUI_EXAMPLE=OFF -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} ${{matrix.RUNNER.CLANG_TIDY}}
 
-    - name: Build (GUI only)
+    - name: Build
       # Build your program with the given configuration
       run: cmake --build ${{env.BUILD_DIR}}/gui --config ${{matrix.BUILD_TYPE}}
 
-    - name: Configure CMake (TUI only)
+    - name: Upload Clang Tidy Artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: clang-tidy-fixes-gui
+        path: ${{env.BUILD_DIR}}/gui/clang-tidy.fixes
+
+  build_tui:
+    strategy:
+      matrix:
+        BUILD_TYPE: [Debug, MinSizeRel]
+        RUNNER:
+          - RUNS_ON: [ubuntu-20.04, self-hosted]
+            OS: ubuntu-20.04
+            HOST: linux
+            ARCH: gcc_64
+            CLANG_TIDY: '-DCMAKE_CXX_CLANG_TIDY="clang-tidy;--export-fixes=clang-tidy.fixes;--fix;--warnings-as-errors=*"'
+          - RUNS_ON: [macos-12, self-hosted]
+            OS: macos-12
+            HOST: mac
+            ARCH: clang_64
+            CLANG_TIDY: ''
+          - RUNS_ON: [macos-13, self-hosted]
+            OS: macos-13
+            HOST: mac
+            ARCH: clang_64
+            CLANG_TIDY: ''
+
+    name: Build TUI Example ${{matrix.RUNNER.OS}} - ${{matrix.BUILD_TYPE}}
+    runs-on: ${{matrix.RUNNER.RUNS_ON}}
+
+    env:
+      BUILD_DIR: ${{github.workspace}}/build
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install System Dependencies
+      if: ${{matrix.RUNNER.OS == 'ubuntu-20.04'}}
+      run: sudo apt install -y clang-tidy libdbus-1-dev
+
+    - name: Install Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v3
+
+    - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: cmake -G Ninja -B ${{env.BUILD_DIR}}/tui -DBUILD_TESTS=OFF -DBUILD_GUI_EXAMPLE=OFF -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} ${{matrix.RUNNER.CLANG_TIDY}}
 
-    - name: Build (TUI only)
+    - name: Build
       # Build your program with the given configuration
       run: cmake --build ${{env.BUILD_DIR}}/tui --config ${{matrix.BUILD_TYPE}}
 
@@ -85,6 +130,5 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: clang-tidy-fixes
-        path: ${{env.BUILD_DIR}}/**/clang-tidy.fixes
-
+        name: clang-tidy-fixes-tui
+        path: ${{env.BUILD_DIR}}/tui/clang-tidy.fixes
