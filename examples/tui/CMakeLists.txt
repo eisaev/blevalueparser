@@ -42,7 +42,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE TRUE
 )
 
-if (APPLE)
+if(ANDROID)
+    message(FATAL_ERROR "TUI Demo Application doesn't suported on Android.")
+endif()
+
+if(APPLE)
     set(BUNDLE_IDENTIFIER "${COMPANY_TLD}.${COMPANY_NAME}.${PROJECT_NAME}")
 
     set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -53,7 +57,7 @@ if (APPLE)
         XCODE_ATTRIBUTE_INFOPLIST_KEY_LSApplicationCategoryType "public.app-category.utilities"
     )
 
-    if (IOS)
+    if(IOS)
         message(FATAL_ERROR "TUI Demo Application doesn't suported on iOS.")
     else()
         set(DEPLOYMENT_TARGET "12.6")
