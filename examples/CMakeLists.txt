@@ -7,6 +7,6 @@ if(BUILD_GUI_EXAMPLE)
     add_subdirectory("qt")
 endif()
 
-if(BUILD_TUI_EXAMPLE AND NOT IOS)
+if(BUILD_TUI_EXAMPLE AND NOT IOS AND NOT ANDROID)
     add_subdirectory("tui")
 endif()

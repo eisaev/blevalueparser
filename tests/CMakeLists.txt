@@ -49,7 +49,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE TRUE
 )
 
-if (APPLE)
+if(APPLE)
     set(BUNDLE_IDENTIFIER "${COMPANY_TLD}.${COMPANY_NAME}.${PROJECT_NAME}")
 
     set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -60,7 +60,7 @@ if (APPLE)
         XCODE_ATTRIBUTE_INFOPLIST_KEY_LSApplicationCategoryType "public.app-category.utilities"
     )
 
-    if (IOS)
+    if(IOS)
         set(DEPLOYMENT_TARGET "13.0")
         set_target_properties(${PROJECT_NAME} PROPERTIES
             XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET "${DEPLOYMENT_TARGET}"
