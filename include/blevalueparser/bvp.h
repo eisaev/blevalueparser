@@ -9,6 +9,7 @@
 #include "bodysensorlocation.h"
 #include "currenttime.h"
 #include "datetime.h"
+#include "heartratecontrolpoint.h"
 #include "heartratemeasurement.h"
 #include "hexstring.h"
 #include "localtimeinformation.h"
@@ -130,8 +131,7 @@ public:
                 return make_value<BodySensorLocation>(data, size);
             // 3.3 Heart Rate Control Point
             case CharacteristicType::HeartRateControlPoint:
-                // TODO:
-                break;
+                return make_value<HeartRateControlPoint>(data, size);
 
             // Body Composition Service (BCS_V1.0.0.pdf)
             // 3.1 BodyCompositionFeature

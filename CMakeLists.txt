@@ -25,6 +25,7 @@ set(LIBRARY_SOURCES
     include/blevalueparser/bodysensorlocation.h
     include/blevalueparser/currenttime.h
     include/blevalueparser/datetime.h
+    include/blevalueparser/heartratecontrolpoint.h
     include/blevalueparser/heartratemeasurement.h
     include/blevalueparser/hexstring.h
     include/blevalueparser/localtimeinformation.h
