@@ -18,6 +18,7 @@ set(TEST_SOURCES
     bodysensorlocationtest.cpp
     currenttimetest.cpp
     datetimetest.cpp
+    heartratecontrolpointtest.cpp
     heartratemeasurementtest.cpp
     hexstringtest.cpp
     internalparsertest.cpp

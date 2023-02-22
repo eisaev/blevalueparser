@@ -8,7 +8,7 @@ This is a header only library for parsing characteristics of some standardized B
 * Device Information Service v1.1 (partially)
 * Current Time Service v1.1 (partially)
 * Battery Service v1.1 (partially)
-* Heart Rate Service v1.0 (partially)
+* Heart Rate Service v1.0 (full)
 * Body Composition Service v1.0 (full, with additional custom parser for Xiaomi Mi Body Composition Scale 2)
 
 This library is designed for rapid prototyping of BLE applications and isn't optimized for either performance or consumption. You can use the library code as example to implement a parser optimized for a specific platform/case. Also, usually you'll need a parser only for certain services, and not all implemented in the library.
@@ -120,7 +120,7 @@ cmake -B ./build -DBUILD_TESTS=OFF
 ```
 
 # Examples
-There are two examples in the project. First demo is GUI application and it uses Qt framework. Second one is TUI application (only for macOS & Linux) which uses SimpleBLE library.
+There are two examples in the project. First demo is GUI application and it uses [Qt](https://qt.io) framework. Second one is TUI application (only for macOS & Linux) which uses [SimpleBLE](https://github.com/OpenBluetoothToolbox/SimpleBLE) library.
 
 You can skip build of specific example on CMake configuration step:
 ```sh
