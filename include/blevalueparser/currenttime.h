@@ -3,53 +3,11 @@
 #include <cassert>
 
 #include "basevalue.h"
-#include "datetime.h"
+#include "exacttime256.h"
 
 
 namespace bvp
 {
-
-/*
- * Current Time Service
- * CTS_SPEC_V1.1.0.pdf
- */
-
-// GATT_Specification_Supplement_v8.pdf
-// 3.73 Day of Week (Table 3.130)
-enum class DayOfWeekEnum
-{
-    Unknown = 0,
-    Monday = 1,
-    Tuesday = 2,
-    Wednesday = 3,
-    Thursday = 4,
-    Friday = 5,
-    Saturday = 6,
-    Sunday = 7
-};
-
-// GATT_Specification_Supplement_v8.pdf
-// 3.73 Day of Week
-struct DayOfWeekStruct
-{
-    DayOfWeekEnum dayOfWeek = DayOfWeekEnum::Unknown;
-};
-
-// GATT_Specification_Supplement_v8.pdf
-// 3.72 Day Date Time
-struct DayDateTimeStruct
-{
-    DateTimeStruct dateTime;
-    DayOfWeekStruct dayOfWeek;
-};
-
-// GATT_Specification_Supplement_v8.pdf
-// 3.90 Exact Time 256
-struct ExactTime256Struct
-{
-    DayDateTimeStruct dayDateTime;
-    uint8_t fractions256 = 0;
-};
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.62 Current Time
@@ -73,6 +31,8 @@ struct CurrentTimeStruct
     uint8_t adjustReason = 0;
 };
 
+// CTS_SPEC_V1.1.0.pdf
+// Current Time Service v1.1.0
 // 3.1 Current Time
 class CurrentTime final : public BaseValue
 {
@@ -178,26 +138,7 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        // Exact Time 256
-        m_currentTime.exactTime256.dayDateTime.dateTime = DateTime(parser, configuration).getBtSpecObject();
-
-        m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek = DayOfWeekEnum(parser.parseUInt8());
-        switch (m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek)
-        {
-            case DayOfWeekEnum::Unknown:
-            case DayOfWeekEnum::Monday:
-            case DayOfWeekEnum::Tuesday:
-            case DayOfWeekEnum::Wednesday:
-            case DayOfWeekEnum::Thursday:
-            case DayOfWeekEnum::Friday:
-            case DayOfWeekEnum::Saturday:
-            case DayOfWeekEnum::Sunday:
-                break;
-            default:
-                m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek = DayOfWeekEnum::Unknown;
-                break;
-        }
-        m_currentTime.exactTime256.fractions256 = parser.parseUInt8();
+        m_currentTime.exactTime256 = ExactTime256(parser, configuration).getBtSpecObject();
 
         // 3.1.2.1 Manual Time Update
         // 3.1.2.2 External Reference Time Update
@@ -210,35 +151,7 @@ private:
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        switch (m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek)
-        {
-            case DayOfWeekEnum::Monday:
-                ss << "Mon ";
-                break;
-            case DayOfWeekEnum::Tuesday:
-                ss << "Tue ";
-                break;
-            case DayOfWeekEnum::Wednesday:
-                ss << "Wed ";
-                break;
-            case DayOfWeekEnum::Thursday:
-                ss << "Thu ";
-                break;
-            case DayOfWeekEnum::Friday:
-                ss << "Fri ";
-                break;
-            case DayOfWeekEnum::Saturday:
-                ss << "Sat ";
-                break;
-            case DayOfWeekEnum::Sunday:
-                ss << "Sun ";
-                break;
-            case DayOfWeekEnum::Unknown:
-                break;
-        }
-
-        ss << DateTime(m_currentTime.exactTime256.dayDateTime.dateTime, configuration);
-        ss << "." <<  std::setfill('0') << std::setw(3) << static_cast<int>(milliseconds());
+        ss << ExactTime256(m_currentTime.exactTime256, configuration);
 
         std::stringstream ssAdjustReasons;
         if (isManuallyAdjusted())

@@ -6,11 +6,6 @@
 namespace bvp
 {
 
-/*
- * Heart Rate Service
- * HRS_SPEC_V10.pdf
- */
-
 // GATT_Specification_Supplement_v8.pdf
 // 3.111.1 Heart Rate Control Point field (Table 3.191)
 enum class HeartRateControlPointEnum : uint8_t
@@ -26,6 +21,8 @@ struct HeartRateControlPointStruct
     HeartRateControlPointEnum heartRateControlPoint = HeartRateControlPointEnum::Reserved;
 };
 
+// HRS_SPEC_V10.pdf
+// Heart Rate Service v10r00
 // 3.3 Heart Rate Control Point
 class HeartRateControlPoint final : public BaseValue
 {
@@ -71,7 +68,6 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        // 3.111.1 Heart Rate Control Point field
         m_heartRateControlPoint.heartRateControlPoint = HeartRateControlPointEnum(parser.parseUInt8());
         switch (m_heartRateControlPoint.heartRateControlPoint)
         {

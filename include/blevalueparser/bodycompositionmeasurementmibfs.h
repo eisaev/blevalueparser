@@ -1,21 +1,22 @@
 #pragma once
 
-#include <cassert>
-
 #include "bodycompositionmeasurementbase.h"
 
 
 namespace bvp
 {
 
-/*
- * Body Composition Service
- * BCS_V1.0.0.pdf
- */
+// GATT_Specification_Supplement_v8.pdf
+// 3.34.1 Flags field
+// Non standard - Xiaomi Mi Body Composition Scale 2 (XMTZC05HM)
+constexpr uint16_t BCS_FLAG_BCM_MIBFS_STABILIZED = BCS_FLAG_BCM_RESERVED1;
+constexpr uint16_t BCS_FLAG_BCM_MIBFS_UNKNOWN1   = BCS_FLAG_BCM_RESERVED2;
+constexpr uint16_t BCS_FLAG_BCM_MIBFS_UNLOADED   = BCS_FLAG_BCM_RESERVED3;
 
+// BCS_V1.0.0.pdf
+// Body Composition Service v1.0.0
 // 3.2 BodyCompositionMeasurement
-// Non standard
-// Xiaomi Mi Body Composition Scale 2 (XMTZC05HM)
+// Non standard - Xiaomi Mi Body Composition Scale 2 (XMTZC05HM)
 class BodyCompositionMeasurementMIBFS final : public BodyCompositionMeasurementBase
 {
 public:

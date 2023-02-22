@@ -8,11 +8,6 @@
 namespace bvp
 {
 
-/*
- * Current Time Service
- * CTS_SPEC_V1.1.0.pdf
- */
-
 // GATT_Specification_Supplement_v8.pdf
 // 3.70 Date Time
 struct DateTimeStruct
@@ -25,11 +20,13 @@ struct DateTimeStruct
     uint8_t seconds = 0;
 };
 
+// CTS_SPEC_V1.1.0.pdf
+// Current Time Service v1.1.0
 // 3.1 Date Time
 class DateTime final : public BaseValue
 {
 public:
-    friend class CurrentTime;
+    friend class DayDateTime;
     friend class BodyCompositionMeasurement;
     friend class BodyCompositionMeasurementMIBFS;
 
@@ -99,8 +96,6 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        // GATT_Specification_Supplement_v8.pdf
-        // 3.70 Date Time
         m_dateTime.year = parser.parseUInt16();
         m_dateTime.month = parser.parseUInt8();
         m_dateTime.day = parser.parseUInt8();

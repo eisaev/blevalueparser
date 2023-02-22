@@ -8,21 +8,6 @@
 namespace bvp
 {
 
-/*
- * Heart Rate Service
- * HRS_SPEC_V10.pdf
- */
-
-// GATT_Specification_Supplement_v8.pdf
-// 3.113 Heart Rate Measurement
-struct HeartRateMeasurementStruct
-{
-    uint8_t flags = 0;
-    uint16_t heartRate = 0;
-    uint16_t energyExpended = 0;
-    std::vector<uint16_t> rrIntervals;
-};
-
 // GATT_Specification_Supplement_v8.pdf
 // 3.113.1 Flags field
 constexpr uint8_t HRS_FLAG_VALUE_FORMAT    = 1 << 0;
@@ -34,6 +19,18 @@ constexpr uint8_t HRS_FLAG_RESERVER1       = 1 << 5;
 constexpr uint8_t HRS_FLAG_RESERVER2       = 1 << 6;
 constexpr uint8_t HRS_FLAG_RESERVER3       = 1 << 7;
 
+// GATT_Specification_Supplement_v8.pdf
+// 3.113 Heart Rate Measurement
+struct HeartRateMeasurementStruct
+{
+    uint8_t flags = 0;
+    uint16_t heartRate = 0;
+    uint16_t energyExpended = 0;
+    std::vector<uint16_t> rrIntervals;
+};
+
+// HRS_SPEC_V10.pdf
+// Heart Rate Service v10r00
 // 3.1 Heart Rate Measurement
 class HeartRateMeasurement final : public BaseValue
 {
