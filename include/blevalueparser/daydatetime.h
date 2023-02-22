@@ -17,74 +17,48 @@ struct DayDateTimeStruct
     DayOfWeekStruct dayOfWeek;
 };
 
-class DayDateTime final : public BaseValue
+class DayDateTime final : public BaseValueSpec<DayDateTimeStruct>
 {
 public:
     friend class ExactTime256;
 
-    DayDateTimeStruct getBtSpecObject() const
-    {
-        return m_dayDateTime;
-    }
-
     uint16_t year() const
     {
-        return m_dayDateTime.dateTime.year;
+        return m_btSpecObject.dateTime.year;
     }
 
     uint8_t month() const
     {
-        return m_dayDateTime.dateTime.month;
+        return m_btSpecObject.dateTime.month;
     }
 
     uint8_t day() const
     {
-        return m_dayDateTime.dateTime.day;
+        return m_btSpecObject.dateTime.day;
     }
 
     uint8_t hour() const
     {
-        return m_dayDateTime.dateTime.hour;
+        return m_btSpecObject.dateTime.hour;
     }
 
     uint8_t minute() const
     {
-        return m_dayDateTime.dateTime.minute;
+        return m_btSpecObject.dateTime.minute;
     }
 
     uint8_t seconds() const
     {
-        return m_dayDateTime.dateTime.seconds;
+        return m_btSpecObject.dateTime.seconds;
     }
 
     DayOfWeekEnum dayOfWeek() const
     {
-        return m_dayDateTime.dayOfWeek.dayOfWeek;
+        return m_btSpecObject.dayOfWeek.dayOfWeek;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit DayDateTime(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit DayDateTime(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit DayDateTime(const DayDateTimeStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_dayDateTime{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    DayDateTimeStruct m_dayDateTime;
+    BVP_CTORS(BaseValueSpec, DayDateTime, DayDateTimeStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -93,16 +67,16 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_dayDateTime.dateTime = DateTime(parser, configuration).getBtSpecObject();
-        m_dayDateTime.dayOfWeek = DayOfWeek(parser, configuration).getBtSpecObject();
+        m_btSpecObject.dateTime = DateTime(parser, configuration).getBtSpecObject();
+        m_btSpecObject.dayOfWeek = DayOfWeek(parser, configuration).getBtSpecObject();
 
         return true;
     }
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        ss << DayOfWeek(m_dayDateTime.dayOfWeek, configuration);
-        ss << " " << DateTime(m_dayDateTime.dateTime, configuration);
+        ss << DayOfWeek(m_btSpecObject.dayOfWeek, configuration);
+        ss << " " << DateTime(m_btSpecObject.dateTime, configuration);
     }
 };
 

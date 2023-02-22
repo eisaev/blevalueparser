@@ -23,71 +23,45 @@ struct DateTimeStruct
 // CTS_SPEC_V1.1.0.pdf
 // Current Time Service v1.1.0
 // 3.1 Date Time
-class DateTime final : public BaseValue
+class DateTime final : public BaseValueSpec<DateTimeStruct>
 {
 public:
     friend class DayDateTime;
     friend class BodyCompositionMeasurement;
     friend class BodyCompositionMeasurementMIBFS;
 
-    DateTimeStruct getBtSpecObject() const
-    {
-        return m_dateTime;
-    }
-
     uint16_t year() const
     {
-        return m_dateTime.year;
+        return m_btSpecObject.year;
     }
 
     uint8_t month() const
     {
-        return m_dateTime.month;
+        return m_btSpecObject.month;
     }
 
     uint8_t day() const
     {
-        return m_dateTime.day;
+        return m_btSpecObject.day;
     }
 
     uint8_t hour() const
     {
-        return m_dateTime.hour;
+        return m_btSpecObject.hour;
     }
 
     uint8_t minute() const
     {
-        return m_dateTime.minute;
+        return m_btSpecObject.minute;
     }
 
     uint8_t seconds() const
     {
-        return m_dateTime.seconds;
+        return m_btSpecObject.seconds;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit DateTime(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit DateTime(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit DateTime(const DateTimeStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_dateTime{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    DateTimeStruct m_dateTime;
+    BVP_CTORS(BaseValueSpec, DateTime, DateTimeStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -96,12 +70,12 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_dateTime.year = parser.parseUInt16();
-        m_dateTime.month = parser.parseUInt8();
-        m_dateTime.day = parser.parseUInt8();
-        m_dateTime.hour = parser.parseUInt8();
-        m_dateTime.minute = parser.parseUInt8();
-        m_dateTime.seconds = parser.parseUInt8();
+        m_btSpecObject.year = parser.parseUInt16();
+        m_btSpecObject.month = parser.parseUInt8();
+        m_btSpecObject.day = parser.parseUInt8();
+        m_btSpecObject.hour = parser.parseUInt8();
+        m_btSpecObject.minute = parser.parseUInt8();
+        m_btSpecObject.seconds = parser.parseUInt8();
 
         return true;
     }

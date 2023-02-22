@@ -54,76 +54,71 @@ struct BodyCompositionFeatureStruct
 // BCS_V1.0.0.pdf
 // Body Composition Service v1.0.0
 // 3.1 BodyCompositionFeature
-class BodyCompositionFeature final : public BaseValue
+class BodyCompositionFeature final : public BaseValueSpec<BodyCompositionFeatureStruct>
 {
 public:
-    BodyCompositionFeatureStruct getBtSpecObject() const
-    {
-        return m_bodyCompositionFeature;
-    }
-
     bool isTimeStampSupported() const
     {
-        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_TIME_STAMP_SUPPORTED) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCF_TIME_STAMP_SUPPORTED) != 0;
     }
 
     bool isMultipleUsersSupported() const
     {
-        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_MULTIPLE_USERS_SUPPORTED) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCF_MULTIPLE_USERS_SUPPORTED) != 0;
     }
 
     bool isBasalMetabolismSupported() const
     {
-        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_BASAL_METABOLISM_SUPPORTED) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCF_BASAL_METABOLISM_SUPPORTED) != 0;
     }
 
     bool isMusclePercentageSupported() const
     {
-        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_MUSCLE_PERCENTAGE_SUPPORTED) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCF_MUSCLE_PERCENTAGE_SUPPORTED) != 0;
     }
 
     bool isMuscleMassSupported() const
     {
-        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_MUSCLE_MASS_SUPPORTED) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCF_MUSCLE_MASS_SUPPORTED) != 0;
     }
 
     bool isFatFreeMassSupported() const
     {
-        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_FAT_FREE_MASS_SUPPORTED) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCF_FAT_FREE_MASS_SUPPORTED) != 0;
     }
 
     bool isSoftLeanMassSupported() const
     {
-        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_SOFT_LEAN_MASS_SUPPORTED) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCF_SOFT_LEAN_MASS_SUPPORTED) != 0;
     }
 
     bool isBodyWaterMassSupported() const
     {
-        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_BODY_WATER_MASS_SUPPORTED) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCF_BODY_WATER_MASS_SUPPORTED) != 0;
     }
 
     bool isImpedanceSupported() const
     {
-        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_IMPEDANCE_SUPPORTED) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCF_IMPEDANCE_SUPPORTED) != 0;
     }
 
     bool isWeightSupported() const
     {
-        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_WEIGHT_SUPPORTED) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCF_WEIGHT_SUPPORTED) != 0;
     }
 
     bool isHeightSupported() const
     {
-        return (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_HEIGHT_SUPPORTED) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCF_HEIGHT_SUPPORTED) != 0;
     }
 
     uint16_t weightResolution() const
     {
         uint32_t resolution =
-            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_WEIGHT_RESOLUTION0) +
-            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_WEIGHT_RESOLUTION1) +
-            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_WEIGHT_RESOLUTION2) +
-            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_WEIGHT_RESOLUTION3);
+            (m_btSpecObject.flags & BCS_FLAG_BCF_WEIGHT_RESOLUTION0) +
+            (m_btSpecObject.flags & BCS_FLAG_BCF_WEIGHT_RESOLUTION1) +
+            (m_btSpecObject.flags & BCS_FLAG_BCF_WEIGHT_RESOLUTION2) +
+            (m_btSpecObject.flags & BCS_FLAG_BCF_WEIGHT_RESOLUTION3);
         resolution = resolution >> BCS_FLAG_BCF_WEIGHT_RESOLUTION_SHIFT;
 
         switch (configuration.measurementUnits)
@@ -164,9 +159,9 @@ public:
     uint16_t heightResolution() const
     {
         uint32_t resolution =
-            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_HEIGHT_RESOLUTION0) +
-            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_HEIGHT_RESOLUTION1) +
-            (m_bodyCompositionFeature.flags & BCS_FLAG_BCF_HEIGHT_RESOLUTION2);
+            (m_btSpecObject.flags & BCS_FLAG_BCF_HEIGHT_RESOLUTION0) +
+            (m_btSpecObject.flags & BCS_FLAG_BCF_HEIGHT_RESOLUTION1) +
+            (m_btSpecObject.flags & BCS_FLAG_BCF_HEIGHT_RESOLUTION2);
         resolution = resolution >> BCS_FLAG_BCF_HEIGHT_RESOLUTION_SHIFT;
 
         switch (configuration.measurementUnits)
@@ -197,28 +192,7 @@ public:
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit BodyCompositionFeature(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit BodyCompositionFeature(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit BodyCompositionFeature(const BodyCompositionFeatureStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_bodyCompositionFeature{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    BodyCompositionFeatureStruct m_bodyCompositionFeature;
+    BVP_CTORS(BaseValueSpec, BodyCompositionFeature, BodyCompositionFeatureStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -227,7 +201,7 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_bodyCompositionFeature.flags = parser.parseUInt32();
+        m_btSpecObject.flags = parser.parseUInt32();
 
         return true;
     }

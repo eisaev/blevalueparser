@@ -16,84 +16,58 @@ struct ExactTime256Struct
     uint8_t fractions256 = 0;
 };
 
-class ExactTime256 final : public BaseValue
+class ExactTime256 final : public BaseValueSpec<ExactTime256Struct>
 {
 public:
     friend class CurrentTime;
 
-    ExactTime256Struct getBtSpecObject() const
-    {
-        return m_exactTime256;
-    }
-
     uint16_t year() const
     {
-        return m_exactTime256.dayDateTime.dateTime.year;
+        return m_btSpecObject.dayDateTime.dateTime.year;
     }
 
     uint8_t month() const
     {
-        return m_exactTime256.dayDateTime.dateTime.month;
+        return m_btSpecObject.dayDateTime.dateTime.month;
     }
 
     uint8_t day() const
     {
-        return m_exactTime256.dayDateTime.dateTime.day;
+        return m_btSpecObject.dayDateTime.dateTime.day;
     }
 
     uint8_t hour() const
     {
-        return m_exactTime256.dayDateTime.dateTime.hour;
+        return m_btSpecObject.dayDateTime.dateTime.hour;
     }
 
     uint8_t minute() const
     {
-        return m_exactTime256.dayDateTime.dateTime.minute;
+        return m_btSpecObject.dayDateTime.dateTime.minute;
     }
 
     uint8_t seconds() const
     {
-        return m_exactTime256.dayDateTime.dateTime.seconds;
+        return m_btSpecObject.dayDateTime.dateTime.seconds;
     }
 
     DayOfWeekEnum dayOfWeek() const
     {
-        return m_exactTime256.dayDateTime.dayOfWeek.dayOfWeek;
+        return m_btSpecObject.dayDateTime.dayOfWeek.dayOfWeek;
     }
 
     uint8_t fractionsOfSeconds() const
     {
-        return m_exactTime256.fractions256;
+        return m_btSpecObject.fractions256;
     }
 
     uint16_t milliseconds() const
     {
-        return m_exactTime256.fractions256 * 1000 / 256;
+        return m_btSpecObject.fractions256 * 1000 / 256;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit ExactTime256(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit ExactTime256(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit ExactTime256(const ExactTime256Struct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_exactTime256{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    ExactTime256Struct m_exactTime256;
+    BVP_CTORS(BaseValueSpec, ExactTime256, ExactTime256Struct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -102,15 +76,15 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_exactTime256.dayDateTime = DayDateTime(parser, configuration).getBtSpecObject();
-        m_exactTime256.fractions256 = parser.parseUInt8();
+        m_btSpecObject.dayDateTime = DayDateTime(parser, configuration).getBtSpecObject();
+        m_btSpecObject.fractions256 = parser.parseUInt8();
 
         return true;
     }
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        ss << DayDateTime(m_exactTime256.dayDateTime, configuration);
+        ss << DayDateTime(m_btSpecObject.dayDateTime, configuration);
         ss << "." <<  std::setfill('0') << std::setw(3) << static_cast<int>(milliseconds());
     }
 };

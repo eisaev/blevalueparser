@@ -25,44 +25,18 @@ struct TimeSourceStruct
     TimeSourceEnum timeSource = TimeSourceEnum::Unknown;
 };
 
-class TimeSource final : public BaseValue
+class TimeSource final : public BaseValueSpec<TimeSourceStruct>
 {
 public:
     friend class ReferenceTimeInformation;
 
-    TimeSourceStruct getBtSpecObject() const
-    {
-        return m_timeSource;
-    }
-
     TimeSourceEnum timeSource() const
     {
-        return m_timeSource.timeSource;
+        return m_btSpecObject.timeSource;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit TimeSource(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit TimeSource(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit TimeSource(const TimeSourceStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_timeSource{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    TimeSourceStruct m_timeSource;
+    BVP_CTORS(BaseValueSpec, TimeSource, TimeSourceStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -71,8 +45,8 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_timeSource.timeSource = TimeSourceEnum(parser.parseUInt8());
-        switch (m_timeSource.timeSource)
+        m_btSpecObject.timeSource = TimeSourceEnum(parser.parseUInt8());
+        switch (m_btSpecObject.timeSource)
         {
             case TimeSourceEnum::Unknown:
             case TimeSourceEnum::NetworkTimeProtocol:
@@ -83,7 +57,7 @@ private:
             case TimeSourceEnum::CellularNetwork:
                 break;
             default:
-                m_timeSource.timeSource = TimeSourceEnum::Unknown;
+                m_btSpecObject.timeSource = TimeSourceEnum::Unknown;
                 break;
         }
 
@@ -92,7 +66,7 @@ private:
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        switch (m_timeSource.timeSource)
+        switch (m_btSpecObject.timeSource)
         {
             case TimeSourceEnum::Unknown:
                 ss << "<Unknown>";

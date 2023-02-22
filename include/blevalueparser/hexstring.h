@@ -8,30 +8,21 @@
 namespace bvp
 {
 
-class HexString final : public BaseValue
+struct HexStringStruct
+{
+    std::string hexString;
+};
+
+class HexString final : public BaseValueSpec<HexStringStruct>
 {
 public:
     std::string hexString() const
     {
-        return m_hexString;
+        return m_btSpecObject.hexString;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit HexString(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit HexString(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    std::string m_hexString;
+    BVP_CTORS(BaseValueSpec, HexString, HexStringStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -52,15 +43,15 @@ private:
                << static_cast<int>(parser.parseUInt8())
                << configuration.hexSeparator;
         }
-        m_hexString = ss.str();
-        m_hexString.pop_back();
+        m_btSpecObject.hexString = ss.str();
+        m_btSpecObject.hexString.pop_back();
 
         return true;
     }
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        ss << m_hexString;
+        ss << m_btSpecObject.hexString;
     }
 };
 

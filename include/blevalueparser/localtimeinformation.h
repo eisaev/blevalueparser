@@ -19,47 +19,21 @@ struct LocalTimeInformationStruct
 // CTS_SPEC_V1.1.0.pdf
 // Current Time Service v1.1.0
 // 3.2 Local Time Information
-class LocalTimeInformation final : public BaseValue
+class LocalTimeInformation final : public BaseValueSpec<LocalTimeInformationStruct>
 {
 public:
-    LocalTimeInformationStruct getBtSpecObject() const
-    {
-        return m_localTimeInformation;
-    }
-
     TimeZoneEnum timeZone() const
     {
-        return m_localTimeInformation.timeZone.timeZone;
+        return m_btSpecObject.timeZone.timeZone;
     }
 
     DSTOffsetEnum dstOffset() const
     {
-        return m_localTimeInformation.dstOffset.dstOffset;
+        return m_btSpecObject.dstOffset.dstOffset;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit LocalTimeInformation(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit LocalTimeInformation(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit LocalTimeInformation(const LocalTimeInformationStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_localTimeInformation{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    LocalTimeInformationStruct m_localTimeInformation;
+    BVP_CTORS(BaseValueSpec, LocalTimeInformation, LocalTimeInformationStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -68,16 +42,16 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_localTimeInformation.timeZone = TimeZone(parser, configuration).getBtSpecObject();
-        m_localTimeInformation.dstOffset = DSTOffset(parser, configuration).getBtSpecObject();
+        m_btSpecObject.timeZone = TimeZone(parser, configuration).getBtSpecObject();
+        m_btSpecObject.dstOffset = DSTOffset(parser, configuration).getBtSpecObject();
 
         return true;
     }
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        ss << "TZ: " << TimeZone(m_localTimeInformation.timeZone, configuration);
-        ss << ", DST: " << DSTOffset(m_localTimeInformation.dstOffset, configuration);
+        ss << "TZ: " << TimeZone(m_btSpecObject.timeZone, configuration);
+        ss << ", DST: " << DSTOffset(m_btSpecObject.dstOffset, configuration);
     }
 };
 

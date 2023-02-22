@@ -6,30 +6,21 @@
 namespace bvp
 {
 
-class TextString final : public BaseValue
+struct TextStringStruct
+{
+    std::string textString;
+};
+
+class TextString final : public BaseValueSpec<TextStringStruct>
 {
 public:
     std::string textString() const
     {
-        return m_textString;
+        return m_btSpecObject.textString;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit TextString(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit TextString(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    std::string m_textString;
+    BVP_CTORS(BaseValueSpec, TextString, TextStringStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -39,13 +30,13 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_textString = parser.parseString();
+        m_btSpecObject.textString = parser.parseString();
         return true;
     }
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        ss << m_textString;
+        ss << m_btSpecObject.textString;
     }
 };
 

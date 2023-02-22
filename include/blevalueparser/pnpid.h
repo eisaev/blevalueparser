@@ -37,67 +37,41 @@ struct PnPIDStruct
 // DIS_SPEC_V11r00.pdf
 // Device Information Service v11r00
 // 3.9 PnPID
-class PnPID final : public BaseValue
+class PnPID final : public BaseValueSpec<PnPIDStruct>
 {
 public:
-    PnPIDStruct getBtSpecObject() const
-    {
-        return m_pnpId;
-    }
-
     VendorIdSourceEnum vendorIdSource() const
     {
-        return m_pnpId.vendorIdSource.vendorIdSource;
+        return m_btSpecObject.vendorIdSource.vendorIdSource;
     }
 
     uint16_t vendorId() const
     {
-        return m_pnpId.vendorId;
+        return m_btSpecObject.vendorId;
     }
 
     uint16_t productId() const
     {
-        return m_pnpId.productId;
+        return m_btSpecObject.productId;
     }
 
     uint8_t majorVersion() const
     {
-        return m_pnpId.productVersion >> 8;
+        return m_btSpecObject.productVersion >> 8;
     }
 
     uint8_t minorVersion() const
     {
-        return m_pnpId.productVersion >> 4 & 0b1111;
+        return m_btSpecObject.productVersion >> 4 & 0b1111;
     }
 
     uint8_t subMinorVersion() const
     {
-        return m_pnpId.productVersion & 0b1111;
+        return m_btSpecObject.productVersion & 0b1111;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit PnPID(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit PnPID(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit PnPID(const PnPIDStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_pnpId{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    PnPIDStruct m_pnpId;
+    BVP_CTORS(BaseValueSpec, PnPID, PnPIDStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -107,26 +81,26 @@ private:
     virtual bool parse(Parser &parser) override
     {
         // 3.9.1.1 Vendor ID Source Field
-        m_pnpId.vendorIdSource.vendorIdSource = VendorIdSourceEnum(parser.parseUInt8());
-        switch (m_pnpId.vendorIdSource.vendorIdSource)
+        m_btSpecObject.vendorIdSource.vendorIdSource = VendorIdSourceEnum(parser.parseUInt8());
+        switch (m_btSpecObject.vendorIdSource.vendorIdSource)
         {
             case VendorIdSourceEnum::Unknown:
             case VendorIdSourceEnum::Bluetooth:
             case VendorIdSourceEnum::USB:
                 break;
             default:
-                m_pnpId.vendorIdSource.vendorIdSource = VendorIdSourceEnum::Unknown;
+                m_btSpecObject.vendorIdSource.vendorIdSource = VendorIdSourceEnum::Unknown;
                 break;
         }
         // 3.9.1.2 Vendor ID Field
-        m_pnpId.vendorId = parser.parseUInt16();
+        m_btSpecObject.vendorId = parser.parseUInt16();
         // 3.9.1.3 Product ID Field
-        m_pnpId.productId = parser.parseUInt16();
+        m_btSpecObject.productId = parser.parseUInt16();
 
         // 3.9.1.4 Product Version Field
         // The value of the field value is 0xJJMN for version JJ.M.N
         // (JJ – major version number, M – minor version number, N – sub-minor version number)
-        m_pnpId.productVersion = parser.parseUInt16();
+        m_btSpecObject.productVersion = parser.parseUInt16();
 
         return true;
     }
@@ -134,7 +108,7 @@ private:
     virtual void toStringStream(std::stringstream &ss) const override
     {
         ss << "(";
-        switch (m_pnpId.vendorIdSource.vendorIdSource)
+        switch (m_btSpecObject.vendorIdSource.vendorIdSource)
         {
             case VendorIdSourceEnum::Unknown:
                 ss << "<Unknown>";
@@ -148,8 +122,8 @@ private:
         }
         ss << ") ";
         auto originalFlags = ss.flags();
-        ss << "VID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_pnpId.vendorId << ", ";
-        ss << "PID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_pnpId.productId << ", ";
+        ss << "VID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_btSpecObject.vendorId << ", ";
+        ss << "PID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_btSpecObject.productId << ", ";
         ss.flags(originalFlags);
         ss << "Version: " << static_cast<int>(majorVersion()) << "." << static_cast<int>(minorVersion()) << "." << static_cast<int>(subMinorVersion());
     }

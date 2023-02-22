@@ -30,42 +30,16 @@ struct BodySensorLocationStruct
 // HRS_SPEC_V10.pdf
 // Heart Rate Service v10r00
 // 3.2 BodySensorLocation
-class BodySensorLocation final : public BaseValue
+class BodySensorLocation final : public BaseValueSpec<BodySensorLocationStruct>
 {
 public:
-    BodySensorLocationStruct getBtSpecObject() const
-    {
-        return m_bodySensorLocation;
-    }
-
     BodySensorLocationEnum location() const
     {
-        return m_bodySensorLocation.bodySensorLocation;
+        return m_btSpecObject.bodySensorLocation;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit BodySensorLocation(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit BodySensorLocation(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit BodySensorLocation(const BodySensorLocationStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_bodySensorLocation{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    BodySensorLocationStruct m_bodySensorLocation;
+    BVP_CTORS(BaseValueSpec, BodySensorLocation, BodySensorLocationStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -76,8 +50,8 @@ private:
     {
         // GATT_Specification_Supplement_v8.pdf
         // 3.35 Body Sensor Location
-        m_bodySensorLocation.bodySensorLocation = BodySensorLocationEnum(parser.parseUInt8());
-        switch (m_bodySensorLocation.bodySensorLocation)
+        m_btSpecObject.bodySensorLocation = BodySensorLocationEnum(parser.parseUInt8());
+        switch (m_btSpecObject.bodySensorLocation)
         {
             case BodySensorLocationEnum::Unknown:
             case BodySensorLocationEnum::Other:
@@ -89,7 +63,7 @@ private:
             case BodySensorLocationEnum::Foot:
                 break;
             default:
-                m_bodySensorLocation.bodySensorLocation = BodySensorLocationEnum::Unknown;
+                m_btSpecObject.bodySensorLocation = BodySensorLocationEnum::Unknown;
         }
 
         return true;
@@ -97,16 +71,16 @@ private:
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        switch (m_bodySensorLocation.bodySensorLocation)
+        switch (m_btSpecObject.bodySensorLocation)
         {
-        case BodySensorLocationEnum::Unknown: ss << "<Unknown>"; break;
-        case BodySensorLocationEnum::Other:   ss << "Other"; break;
-        case BodySensorLocationEnum::Chest:   ss << "Chest"; break;
-        case BodySensorLocationEnum::Wrist:   ss << "Wrist"; break;
-        case BodySensorLocationEnum::Finger:  ss << "Finger"; break;
-        case BodySensorLocationEnum::Hand:    ss << "Hand"; break;
-        case BodySensorLocationEnum::EarLobe: ss << "Ear Lobe"; break;
-        case BodySensorLocationEnum::Foot:    ss << "Foot"; break;
+            case BodySensorLocationEnum::Unknown: ss << "<Unknown>"; break;
+            case BodySensorLocationEnum::Other:   ss << "Other"; break;
+            case BodySensorLocationEnum::Chest:   ss << "Chest"; break;
+            case BodySensorLocationEnum::Wrist:   ss << "Wrist"; break;
+            case BodySensorLocationEnum::Finger:  ss << "Finger"; break;
+            case BodySensorLocationEnum::Hand:    ss << "Hand"; break;
+            case BodySensorLocationEnum::EarLobe: ss << "Ear Lobe"; break;
+            case BodySensorLocationEnum::Foot:    ss << "Foot"; break;
         }
     }
 };
