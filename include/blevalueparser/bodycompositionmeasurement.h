@@ -19,6 +19,13 @@ class BodyCompositionMeasurement final : public BodyCompositionMeasurementBase
 {
 private:
     friend class BLEValueParser;
+
+    explicit BodyCompositionMeasurement(Parser &parser, const Configuration &configuration) :
+        BodyCompositionMeasurementBase{configuration}
+    {
+        create(parser);
+    }
+
     explicit BodyCompositionMeasurement(const char *data, size_t size, const Configuration &configuration) :
         BodyCompositionMeasurementBase{configuration}
     {
@@ -47,21 +54,13 @@ private:
         // 3.2.1.3 Time Stamp Field
         if (isTimeStampPresent())
         {
-            size_t dateTimeSize = DateTime::expectedSize();
-            const char *data = parser.getRawData(dateTimeSize);
-            assert(!parser.outOfData());
-            auto dateTime = DateTime(data, dateTimeSize, configuration);
-            m_bodyCompositionMeasurement.timeStamp = dateTime.getBtSpecObject();
+            m_bodyCompositionMeasurement.timeStamp = DateTime(parser, configuration).getBtSpecObject();
         }
 
         // 3.2.1.4 User ID Field
         if (isUserIDPresent())
         {
-            size_t userIDSize = UserIndex::expectedSize();
-            const char *data = parser.getRawData(userIDSize);
-            assert(!parser.outOfData());
-            auto userIndex = UserIndex(data, userIDSize, configuration);
-            m_bodyCompositionMeasurement.userID = userIndex.getBtSpecObject();
+            m_bodyCompositionMeasurement.userID = UserIndex(parser, configuration).getBtSpecObject();
         }
 
         // 3.2.1.5 Basal Metabolism

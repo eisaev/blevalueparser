@@ -102,6 +102,29 @@ TEST_F(LocalTimeInformationTest, TZPlus56_DST0)
 
     EXPECT_EQ("TZ: 56, DST: Standard Time", result->toString());
 }
+
+TEST_F(LocalTimeInformationTest, TooShort)
+{
+    constexpr char data[] = { '\x2A' };
+
+    auto result = bleValueParser.make_value<LocalTimeInformation>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
+    EXPECT_FALSE(result->isValid());
+
+    EXPECT_EQ("<Invalid>", result->toString());
+}
+
+TEST_F(LocalTimeInformationTest, TooLong)
+{
+    constexpr char data[] = { '\x2A', '\x2A', '\x2A' };
+
+    auto result = bleValueParser.make_value<LocalTimeInformation>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
+    EXPECT_FALSE(result->isValid());
+
+    EXPECT_EQ("<Invalid>", result->toString());
+}
+
 TEST_F(LocalTimeInformationTest, ToString)
 {
     constexpr char data[] = { char(-42), '\x08' };

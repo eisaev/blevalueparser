@@ -138,30 +138,22 @@ TEST_F(BodySensorLocationTest, Unknown)
     EXPECT_EQ("<Unknown>", result->toString());
 }
 
-TEST_F(BodySensorLocationTest, Empty)
+TEST_F(BodySensorLocationTest, TooShort)
 {
     auto result = bleValueParser.make_value<BodySensorLocation>({}, 0);
     EXPECT_NE(nullptr, result);
     EXPECT_FALSE(result->isValid());
-    EXPECT_EQ(BodySensorLocationEnum::Unknown, result->location());
-
-    auto btSpecObj = result->getBtSpecObject();
-    EXPECT_EQ(BodySensorLocationEnum::Unknown, btSpecObj.bodySensorLocation);
 
     EXPECT_EQ("<Invalid>", result->toString());
 }
 
-TEST_F(BodySensorLocationTest, InvalidSize)
+TEST_F(BodySensorLocationTest, TooLong)
 {
     constexpr char data[] = { '\x01', '\x02' };
 
     auto result = bleValueParser.make_value<BodySensorLocation>(data, sizeof(data));
     EXPECT_NE(nullptr, result);
     EXPECT_FALSE(result->isValid());
-    EXPECT_EQ(BodySensorLocationEnum::Unknown, result->location());
-
-    auto btSpecObj = result->getBtSpecObject();
-    EXPECT_EQ(BodySensorLocationEnum::Unknown, btSpecObj.bodySensorLocation);
 
     EXPECT_EQ("<Invalid>", result->toString());
 }

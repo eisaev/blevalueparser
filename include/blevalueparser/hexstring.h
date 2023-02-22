@@ -18,6 +18,13 @@ public:
 
 private:
     friend class BLEValueParser;
+
+    explicit HexString(Parser &parser, const Configuration &configuration) :
+        BaseValue{configuration}
+    {
+        create(parser);
+    }
+
     explicit HexString(const char *data, size_t size, const Configuration &configuration) :
         BaseValue{configuration}
     {

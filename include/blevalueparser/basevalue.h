@@ -217,6 +217,11 @@ protected:
         }
     };
 
+    void create(Parser &parser)
+    {
+        m_isValid = parse(parser) && !parser.outOfData();
+    }
+
     void create(const char *data, size_t size)
     {
         if (!checkSize(size))
@@ -225,7 +230,7 @@ protected:
         }
 
         Parser parser{data, size};
-        m_isValid = parse(parser) && !parser.outOfData();
+        create(parser);
     }
 
     virtual bool checkSize(size_t size) = 0;

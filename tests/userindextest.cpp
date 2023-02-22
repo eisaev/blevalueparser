@@ -78,6 +78,26 @@ TEST_F(UserIndexTest, Unknown)
     EXPECT_EQ("<Unknown User>", result->toString());
 }
 
+TEST_F(UserIndexTest, TooShort)
+{
+    auto result = bleValueParser.make_value<UserIndex>({}, 0);
+    EXPECT_NE(nullptr, result);
+    EXPECT_FALSE(result->isValid());
+
+    EXPECT_EQ("<Invalid>", result->toString());
+}
+
+TEST_F(UserIndexTest, TooLong)
+{
+    constexpr char data[] = { '\x2A', '\x2A' };
+
+    auto result = bleValueParser.make_value<UserIndex>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
+    EXPECT_FALSE(result->isValid());
+
+    EXPECT_EQ("<Invalid>", result->toString());
+}
+
 TEST_F(UserIndexTest, ToString)
 {
     constexpr char data[] = { '\xFE' };

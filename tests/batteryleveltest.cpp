@@ -62,6 +62,26 @@ TEST_F(BatteryLevelTest, Unreal)
     EXPECT_EQ("<Invalid>", result->toString());
 }
 
+TEST_F(BatteryLevelTest, TooShort)
+{
+    auto result = bleValueParser.make_value<BatteryLevel>({}, 0);
+    EXPECT_NE(nullptr, result);
+    EXPECT_FALSE(result->isValid());
+
+    EXPECT_EQ("<Invalid>", result->toString());
+}
+
+TEST_F(BatteryLevelTest, TooLong)
+{
+    constexpr char data[] = { '\x2A', '\x2A' };
+
+    auto result = bleValueParser.make_value<BatteryLevel>(data, sizeof(data));
+    EXPECT_NE(nullptr, result);
+    EXPECT_FALSE(result->isValid());
+
+    EXPECT_EQ("<Invalid>", result->toString());
+}
+
 TEST_F(BatteryLevelTest, ToString)
 {
     constexpr char data[] = { '\x63' };

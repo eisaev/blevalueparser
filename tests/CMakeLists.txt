@@ -24,7 +24,10 @@ set(TEST_SOURCES
     internalparsertest.cpp
     localtimeinformationtest.cpp
     pnpidtest.cpp
+    referencetimeinformationtest.cpp
     textstringtest.cpp
+    timeaccuracytest.cpp
+    timesourcetest.cpp
     unsupportedtest.cpp
     userindextest.cpp
 )
