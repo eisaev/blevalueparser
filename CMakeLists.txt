@@ -25,6 +25,10 @@ set(LIBRARY_SOURCES
     include/blevalueparser/bodysensorlocation.h
     include/blevalueparser/currenttime.h
     include/blevalueparser/datetime.h
+    include/blevalueparser/daydatetime.h
+    include/blevalueparser/dayofweek.h
+    include/blevalueparser/dstoffset.h
+    include/blevalueparser/exacttime256.h
     include/blevalueparser/heartratecontrolpoint.h
     include/blevalueparser/heartratemeasurement.h
     include/blevalueparser/hexstring.h
@@ -34,6 +38,7 @@ set(LIBRARY_SOURCES
     include/blevalueparser/textstring.h
     include/blevalueparser/timeaccuracy.h
     include/blevalueparser/timesource.h
+    include/blevalueparser/timezone.h
     include/blevalueparser/userindex.h
 )
 

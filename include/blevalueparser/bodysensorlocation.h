@@ -6,13 +6,8 @@
 namespace bvp
 {
 
-/*
- * Heart Rate Service
- * HRS_SPEC_V10.pdf
- */
-
 // GATT_Specification_Supplement_v8.pdf
-// 3.35.1 Body Sensor Location field (Table 3.59)
+// 3.35.1 Body Sensor Location field
 enum class BodySensorLocationEnum
 {
     Unknown     = 0xFF,  // 0x07–0xFF - Reserved for Future Use
@@ -32,6 +27,8 @@ struct BodySensorLocationStruct
     BodySensorLocationEnum bodySensorLocation = BodySensorLocationEnum::Unknown;
 };
 
+// HRS_SPEC_V10.pdf
+// Heart Rate Service v10r00
 // 3.2 BodySensorLocation
 class BodySensorLocation final : public BaseValue
 {

@@ -7,7 +7,8 @@ namespace bvp
 {
 
 // GATT_Specification_Supplement_v8.pdf
-// 3.228 Time Source (Table 3.341)
+// 3.228 Time Source
+
 enum class TimeSourceEnum : uint8_t
 {
     Unknown             = 0,  // 7–255 - Reserved for Future Use
@@ -19,8 +20,6 @@ enum class TimeSourceEnum : uint8_t
     CellularNetwork     = 6,
 };
 
-// GATT_Specification_Supplement_v8.pdf
-// 3.228 Time Source
 struct TimeSourceStruct
 {
     TimeSourceEnum timeSource = TimeSourceEnum::Unknown;
@@ -72,7 +71,6 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        // 3.228 Time Source
         m_timeSource.timeSource = TimeSourceEnum(parser.parseUInt8());
         switch (m_timeSource.timeSource)
         {

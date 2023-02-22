@@ -1,18 +1,13 @@
 #pragma once
 
-#include <cassert>
-
 #include "bodycompositionmeasurementbase.h"
 
 
 namespace bvp
 {
 
-/*
- * Body Composition Service
- * BCS_V1.0.0.pdf
- */
-
+// BCS_V1.0.0.pdf
+// Body Composition Service v1.0.0
 // 3.2 BodyCompositionMeasurement
 // Standard
 class BodyCompositionMeasurement final : public BodyCompositionMeasurementBase

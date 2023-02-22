@@ -18,6 +18,10 @@ set(TEST_SOURCES
     bodysensorlocationtest.cpp
     currenttimetest.cpp
     datetimetest.cpp
+    daydatetimetest.cpp
+    dayofweektest.cpp
+    dstoffsettest.cpp
+    exacttime256test.cpp
     heartratecontrolpointtest.cpp
     heartratemeasurementtest.cpp
     hexstringtest.cpp
@@ -28,6 +32,7 @@ set(TEST_SOURCES
     textstringtest.cpp
     timeaccuracytest.cpp
     timesourcetest.cpp
+    timezonetest.cpp
     unsupportedtest.cpp
     userindextest.cpp
 )

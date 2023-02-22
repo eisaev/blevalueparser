@@ -8,12 +8,6 @@
 namespace bvp
 {
 
-/*
- * Device Information Service
- * DIS_SPEC_V11r00.pdf
- */
-
-// 3.9.1.1 Vendor ID Source Field (Table 3.2)
 // GATT_Specification_Supplement_v8.pdf
 // 3.169.1 Vendor ID Source field (Table 3.267)
 enum class VendorIdSourceEnum
@@ -40,6 +34,8 @@ struct PnPIDStruct
     uint16_t productVersion = 0;
 };
 
+// DIS_SPEC_V11r00.pdf
+// Device Information Service v11r00
 // 3.9 PnPID
 class PnPID final : public BaseValue
 {

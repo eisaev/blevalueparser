@@ -6,11 +6,6 @@
 namespace bvp
 {
 
-/*
- * Battery Service
- * BAS_V1.1.pdf
- */
-
 // GATT_Specification_Supplement_v8.pdf
 // 3.27 Battery Level
 struct BatteryLevelStruct
@@ -18,6 +13,8 @@ struct BatteryLevelStruct
     uint8_t batteryLevel = 0;
 };
 
+// BAS_V1.1.pdf
+// Battery Service v1.1
 // 3.1 Battery Level
 class BatteryLevel final : public BaseValue
 {

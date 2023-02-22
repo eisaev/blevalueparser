@@ -9,6 +9,10 @@
 #include "bodysensorlocation.h"
 #include "currenttime.h"
 #include "datetime.h"
+#include "daydatetime.h"
+#include "dayofweek.h"
+#include "dstoffset.h"
+#include "exacttime256.h"
 #include "heartratecontrolpoint.h"
 #include "heartratemeasurement.h"
 #include "hexstring.h"
@@ -18,6 +22,7 @@
 #include "textstring.h"
 #include "timeaccuracy.h"
 #include "timesource.h"
+#include "timezone.h"
 #include "userindex.h"
 
 
@@ -41,16 +46,33 @@ public:
         switch (characteristicType)
         {
             // Unsorted
+            // 3.70 Date Time
             case CharacteristicType::DateTime:
                 return make_value<DateTime>(data, size);
-            case CharacteristicType::UserIndex:
-                return make_value<UserIndex>(data, size);
+            // 3.72 Day Date Time
+            case CharacteristicType::DayDateTime:
+                return make_value<DayDateTime>(data, size);
+            // 3.73 Day of Week
+            case CharacteristicType::DayOfWeek:
+                return make_value<DayOfWeek>(data, size);
+            // 3.76 DST Offset
+            case CharacteristicType::DSTOffset:
+                return make_value<DSTOffset>(data, size);
+            // 3.90 Exact Time 256
+            case CharacteristicType::ExactTime256:
+                return make_value<ExactTime256>(data, size);
             // 3.220 Time Accuracy
             case CharacteristicType::TimeAccuracy:
                 return make_value<TimeAccuracy>(data, size);
             // 3.228 Time Source
             case CharacteristicType::TimeSource:
                 return make_value<TimeSource>(data, size);
+            // 3.232 Time Zone
+            case CharacteristicType::TimeZone:
+                return make_value<TimeZone>(data, size);
+            // 3.239 User Index
+            case CharacteristicType::UserIndex:
+                return make_value<UserIndex>(data, size);
 
             // Device Information Service (DIS_SPEC_V11r00.pdf)
             // 3.1 Manufacturer Name String
@@ -168,11 +190,6 @@ public:
             case CharacteristicType::ServiceChanged:
             case CharacteristicType::AlertLevel:
             case CharacteristicType::TxPowerLevel:
-            case CharacteristicType::DayOfWeek:
-            case CharacteristicType::DayDateTime:
-            case CharacteristicType::ExactTime256:
-            case CharacteristicType::DSTOffset:
-            case CharacteristicType::TimeZone:
             case CharacteristicType::TimewithDST:
             case CharacteristicType::TimeUpdateControlPoint:
             case CharacteristicType::TimeUpdateState:

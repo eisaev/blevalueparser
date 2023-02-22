@@ -8,6 +8,7 @@ namespace bvp
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.220 Time Accuracy
+
 struct TimeAccuracyStruct
 {
     uint8_t accuracy = 0;
@@ -81,7 +82,6 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        // 3.220 Time Accuracy
         m_timeAccuracy.accuracy = parser.parseUInt8();
 
         return true;

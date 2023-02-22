@@ -6,18 +6,6 @@
 namespace bvp
 {
 
-/*
- * Body Composition Service
- * BCS_V1.0.0.pdf
- */
-
-// GATT_Specification_Supplement_v8.pdf
-// 3.33 Body Composition Feature
-struct BodyCompositionFeatureStruct
-{
-    uint32_t flags = 0;
-};
-
 constexpr uint8_t BCS_FLAG_BCF_WEIGHT_RESOLUTION_SHIFT = 11;
 constexpr uint8_t BCS_FLAG_BCF_HEIGHT_RESOLUTION_SHIFT = 15;
 
@@ -56,6 +44,15 @@ constexpr uint32_t BCS_FLAG_BCF_RESERVER12                  = 1 << 29;
 constexpr uint32_t BCS_FLAG_BCF_RESERVER13                  = 1 << 30;
 constexpr uint32_t BCS_FLAG_BCF_RESERVER14                  = 1 << 31;
 
+// GATT_Specification_Supplement_v8.pdf
+// 3.33 Body Composition Feature
+struct BodyCompositionFeatureStruct
+{
+    uint32_t flags = 0;
+};
+
+// BCS_V1.0.0.pdf
+// Body Composition Service v1.0.0
 // 3.1 BodyCompositionFeature
 class BodyCompositionFeature final : public BaseValue
 {
@@ -230,8 +227,6 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        // GATT_Specification_Supplement_v8.pdf
-        // 3.33.1 Body Composition Feature field
         m_bodyCompositionFeature.flags = parser.parseUInt32();
 
         return true;

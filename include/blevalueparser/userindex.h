@@ -8,6 +8,7 @@ namespace bvp
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.239 User Index
+
 struct UserIndexStruct
 {
     uint8_t userIndex = 0;

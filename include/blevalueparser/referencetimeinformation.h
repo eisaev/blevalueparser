@@ -8,11 +8,6 @@
 namespace bvp
 {
 
-/*
- * Current Time Service
- * CTS_SPEC_V1.1.0.pdf
- */
-
 // GATT_Specification_Supplement_v8.pdf
 // 3.178 Reference Time Information
 struct ReferenceTimeInformationStruct
@@ -23,6 +18,8 @@ struct ReferenceTimeInformationStruct
     uint8_t hoursSinceUpdate = 0;
 };
 
+// CTS_SPEC_V1.1.0.pdf
+// Current Time Service v1.1.0
 // 3.3 Reference Time Information
 class ReferenceTimeInformation final : public BaseValue
 {

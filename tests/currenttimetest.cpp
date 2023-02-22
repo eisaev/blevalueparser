@@ -278,7 +278,7 @@ TEST_F(CurrentTimeTest, TooLong)
     EXPECT_EQ("<Invalid>", result->toString());
 }
 
-TEST_F(CurrentTimeTest, InknownDayOfWeek)
+TEST_F(CurrentTimeTest, UnknownDayOfWeek)
 {
     constexpr char data[] = { '\xE6', '\x07', '\x0C', '\x1F', '\x17', '\x3B', '\x3B', '\xAA', '\xFF', '\x01' };
 
@@ -286,7 +286,7 @@ TEST_F(CurrentTimeTest, InknownDayOfWeek)
     EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
 
-    EXPECT_EQ("31.12.2022 23:59:59.996 (adjust reason: { ManuallyAdjusted })", result->toString());
+    EXPECT_EQ("<Unknown> 31.12.2022 23:59:59.996 (adjust reason: { ManuallyAdjusted })", result->toString());
 }
 
 TEST_F(CurrentTimeTest, NoReason)
@@ -297,7 +297,7 @@ TEST_F(CurrentTimeTest, NoReason)
     EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
 
-    EXPECT_EQ("06.02.2023 14:47:42.000", result->toString());
+    EXPECT_EQ("<Unknown> 06.02.2023 14:47:42.000", result->toString());
 }
 
 TEST_F(CurrentTimeTest, ToString)
