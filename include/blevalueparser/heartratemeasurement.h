@@ -84,6 +84,13 @@ public:
 
 private:
     friend class BLEValueParser;
+
+    explicit HeartRateMeasurement(Parser &parser, const Configuration &configuration) :
+        BaseValue{configuration}
+    {
+        create(parser);
+    }
+
     explicit HeartRateMeasurement(const char *data, size_t size, const Configuration &configuration) :
         BaseValue{configuration}
     {

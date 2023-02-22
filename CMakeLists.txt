@@ -30,7 +30,10 @@ set(LIBRARY_SOURCES
     include/blevalueparser/hexstring.h
     include/blevalueparser/localtimeinformation.h
     include/blevalueparser/pnpid.h
+    include/blevalueparser/referencetimeinformation.h
     include/blevalueparser/textstring.h
+    include/blevalueparser/timeaccuracy.h
+    include/blevalueparser/timesource.h
     include/blevalueparser/userindex.h
 )
 

@@ -36,6 +36,13 @@ public:
 
 private:
     friend class BLEValueParser;
+
+    explicit BodyCompositionMeasurementMIBFS(Parser &parser, const Configuration &configuration) :
+        BodyCompositionMeasurementBase{configuration}
+    {
+        create(parser);
+    }
+
     explicit BodyCompositionMeasurementMIBFS(const char *data, size_t size, const Configuration &configuration) :
         BodyCompositionMeasurementBase{configuration}
     {
@@ -56,11 +63,7 @@ private:
         // 3.2.1.3 Time Stamp Field
         if (isTimeStampPresent())
         {
-            size_t dateTimeSize = DateTime::expectedSize();
-            const char *data = parser.getRawData(dateTimeSize);
-            assert(!parser.outOfData());
-            auto dateTime = DateTime(data, dateTimeSize, configuration);
-            m_bodyCompositionMeasurement.timeStamp = dateTime.getBtSpecObject();
+            m_bodyCompositionMeasurement.timeStamp = DateTime(parser, configuration).getBtSpecObject();
         }
 
         // 3.2.1.11 Impedance

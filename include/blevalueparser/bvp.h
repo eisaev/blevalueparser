@@ -14,7 +14,10 @@
 #include "hexstring.h"
 #include "localtimeinformation.h"
 #include "pnpid.h"
+#include "referencetimeinformation.h"
 #include "textstring.h"
+#include "timeaccuracy.h"
+#include "timesource.h"
 #include "userindex.h"
 
 
@@ -37,6 +40,18 @@ public:
     {
         switch (characteristicType)
         {
+            // Unsorted
+            case CharacteristicType::DateTime:
+                return make_value<DateTime>(data, size);
+            case CharacteristicType::UserIndex:
+                return make_value<UserIndex>(data, size);
+            // 3.220 Time Accuracy
+            case CharacteristicType::TimeAccuracy:
+                return make_value<TimeAccuracy>(data, size);
+            // 3.228 Time Source
+            case CharacteristicType::TimeSource:
+                return make_value<TimeSource>(data, size);
+
             // Device Information Service (DIS_SPEC_V11r00.pdf)
             // 3.1 Manufacturer Name String
             case CharacteristicType::ManufacturerNameString:
@@ -76,8 +91,7 @@ public:
                 return make_value<LocalTimeInformation>(data, size);
             // 3.3 Reference Time Information
             case CharacteristicType::ReferenceTimeInformation:
-                // TODO:
-                break;
+                return make_value<ReferenceTimeInformation>(data, size);
 
             // Battery Service (BAS_V1.1.pdf)
             // 3.1 Battery Level
@@ -145,12 +159,6 @@ public:
             case CharacteristicType::BodyCompositionMeasurementMIBFS:
                 return make_value<BodyCompositionMeasurementMIBFS>(data, size);
 
-            // Unsorted
-            case CharacteristicType::DateTime:
-                return make_value<DateTime>(data, size);
-            case CharacteristicType::UserIndex:
-                return make_value<UserIndex>(data, size);
-
             // Other
             case CharacteristicType::DeviceName:
             case CharacteristicType::Appearance:
@@ -166,8 +174,6 @@ public:
             case CharacteristicType::DSTOffset:
             case CharacteristicType::TimeZone:
             case CharacteristicType::TimewithDST:
-            case CharacteristicType::TimeAccuracy:
-            case CharacteristicType::TimeSource:
             case CharacteristicType::TimeUpdateControlPoint:
             case CharacteristicType::TimeUpdateState:
             case CharacteristicType::GlucoseMeasurement:

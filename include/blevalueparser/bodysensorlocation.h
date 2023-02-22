@@ -48,6 +48,13 @@ public:
 
 private:
     friend class BLEValueParser;
+
+    explicit BodySensorLocation(Parser &parser, const Configuration &configuration) :
+        BaseValue{configuration}
+    {
+        create(parser);
+    }
+
     explicit BodySensorLocation(const char *data, size_t size, const Configuration &configuration) :
         BaseValue{configuration}
     {
@@ -63,14 +70,9 @@ private:
 
     BodySensorLocationStruct m_bodySensorLocation;
 
-    static size_t expectedSize()
-    {
-        return 1;
-    }
-
     virtual bool checkSize(size_t size) override
     {
-        return size == expectedSize();
+        return size == 1;
     }
 
     virtual bool parse(Parser &parser) override

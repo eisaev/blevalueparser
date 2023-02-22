@@ -178,6 +178,13 @@ public:
 
 private:
     friend class BLEValueParser;
+
+    explicit LocalTimeInformation(Parser &parser, const Configuration &configuration) :
+        BaseValue{configuration}
+    {
+        create(parser);
+    }
+
     explicit LocalTimeInformation(const char *data, size_t size, const Configuration &configuration) :
         BaseValue{configuration}
     {
@@ -193,14 +200,9 @@ private:
 
     LocalTimeInformationStruct m_localTimeInformation;
 
-    static size_t expectedSize()
-    {
-        return 2;
-    }
-
     virtual bool checkSize(size_t size) override
     {
-        return size == expectedSize();
+        return size == 2;
     }
 
     virtual bool parse(Parser &parser) override

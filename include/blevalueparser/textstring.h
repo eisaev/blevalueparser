@@ -16,6 +16,13 @@ public:
 
 private:
     friend class BLEValueParser;
+
+    explicit TextString(Parser &parser, const Configuration &configuration) :
+        BaseValue{configuration}
+    {
+        create(parser);
+    }
+
     explicit TextString(const char *data, size_t size, const Configuration &configuration) :
         BaseValue{configuration}
     {

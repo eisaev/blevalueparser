@@ -70,6 +70,13 @@ public:
 
 private:
     friend class BLEValueParser;
+
+    explicit DateTime(Parser &parser, const Configuration &configuration) :
+        BaseValue{configuration}
+    {
+        create(parser);
+    }
+
     explicit DateTime(const char *data, size_t size, const Configuration &configuration) :
         BaseValue{configuration}
     {
@@ -85,14 +92,9 @@ private:
 
     DateTimeStruct m_dateTime;
 
-    static size_t expectedSize()
-    {
-        return 7;
-    }
-
     virtual bool checkSize(size_t size) override
     {
-        return size == expectedSize();
+        return size == 7;
     }
 
     virtual bool parse(Parser &parser) override

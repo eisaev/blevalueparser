@@ -201,6 +201,13 @@ public:
 
 private:
     friend class BLEValueParser;
+
+    explicit BodyCompositionFeature(Parser &parser, const Configuration &configuration) :
+        BaseValue{configuration}
+    {
+        create(parser);
+    }
+
     explicit BodyCompositionFeature(const char *data, size_t size, const Configuration &configuration) :
         BaseValue{configuration}
     {
@@ -216,14 +223,9 @@ private:
 
     BodyCompositionFeatureStruct m_bodyCompositionFeature;
 
-    static size_t expectedSize()
-    {
-        return 4;
-    }
-
     virtual bool checkSize(size_t size) override
     {
-        return size == expectedSize();
+        return size == 4;
     }
 
     virtual bool parse(Parser &parser) override

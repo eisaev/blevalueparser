@@ -6,7 +6,7 @@
 # BLE Value Parser
 This is a header only library for parsing characteristics of some standardized BLE services. At the moment, parsers are implemented for the following services:
 * Device Information Service v1.1 (partially)
-* Current Time Service v1.1 (partially)
+* Current Time Service v1.1 (full)
 * Battery Service v1.1 (partially)
 * Heart Rate Service v1.0 (full)
 * Body Composition Service v1.0 (full, with additional custom parser for Xiaomi Mi Body Composition Scale 2)

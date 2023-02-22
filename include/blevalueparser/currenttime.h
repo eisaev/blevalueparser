@@ -149,6 +149,13 @@ public:
 
 private:
     friend class BLEValueParser;
+
+    explicit CurrentTime(Parser &parser, const Configuration &configuration) :
+        BaseValue{configuration}
+    {
+        create(parser);
+    }
+
     explicit CurrentTime(const char *data, size_t size, const Configuration &configuration) :
         BaseValue{configuration}
     {
@@ -164,24 +171,15 @@ private:
 
     CurrentTimeStruct m_currentTime;
 
-    static size_t expectedSize()
-    {
-        return 10;
-    }
-
     virtual bool checkSize(size_t size) override
     {
-        return size == expectedSize();
+        return size == 10;
     }
 
     virtual bool parse(Parser &parser) override
     {
         // Exact Time 256
-        size_t dateTimeSize = DateTime::expectedSize();
-        const char *data = parser.getRawData(dateTimeSize);
-        assert(!parser.outOfData());
-        auto dateTime = DateTime(data, dateTimeSize, configuration);
-        m_currentTime.exactTime256.dayDateTime.dateTime = dateTime.getBtSpecObject();
+        m_currentTime.exactTime256.dayDateTime.dateTime = DateTime(parser, configuration).getBtSpecObject();
 
         m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek = DayOfWeekEnum(parser.parseUInt8());
         switch (m_currentTime.exactTime256.dayDateTime.dayOfWeek.dayOfWeek)

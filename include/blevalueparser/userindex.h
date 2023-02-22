@@ -30,6 +30,13 @@ public:
 
 private:
     friend class BLEValueParser;
+
+    explicit UserIndex(Parser &parser, const Configuration &configuration) :
+        BaseValue{configuration}
+    {
+        create(parser);
+    }
+
     explicit UserIndex(const char *data, size_t size, const Configuration &configuration) :
         BaseValue{configuration}
     {
@@ -45,14 +52,9 @@ private:
 
     UserIndexStruct m_userIndex;
 
-    static size_t expectedSize()
-    {
-        return 1;
-    }
-
     virtual bool checkSize(size_t size) override
     {
-        return size == expectedSize();
+        return size == 1;
     }
 
     virtual bool parse(Parser &parser) override
