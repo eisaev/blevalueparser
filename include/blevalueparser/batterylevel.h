@@ -16,42 +16,16 @@ struct BatteryLevelStruct
 // BAS_V1.1.pdf
 // Battery Service v1.1
 // 3.1 Battery Level
-class BatteryLevel final : public BaseValue
+class BatteryLevel final : public BaseValueSpec<BatteryLevelStruct>
 {
 public:
-    BatteryLevelStruct getBtSpecObject() const
-    {
-        return m_batteryLevel;
-    }
-
     uint8_t level() const
     {
-        return m_batteryLevel.batteryLevel;
+        return m_btSpecObject.batteryLevel;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit BatteryLevel(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit BatteryLevel(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit BatteryLevel(const BatteryLevelStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_batteryLevel{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    BatteryLevelStruct m_batteryLevel;
+    BVP_CTORS(BaseValueSpec, BatteryLevel, BatteryLevelStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -60,8 +34,8 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_batteryLevel.batteryLevel = parser.parseUInt8();
-        if (m_batteryLevel.batteryLevel > 100)
+        m_btSpecObject.batteryLevel = parser.parseUInt8();
+        if (m_btSpecObject.batteryLevel > 100)
         {
             return false;
         }
@@ -71,7 +45,7 @@ private:
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        ss << static_cast<int>(m_batteryLevel.batteryLevel) << "%";
+        ss << static_cast<int>(m_btSpecObject.batteryLevel) << "%";
     }
 };
 

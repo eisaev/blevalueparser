@@ -22,60 +22,44 @@ class BodyCompositionMeasurementMIBFS final : public BodyCompositionMeasurementB
 public:
     bool isStabilized() const
     {
-        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_MIBFS_STABILIZED) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCM_MIBFS_STABILIZED) != 0;
     }
 
     bool isUnknown1() const
     {
-        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_MIBFS_UNKNOWN1) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCM_MIBFS_UNKNOWN1) != 0;
     }
 
     bool isUnloaded() const
     {
-        return (m_bodyCompositionMeasurement.flags & BCS_FLAG_BCM_MIBFS_UNLOADED) != 0;
+        return (m_btSpecObject.flags & BCS_FLAG_BCM_MIBFS_UNLOADED) != 0;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit BodyCompositionMeasurementMIBFS(Parser &parser, const Configuration &configuration) :
-        BodyCompositionMeasurementBase{configuration}
-    {
-        create(parser);
-    }
-
-    explicit BodyCompositionMeasurementMIBFS(const char *data, size_t size, const Configuration &configuration) :
-        BodyCompositionMeasurementBase{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit BodyCompositionMeasurementMIBFS(const BodyCompositionMeasurementStruct &btSpecObject, const Configuration &configuration) :
-        BodyCompositionMeasurementBase{btSpecObject, configuration}
-    {}
+    BVP_CTORS(BodyCompositionMeasurementBase, BodyCompositionMeasurementMIBFS, BodyCompositionMeasurementStruct)
 
     virtual bool parse(Parser &parser) override
     {
         // 3.2.1.1 Flags Field
-        m_bodyCompositionMeasurement.flags = parser.parseUInt16();
+        m_btSpecObject.flags = parser.parseUInt16();
 
         configuration.measurementUnits = measurementUnits();
 
         // 3.2.1.3 Time Stamp Field
         if (isTimeStampPresent())
         {
-            m_bodyCompositionMeasurement.timeStamp = DateTime(parser, configuration).getBtSpecObject();
+            m_btSpecObject.timeStamp = DateTime(parser, configuration).getBtSpecObject();
         }
 
         // 3.2.1.11 Impedance
         // Unit is 1/10 of an Ohm
         // Always present in data on Xiaomi scales
-        m_bodyCompositionMeasurement.impedance = parser.parseUInt16();
+        m_btSpecObject.impedance = parser.parseUInt16();
 
         // 3.2.1.12 Weight
         if (isWeightPresent())
         {
-            m_bodyCompositionMeasurement.weight = parser.parseUInt16();
+            m_btSpecObject.weight = parser.parseUInt16();
         }
 
         return true;
@@ -87,7 +71,7 @@ private:
 
         if (isTimeStampPresent())
         {
-            ss << ", TimeStamp: " << DateTime(m_bodyCompositionMeasurement.timeStamp, configuration);
+            ss << ", TimeStamp: " << DateTime(m_btSpecObject.timeStamp, configuration);
         }
 
         if (isImpedancePresent())

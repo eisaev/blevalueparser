@@ -24,44 +24,18 @@ struct DSTOffsetStruct
 };
 
 
-class DSTOffset final : public BaseValue
+class DSTOffset final : public BaseValueSpec<DSTOffsetStruct>
 {
 public:
     friend class LocalTimeInformation;
 
-    DSTOffsetStruct getBtSpecObject() const
-    {
-        return m_dstOffset;
-    }
-
     DSTOffsetEnum dstOffset() const
     {
-        return m_dstOffset.dstOffset;
+        return m_btSpecObject.dstOffset;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit DSTOffset(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit DSTOffset(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit DSTOffset(const DSTOffsetStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_dstOffset{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    DSTOffsetStruct m_dstOffset;
+    BVP_CTORS(BaseValueSpec, DSTOffset, DSTOffsetStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -70,8 +44,8 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_dstOffset.dstOffset = DSTOffsetEnum(parser.parseUInt8());
-        switch (m_dstOffset.dstOffset)
+        m_btSpecObject.dstOffset = DSTOffsetEnum(parser.parseUInt8());
+        switch (m_btSpecObject.dstOffset)
         {
             case DSTOffsetEnum::StandardTime:
             case DSTOffsetEnum::HalfAnHourDaylightTime0_5h:
@@ -80,7 +54,7 @@ private:
             case DSTOffsetEnum::Unknown:
                 break;
             default:
-                m_dstOffset.dstOffset = DSTOffsetEnum::Unknown;
+                m_btSpecObject.dstOffset = DSTOffsetEnum::Unknown;
                 break;
         }
 
@@ -89,7 +63,7 @@ private:
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        switch (m_dstOffset.dstOffset)
+        switch (m_btSpecObject.dstOffset)
         {
             case DSTOffsetEnum::StandardTime:
                 ss << "Standard Time";

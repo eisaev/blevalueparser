@@ -32,47 +32,42 @@ struct HeartRateMeasurementStruct
 // HRS_SPEC_V10.pdf
 // Heart Rate Service v10r00
 // 3.1 Heart Rate Measurement
-class HeartRateMeasurement final : public BaseValue
+class HeartRateMeasurement final : public BaseValueSpec<HeartRateMeasurementStruct>
 {
 public:
-    HeartRateMeasurementStruct getBtSpecObject() const
-    {
-        return m_heartRateMeasurement;
-    }
-
     bool isContactSupported() const
     {
-        return (m_heartRateMeasurement.flags & HRS_FLAG_CONTACT_SUPPORT) != 0;
+        return (m_btSpecObject.flags & HRS_FLAG_CONTACT_SUPPORT) != 0;
     }
 
     bool isContacted() const
     {
-        return (m_heartRateMeasurement.flags & HRS_FLAG_CONTACT_STATUS) != 0;
+        return (m_btSpecObject.flags & HRS_FLAG_CONTACT_STATUS) != 0;
     }
 
     uint16_t heartRate() const
     {
-        return m_heartRateMeasurement.heartRate;
+        return m_btSpecObject.heartRate;
     }
 
     bool hasEnergyExpended() const
     {
-        return (m_heartRateMeasurement.flags & HRS_FLAG_ENERGY_EXPENDED) != 0;
+        return (m_btSpecObject.flags & HRS_FLAG_ENERGY_EXPENDED) != 0;
     }
 
     uint16_t energyExpended() const
     {
-        return m_heartRateMeasurement.energyExpended;
+        return m_btSpecObject.energyExpended;
     }
 
     std::vector<uint16_t> rrIntervals() const
     {
         std::vector<uint16_t> result;
-        result.reserve(m_heartRateMeasurement.rrIntervals.size());
+        result.reserve(m_btSpecObject.rrIntervals.size());
         // GATT_Specification_Supplement_v8.pdf
         // 3.113.2 RR-Interval field
         // Each RR-Interval value is represented by a uint16 with 1/1024 second as the unit.
-        for (auto rrInterval : m_heartRateMeasurement.rrIntervals)
+        for (auto rrInterval : m_btSpecObject.rrIntervals)
         {
             result.push_back(rrInterval * 1000 / 1024);
         }
@@ -80,28 +75,7 @@ public:
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit HeartRateMeasurement(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit HeartRateMeasurement(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit HeartRateMeasurement(const HeartRateMeasurementStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_heartRateMeasurement{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    HeartRateMeasurementStruct m_heartRateMeasurement;
+    BVP_CTORS(BaseValueSpec, HeartRateMeasurement, HeartRateMeasurementStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -112,22 +86,22 @@ private:
     virtual bool parse(Parser &parser) override
     {
         // 3.1.1.1 Flags Field
-        m_heartRateMeasurement.flags = parser.parseUInt8();
+        m_btSpecObject.flags = parser.parseUInt8();
 
         // 3.1.1.2 Heart Rate Measurement Value Field
         if (isWideFormat())
         {
-            m_heartRateMeasurement.heartRate = parser.parseUInt16();
+            m_btSpecObject.heartRate = parser.parseUInt16();
         }
         else
         {
-            m_heartRateMeasurement.heartRate = parser.parseUInt8();
+            m_btSpecObject.heartRate = parser.parseUInt8();
         }
 
         // 3.1.1.3 Energy Expended Field
         if (hasEnergyExpended())
         {
-            m_heartRateMeasurement.energyExpended = parser.parseUInt16();
+            m_btSpecObject.energyExpended = parser.parseUInt16();
         }
 
         // 3.1.1.4 RR-Interval Field
@@ -142,11 +116,11 @@ private:
             {
                 --maxRRCount;
             }
-            m_heartRateMeasurement.rrIntervals.reserve(maxRRCount);
+            m_btSpecObject.rrIntervals.reserve(maxRRCount);
 
             for (uint8_t i = 0; i < maxRRCount && !parser.atEnd(); ++i)
             {
-                m_heartRateMeasurement.rrIntervals.push_back(parser.parseUInt16());
+                m_btSpecObject.rrIntervals.push_back(parser.parseUInt16());
             }
         }
 
@@ -167,14 +141,14 @@ private:
             }
         }
 
-        ss << "HR: " << m_heartRateMeasurement.heartRate << "bpm";
+        ss << "HR: " << m_btSpecObject.heartRate << "bpm";
 
         if (hasEnergyExpended())
         {
-            ss << ", EE: " << m_heartRateMeasurement.energyExpended << "kJ";
+            ss << ", EE: " << m_btSpecObject.energyExpended << "kJ";
         }
 
-        if (!m_heartRateMeasurement.rrIntervals.empty())
+        if (!m_btSpecObject.rrIntervals.empty())
         {
             ss << ", RR: { ";
             for (auto rrInterval : rrIntervals())
@@ -187,12 +161,12 @@ private:
 
     bool isWideFormat() const
     {
-        return (m_heartRateMeasurement.flags & HRS_FLAG_VALUE_FORMAT) != 0;
+        return (m_btSpecObject.flags & HRS_FLAG_VALUE_FORMAT) != 0;
     }
 
     bool hasRRIntervals() const
     {
-        return (m_heartRateMeasurement.flags & HRS_FLAG_RR_INTERVALS) != 0;
+        return (m_btSpecObject.flags & HRS_FLAG_RR_INTERVALS) != 0;
     }
 };
 

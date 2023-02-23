@@ -124,44 +124,18 @@ struct TimeZoneStruct
     TimeZoneEnum timeZone = TimeZoneEnum::Unknown;
 };
 
-class TimeZone final : public BaseValue
+class TimeZone final : public BaseValueSpec<TimeZoneStruct>
 {
 public:
     friend class LocalTimeInformation;
 
-    TimeZoneStruct getBtSpecObject() const
-    {
-        return m_timeZone;
-    }
-
     TimeZoneEnum timeZone() const
     {
-        return m_timeZone.timeZone;
+        return m_btSpecObject.timeZone;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit TimeZone(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit TimeZone(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit TimeZone(const TimeZoneStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_timeZone{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    TimeZoneStruct m_timeZone;
+    BVP_CTORS(BaseValueSpec, TimeZone, TimeZoneStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -170,8 +144,8 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_timeZone.timeZone = TimeZoneEnum(parser.parseInt8());
-        switch (m_timeZone.timeZone)
+        m_btSpecObject.timeZone = TimeZoneEnum(parser.parseInt8());
+        switch (m_btSpecObject.timeZone)
         {
             case TimeZoneEnum::Unknown:
             case TimeZoneEnum::Minus48:
@@ -281,7 +255,7 @@ private:
             case TimeZoneEnum::Plus56:
                 break;
             default:
-                m_timeZone.timeZone = TimeZoneEnum::Unknown;
+                m_btSpecObject.timeZone = TimeZoneEnum::Unknown;
                 break;
         }
 
@@ -290,13 +264,13 @@ private:
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        if (TimeZoneEnum::Unknown == m_timeZone.timeZone)
+        if (TimeZoneEnum::Unknown == m_btSpecObject.timeZone)
         {
             ss << "<Unknown>";
         }
         else
         {
-            ss << static_cast<int>(m_timeZone.timeZone);
+            ss << static_cast<int>(m_btSpecObject.timeZone);
         }
     }
 };

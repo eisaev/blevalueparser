@@ -27,44 +27,18 @@ struct DayOfWeekStruct
     DayOfWeekEnum dayOfWeek = DayOfWeekEnum::Unknown;
 };
 
-class DayOfWeek final : public BaseValue
+class DayOfWeek final : public BaseValueSpec<DayOfWeekStruct>
 {
 public:
     friend class DayDateTime;
 
-    DayOfWeekStruct getBtSpecObject() const
-    {
-        return m_dayOfWeek;
-    }
-
     DayOfWeekEnum dayOfWeek() const
     {
-        return m_dayOfWeek.dayOfWeek;
+        return m_btSpecObject.dayOfWeek;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit DayOfWeek(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit DayOfWeek(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit DayOfWeek(const DayOfWeekStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_dayOfWeek{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    DayOfWeekStruct m_dayOfWeek;
+    BVP_CTORS(BaseValueSpec, DayOfWeek, DayOfWeekStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -73,8 +47,8 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_dayOfWeek.dayOfWeek = DayOfWeekEnum(parser.parseUInt8());
-        switch (m_dayOfWeek.dayOfWeek)
+        m_btSpecObject.dayOfWeek = DayOfWeekEnum(parser.parseUInt8());
+        switch (m_btSpecObject.dayOfWeek)
         {
             case DayOfWeekEnum::Unknown:
             case DayOfWeekEnum::Monday:
@@ -86,7 +60,7 @@ private:
             case DayOfWeekEnum::Sunday:
                 break;
             default:
-                m_dayOfWeek.dayOfWeek = DayOfWeekEnum::Unknown;
+                m_btSpecObject.dayOfWeek = DayOfWeekEnum::Unknown;
                 break;
         }
 
@@ -95,7 +69,7 @@ private:
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        switch (m_dayOfWeek.dayOfWeek)
+        switch (m_btSpecObject.dayOfWeek)
         {
             case DayOfWeekEnum::Unknown:
                 ss << "<Unknown>";

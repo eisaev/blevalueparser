@@ -14,44 +14,18 @@ struct UserIndexStruct
     uint8_t userIndex = 0;
 };
 
-class UserIndex final : public BaseValue
+class UserIndex final : public BaseValueSpec<UserIndexStruct>
 {
 public:
     friend class BodyCompositionMeasurement;
 
-    UserIndexStruct getBtSpecObject() const
-    {
-        return m_userIndex;
-    }
-
     uint8_t userIndex() const
     {
-        return m_userIndex.userIndex;
+        return m_btSpecObject.userIndex;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit UserIndex(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit UserIndex(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit UserIndex(const UserIndexStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_userIndex{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    UserIndexStruct m_userIndex;
+    BVP_CTORS(BaseValueSpec, UserIndex, UserIndexStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -60,20 +34,20 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_userIndex.userIndex = parser.parseUInt8();
+        m_btSpecObject.userIndex = parser.parseUInt8();
 
         return true;
     }
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        if (0xFF == m_userIndex.userIndex)
+        if (0xFF == m_btSpecObject.userIndex)
         {
             ss << "<Unknown User>";
             return;
         }
 
-        ss << static_cast<int>(m_userIndex.userIndex);
+        ss << static_cast<int>(m_btSpecObject.userIndex);
     }
 };
 

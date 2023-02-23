@@ -4,6 +4,25 @@
 #include <sstream>
 #include <map>
 
+#define BVP_CTORS(TBase, T, TStruct) \
+    friend class BLEValueParser;\
+\
+    explicit T(Parser &parser, const Configuration &configuration) :\
+        TBase{configuration}\
+    {\
+        create(parser);\
+    }\
+\
+    explicit T(const char *data, size_t size, const Configuration &configuration) :\
+        TBase{configuration}\
+    {\
+        create(data, size);\
+    }\
+\
+    explicit T(const TStruct &btSpecObject, const Configuration &configuration) :\
+        TBase{btSpecObject, configuration}\
+    {}
+
 
 namespace bvp
 {
@@ -242,6 +261,32 @@ protected:
         os << rhs.toString();
         return os;
     }
+};
+
+template<class TStruct>
+class BaseValueSpec : public BaseValue
+{
+public:
+    virtual ~BaseValueSpec() = default;
+
+    TStruct getBtSpecObject() const
+    {
+        return m_btSpecObject;
+    }
+
+protected:
+    explicit BaseValueSpec(const Configuration &configuration) :
+        BaseValue{configuration}
+    {}
+
+    explicit BaseValueSpec(const TStruct &btSpecObject, const Configuration &configuration) :
+        BaseValue{configuration},
+        m_btSpecObject{btSpecObject}
+    {
+        m_isValid = true;
+    }
+
+    TStruct m_btSpecObject;
 };
 
 }  // namespace bvp

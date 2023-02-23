@@ -24,42 +24,16 @@ struct HeartRateControlPointStruct
 // HRS_SPEC_V10.pdf
 // Heart Rate Service v10r00
 // 3.3 Heart Rate Control Point
-class HeartRateControlPoint final : public BaseValue
+class HeartRateControlPoint final : public BaseValueSpec<HeartRateControlPointStruct>
 {
 public:
-    HeartRateControlPointStruct getBtSpecObject() const
-    {
-        return m_heartRateControlPoint;
-    }
-
     HeartRateControlPointEnum controlPointType() const
     {
-        return m_heartRateControlPoint.heartRateControlPoint;
+        return m_btSpecObject.heartRateControlPoint;
     }
 
 private:
-    friend class BLEValueParser;
-
-    explicit HeartRateControlPoint(Parser &parser, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(parser);
-    }
-
-    explicit HeartRateControlPoint(const char *data, size_t size, const Configuration &configuration) :
-        BaseValue{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit HeartRateControlPoint(const HeartRateControlPointStruct &btSpecObject, const Configuration &configuration) :
-        BaseValue{configuration},
-        m_heartRateControlPoint{btSpecObject}
-    {
-        m_isValid = true;
-    }
-
-    HeartRateControlPointStruct m_heartRateControlPoint;
+    BVP_CTORS(BaseValueSpec, HeartRateControlPoint, HeartRateControlPointStruct)
 
     virtual bool checkSize(size_t size) override
     {
@@ -68,14 +42,14 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_heartRateControlPoint.heartRateControlPoint = HeartRateControlPointEnum(parser.parseUInt8());
-        switch (m_heartRateControlPoint.heartRateControlPoint)
+        m_btSpecObject.heartRateControlPoint = HeartRateControlPointEnum(parser.parseUInt8());
+        switch (m_btSpecObject.heartRateControlPoint)
         {
             case HeartRateControlPointEnum::Reserved:
             case HeartRateControlPointEnum::ResetEnergyExpended:
                 break;
             default:
-                m_heartRateControlPoint.heartRateControlPoint = HeartRateControlPointEnum::Reserved;
+                m_btSpecObject.heartRateControlPoint = HeartRateControlPointEnum::Reserved;
                 break;
         }
 
@@ -84,7 +58,7 @@ private:
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        switch (m_heartRateControlPoint.heartRateControlPoint)
+        switch (m_btSpecObject.heartRateControlPoint)
         {
             case HeartRateControlPointEnum::Reserved:
                 ss << "<Reserved>";

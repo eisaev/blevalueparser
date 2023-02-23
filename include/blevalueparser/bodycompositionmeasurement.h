@@ -13,34 +13,18 @@ namespace bvp
 class BodyCompositionMeasurement final : public BodyCompositionMeasurementBase
 {
 private:
-    friend class BLEValueParser;
-
-    explicit BodyCompositionMeasurement(Parser &parser, const Configuration &configuration) :
-        BodyCompositionMeasurementBase{configuration}
-    {
-        create(parser);
-    }
-
-    explicit BodyCompositionMeasurement(const char *data, size_t size, const Configuration &configuration) :
-        BodyCompositionMeasurementBase{configuration}
-    {
-        create(data, size);
-    }
-
-    explicit BodyCompositionMeasurement(const BodyCompositionMeasurementStruct &btSpecObject, const Configuration &configuration) :
-        BodyCompositionMeasurementBase{btSpecObject, configuration}
-    {}
+    BVP_CTORS(BodyCompositionMeasurementBase, BodyCompositionMeasurement, BodyCompositionMeasurementStruct)
 
     virtual bool parse(Parser &parser) override
     {
         // 3.2.1.1 Flags Field
-        m_bodyCompositionMeasurement.flags = parser.parseUInt16();
+        m_btSpecObject.flags = parser.parseUInt16();
 
         configuration.measurementUnits = measurementUnits();
 
         // 3.2.1.2 Body Fat Percentage Field
         // Unit is 1/10 of a percent
-        m_bodyCompositionMeasurement.bodyFatPercentage = parser.parseUInt16();
+        m_btSpecObject.bodyFatPercentage = parser.parseUInt16();
         if (isMeasurementUnsuccessful())
         {
             return true;
@@ -49,70 +33,70 @@ private:
         // 3.2.1.3 Time Stamp Field
         if (isTimeStampPresent())
         {
-            m_bodyCompositionMeasurement.timeStamp = DateTime(parser, configuration).getBtSpecObject();
+            m_btSpecObject.timeStamp = DateTime(parser, configuration).getBtSpecObject();
         }
 
         // 3.2.1.4 User ID Field
         if (isUserIDPresent())
         {
-            m_bodyCompositionMeasurement.userID = UserIndex(parser, configuration).getBtSpecObject();
+            m_btSpecObject.userID = UserIndex(parser, configuration).getBtSpecObject();
         }
 
         // 3.2.1.5 Basal Metabolism
         // Unit is kilojoules
         if (isBasalMetabolismPresent())
         {
-            m_bodyCompositionMeasurement.basalMetabolism = parser.parseUInt16();
+            m_btSpecObject.basalMetabolism = parser.parseUInt16();
         }
 
         // 3.2.1.6 Muscle Percentage
         // Unit is 1/10 of a percent
         if (isMusclePercentagePresent())
         {
-            m_bodyCompositionMeasurement.musclePercentage = parser.parseUInt16();
+            m_btSpecObject.musclePercentage = parser.parseUInt16();
         }
 
         // 3.2.1.7 Muscle Mass
         if (isMuscleMassPresent())
         {
-            m_bodyCompositionMeasurement.muscleMass = parser.parseUInt16();
+            m_btSpecObject.muscleMass = parser.parseUInt16();
         }
 
         // 3.2.1.8 Fat Free Mass
         if (isFatFreeMassPresent())
         {
-            m_bodyCompositionMeasurement.fatFreeMass = parser.parseUInt16();
+            m_btSpecObject.fatFreeMass = parser.parseUInt16();
         }
 
         // 3.2.1.9 Soft Lean Mass
         if (isSoftLeanMassPresent())
         {
-            m_bodyCompositionMeasurement.softLeanMass = parser.parseUInt16();
+            m_btSpecObject.softLeanMass = parser.parseUInt16();
         }
 
         // 3.2.1.10 Body Water Mass
         if (isBodyWaterMassPresent())
         {
-            m_bodyCompositionMeasurement.bodyWaterMass = parser.parseUInt16();
+            m_btSpecObject.bodyWaterMass = parser.parseUInt16();
         }
 
         // 3.2.1.11 Impedance
         // Unit is 1/10 of an Ohm
         if (isImpedancePresent())
         {
-            m_bodyCompositionMeasurement.impedance = parser.parseUInt16();
+            m_btSpecObject.impedance = parser.parseUInt16();
         }
 
         // 3.2.1.12 Weight
         if (isWeightPresent())
         {
-            m_bodyCompositionMeasurement.weight = parser.parseUInt16();
+            m_btSpecObject.weight = parser.parseUInt16();
         }
 
         // 3.2.1.13 Height
         if (isHeightPresent())
         {
-            m_bodyCompositionMeasurement.height = parser.parseUInt16();
+            m_btSpecObject.height = parser.parseUInt16();
         }
 
         return true;
@@ -130,12 +114,12 @@ private:
 
         if (isTimeStampPresent())
         {
-            ss << ", TimeStamp: " << DateTime(m_bodyCompositionMeasurement.timeStamp, configuration);
+            ss << ", TimeStamp: " << DateTime(m_btSpecObject.timeStamp, configuration);
         }
 
         if (isUserIDPresent())
         {
-            ss << ", UserID: " << UserIndex(m_bodyCompositionMeasurement.userID, configuration);
+            ss << ", UserID: " << UserIndex(m_btSpecObject.userID, configuration);
         }
 
         if (isBasalMetabolismPresent())
