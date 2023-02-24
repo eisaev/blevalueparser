@@ -3,6 +3,7 @@
 #include "characteristictype.h"
 #include "basevalue.h"
 #include "batterylevel.h"
+#include "batterylevelstatus.h"
 #include "bodycompositionfeature.h"
 #include "bodycompositionmeasurement.h"
 #include "bodycompositionmeasurementmibfs.h"
@@ -99,6 +100,8 @@ public:
             // 3.8 IEEE 11073-20601 Regulatory Certification Data List
             case CharacteristicType::IEEE1107320601RegulatoryCertificationDataList:
                 // TODO:
+                // ISO/IEEE FDIS 11073-20601:2022
+                // ISO/IEEE 11073-20101:2004 for ASN.1 MDER (medical device encoding rules)
                 break;
             // 3.9 PnPID
             case CharacteristicType::PnPID:
@@ -121,8 +124,7 @@ public:
                 return make_value<BatteryLevel>(data, size);
             // 3.2 Battery Level Status
             case CharacteristicType::BatteryLevelStatus:
-                // TODO:
-                break;
+                return make_value<BatteryLevelStatus>(data, size);
             // 3.3 Estimated Service Date
             case CharacteristicType::EstimatedServiceDate:
                 // TODO:

@@ -2,6 +2,8 @@
 
 #include "blevalueparser/bvp.h"
 
+#define C(x) static_cast<char>(x)
+
 
 namespace bvp
 {
@@ -20,7 +22,7 @@ protected:
 
 TEST_F(HeartRateMeasurementTest, ContactsSupportedNotConnected)
 {
-    constexpr char flags = 0b00000100;
+    constexpr char flags = C(0b00000100);
     constexpr char data[] = { flags, '\xAA' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -43,7 +45,7 @@ TEST_F(HeartRateMeasurementTest, ContactsSupportedNotConnected)
 
 TEST_F(HeartRateMeasurementTest, ContactsSupportedConnected)
 {
-    constexpr char flags = 0b00000110;
+    constexpr char flags = C(0b00000110);
     constexpr char data[] = { flags, '\xAA' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -66,7 +68,7 @@ TEST_F(HeartRateMeasurementTest, ContactsSupportedConnected)
 
 TEST_F(HeartRateMeasurementTest, HR8)
 {
-    constexpr char flags = 0b00000000;
+    constexpr char flags = C(0b00000000);
     constexpr char data[] = { flags, '\xAA' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -89,7 +91,7 @@ TEST_F(HeartRateMeasurementTest, HR8)
 
 TEST_F(HeartRateMeasurementTest, HR16)
 {
-    constexpr char flags = 0b00000001;
+    constexpr char flags = C(0b00000001);
     constexpr char data[] = { flags, '\xAA', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -112,7 +114,7 @@ TEST_F(HeartRateMeasurementTest, HR16)
 
 TEST_F(HeartRateMeasurementTest, HR8_EE)
 {
-    constexpr char flags = 0b00001000;
+    constexpr char flags = C(0b00001000);
     constexpr char data[] = { flags, '\xAA', '\xBB', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -136,7 +138,7 @@ TEST_F(HeartRateMeasurementTest, HR8_EE)
 
 TEST_F(HeartRateMeasurementTest, HR16_EE)
 {
-    constexpr char flags = 0b00001001;
+    constexpr char flags = C(0b00001001);
     constexpr char data[] = { flags, '\xAA', '\x01', '\xBB', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -160,7 +162,7 @@ TEST_F(HeartRateMeasurementTest, HR16_EE)
 
 TEST_F(HeartRateMeasurementTest, HR8_EE_RR1)
 {
-    constexpr char flags = 0b00011000;
+    constexpr char flags = C(0b00011000);
     constexpr char data[] = { flags, '\xAA', '\xBB', '\x01', '\xCC', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -188,7 +190,7 @@ TEST_F(HeartRateMeasurementTest, HR8_EE_RR1)
 
 TEST_F(HeartRateMeasurementTest, HR8_RR9)
 {
-    constexpr char flags = 0b00010000;
+    constexpr char flags = C(0b00010000);
     constexpr char data[] = { flags, '\xAA', '\x00', '\x00', '\x01', '\x00', '\x02', '\x00', '\x03', '\x00', '\xF3', '\x03', '\xFC', '\xFF', '\xFD', '\xFF', '\xFE', '\xFF', '\xFF', '\xFF' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -232,7 +234,7 @@ TEST_F(HeartRateMeasurementTest, HR8_RR9)
 // 10th RR-Interval should be ignored in this case
 TEST_F(HeartRateMeasurementTest, HR8_RR10)
 {
-    constexpr char flags = 0b00010000;
+    constexpr char flags = C(0b00010000);
     constexpr char data[] = { flags, '\xAA', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01', '\xA8', '\x01', '\xA9', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -275,7 +277,7 @@ TEST_F(HeartRateMeasurementTest, HR8_RR10)
 
 TEST_F(HeartRateMeasurementTest, HR8_EE_RR8)
 {
-    constexpr char flags = 0b00011000;
+    constexpr char flags = C(0b00011000);
     constexpr char data[] = { flags, '\xAA', '\xBB', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01', '\xA8', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -318,7 +320,7 @@ TEST_F(HeartRateMeasurementTest, HR8_EE_RR8)
 // 9th RR-Interval should be ignored in this case
 TEST_F(HeartRateMeasurementTest, HR8_EE_RR9)
 {
-    constexpr char flags = 0b00011000;
+    constexpr char flags = C(0b00011000);
     constexpr char data[] = { flags, '\xAA', '\xBB', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01', '\xA8', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -360,7 +362,7 @@ TEST_F(HeartRateMeasurementTest, HR8_EE_RR9)
 
 TEST_F(HeartRateMeasurementTest, HR16_RR8)
 {
-    constexpr char flags = 0b00010001;
+    constexpr char flags = C(0b00010001);
     constexpr char data[] = { flags, '\xAA', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01', '\xA8', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -402,7 +404,7 @@ TEST_F(HeartRateMeasurementTest, HR16_RR8)
 // 9th RR-Interval should be ignored in this case
 TEST_F(HeartRateMeasurementTest, HR16_RR9)
 {
-    constexpr char flags = 0b00010001;
+    constexpr char flags = C(0b00010001);
     constexpr char data[] = { flags, '\xAA', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01', '\xA8', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -443,7 +445,7 @@ TEST_F(HeartRateMeasurementTest, HR16_RR9)
 
 TEST_F(HeartRateMeasurementTest, HR16_EE_RR7)
 {
-    constexpr char flags = 0b00011001;
+    constexpr char flags = C(0b00011001);
     constexpr char data[] = { flags, '\xAA', '\x01', '\xBB', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -484,7 +486,7 @@ TEST_F(HeartRateMeasurementTest, HR16_EE_RR7)
 // 8th RR-Interval should be ignored in this case
 TEST_F(HeartRateMeasurementTest, HR16_EE_RR8)
 {
-    constexpr char flags = 0b00011001;
+    constexpr char flags = C(0b00011001);
     constexpr char data[] = { flags, '\xAA', '\x01', '\xBB', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -524,7 +526,7 @@ TEST_F(HeartRateMeasurementTest, HR16_EE_RR8)
 
 TEST_F(HeartRateMeasurementTest, TooShort)
 {
-    constexpr char flags = 0b00000000;
+    constexpr char flags = C(0b00000000);
     constexpr char data[] = { flags };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -536,7 +538,7 @@ TEST_F(HeartRateMeasurementTest, TooShort)
 
 TEST_F(HeartRateMeasurementTest, TooLong)
 {
-    constexpr char flags = 0b00011001;
+    constexpr char flags = C(0b00011001);
     constexpr char data[] = { flags, '\xAA', '\x01', '\xBB', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01', '\xA8', '\x01' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -548,7 +550,7 @@ TEST_F(HeartRateMeasurementTest, TooLong)
 
 TEST_F(HeartRateMeasurementTest, BrokenPacket)
 {
-    constexpr char flags = 0b00000001;
+    constexpr char flags = C(0b00000001);
     constexpr char data[] = { flags, '\xAA' };
 
     auto result = bleValueParser.make_value<HeartRateMeasurement>(data, sizeof(data));
@@ -560,7 +562,7 @@ TEST_F(HeartRateMeasurementTest, BrokenPacket)
 
 TEST_F(HeartRateMeasurementTest, ToString)
 {
-    constexpr char flags = 0b00011001;
+    constexpr char flags = C(0b00011001);
     constexpr char data[] = { flags, '\xAA', '\x01', '\xBB', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01' };
 
     auto result = bleValueParser.make_value(CharacteristicType::HeartRateMeasurement,

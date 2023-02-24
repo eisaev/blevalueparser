@@ -12,6 +12,7 @@ find_package(gtest REQUIRED)
 set(TEST_SOURCES
     tests.cpp
     batteryleveltest.cpp
+    batterylevelstatustest.cpp
     bodycompositionfeaturetest.cpp
     bodycompositionmeasurementmibfstest.cpp
     bodycompositionmeasurementtest.cpp

@@ -19,6 +19,8 @@ struct BatteryLevelStruct
 class BatteryLevel final : public BaseValueSpec<BatteryLevelStruct>
 {
 public:
+    friend class BatteryLevelStatus;
+
     uint8_t level() const
     {
         return m_btSpecObject.batteryLevel;

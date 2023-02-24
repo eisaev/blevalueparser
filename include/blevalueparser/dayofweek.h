@@ -21,6 +21,42 @@ enum class DayOfWeekEnum
     Sunday      = 7
     // 8–255 - Reserved for Future Use
 };
+inline std::ostream &operator<<(std::ostream &os, const DayOfWeekEnum value)
+{
+    switch (value)
+    {
+        case DayOfWeekEnum::Unknown:    os << "<Unknown>";  break;
+        case DayOfWeekEnum::Monday:     os << "Mon";        break;
+        case DayOfWeekEnum::Tuesday:    os << "Tue";        break;
+        case DayOfWeekEnum::Wednesday:  os << "Wed";        break;
+        case DayOfWeekEnum::Thursday:   os << "Thu";        break;
+        case DayOfWeekEnum::Friday:     os << "Fri";        break;
+        case DayOfWeekEnum::Saturday:   os << "Sat";        break;
+        case DayOfWeekEnum::Sunday:     os << "Sun";        break;
+    }
+
+    return os;
+}
+inline DayOfWeekEnum &operator%=(DayOfWeekEnum &lhs, const DayOfWeekEnum &rhs)
+{
+    lhs = DayOfWeekEnum::Unknown;
+
+    switch (rhs)
+    {
+        case DayOfWeekEnum::Unknown:
+        case DayOfWeekEnum::Monday:
+        case DayOfWeekEnum::Tuesday:
+        case DayOfWeekEnum::Wednesday:
+        case DayOfWeekEnum::Thursday:
+        case DayOfWeekEnum::Friday:
+        case DayOfWeekEnum::Saturday:
+        case DayOfWeekEnum::Sunday:
+            lhs = rhs;
+            break;
+    }
+
+    return lhs;
+}
 
 struct DayOfWeekStruct
 {
@@ -47,55 +83,14 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_btSpecObject.dayOfWeek = DayOfWeekEnum(parser.parseUInt8());
-        switch (m_btSpecObject.dayOfWeek)
-        {
-            case DayOfWeekEnum::Unknown:
-            case DayOfWeekEnum::Monday:
-            case DayOfWeekEnum::Tuesday:
-            case DayOfWeekEnum::Wednesday:
-            case DayOfWeekEnum::Thursday:
-            case DayOfWeekEnum::Friday:
-            case DayOfWeekEnum::Saturday:
-            case DayOfWeekEnum::Sunday:
-                break;
-            default:
-                m_btSpecObject.dayOfWeek = DayOfWeekEnum::Unknown;
-                break;
-        }
+        m_btSpecObject.dayOfWeek %= DayOfWeekEnum(parser.parseUInt8());
 
         return true;
     }
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        switch (m_btSpecObject.dayOfWeek)
-        {
-            case DayOfWeekEnum::Unknown:
-                ss << "<Unknown>";
-                break;
-            case DayOfWeekEnum::Monday:
-                ss << "Mon";
-                break;
-            case DayOfWeekEnum::Tuesday:
-                ss << "Tue";
-                break;
-            case DayOfWeekEnum::Wednesday:
-                ss << "Wed";
-                break;
-            case DayOfWeekEnum::Thursday:
-                ss << "Thu";
-                break;
-            case DayOfWeekEnum::Friday:
-                ss << "Fri";
-                break;
-            case DayOfWeekEnum::Saturday:
-                ss << "Sat";
-                break;
-            case DayOfWeekEnum::Sunday:
-                ss << "Sun";
-                break;
-        }
+        ss << m_btSpecObject.dayOfWeek;
     }
 };
 

@@ -19,6 +19,42 @@ enum class BodySensorLocationEnum
     EarLobe     = 5,
     Foot        = 6
 };
+inline std::ostream &operator<<(std::ostream &os, const BodySensorLocationEnum value)
+{
+    switch (value)
+    {
+        case BodySensorLocationEnum::Unknown: os << "<Unknown>";    break;
+        case BodySensorLocationEnum::Other:   os << "Other";        break;
+        case BodySensorLocationEnum::Chest:   os << "Chest";        break;
+        case BodySensorLocationEnum::Wrist:   os << "Wrist";        break;
+        case BodySensorLocationEnum::Finger:  os << "Finger";       break;
+        case BodySensorLocationEnum::Hand:    os << "Hand";         break;
+        case BodySensorLocationEnum::EarLobe: os << "Ear Lobe";     break;
+        case BodySensorLocationEnum::Foot:    os << "Foot";         break;
+    }
+
+    return os;
+}
+inline BodySensorLocationEnum &operator%=(BodySensorLocationEnum &lhs, const BodySensorLocationEnum &rhs)
+{
+    lhs = BodySensorLocationEnum::Unknown;
+
+    switch (rhs)
+    {
+        case BodySensorLocationEnum::Unknown:
+        case BodySensorLocationEnum::Other:
+        case BodySensorLocationEnum::Chest:
+        case BodySensorLocationEnum::Wrist:
+        case BodySensorLocationEnum::Finger:
+        case BodySensorLocationEnum::Hand:
+        case BodySensorLocationEnum::EarLobe:
+        case BodySensorLocationEnum::Foot:
+            lhs = rhs;
+            break;
+    }
+
+    return lhs;
+}
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.35 Body Sensor Location
@@ -48,40 +84,14 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        // GATT_Specification_Supplement_v8.pdf
-        // 3.35 Body Sensor Location
-        m_btSpecObject.bodySensorLocation = BodySensorLocationEnum(parser.parseUInt8());
-        switch (m_btSpecObject.bodySensorLocation)
-        {
-            case BodySensorLocationEnum::Unknown:
-            case BodySensorLocationEnum::Other:
-            case BodySensorLocationEnum::Chest:
-            case BodySensorLocationEnum::Wrist:
-            case BodySensorLocationEnum::Finger:
-            case BodySensorLocationEnum::Hand:
-            case BodySensorLocationEnum::EarLobe:
-            case BodySensorLocationEnum::Foot:
-                break;
-            default:
-                m_btSpecObject.bodySensorLocation = BodySensorLocationEnum::Unknown;
-        }
+        m_btSpecObject.bodySensorLocation %= BodySensorLocationEnum(parser.parseUInt8());
 
         return true;
     }
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        switch (m_btSpecObject.bodySensorLocation)
-        {
-            case BodySensorLocationEnum::Unknown: ss << "<Unknown>"; break;
-            case BodySensorLocationEnum::Other:   ss << "Other"; break;
-            case BodySensorLocationEnum::Chest:   ss << "Chest"; break;
-            case BodySensorLocationEnum::Wrist:   ss << "Wrist"; break;
-            case BodySensorLocationEnum::Finger:  ss << "Finger"; break;
-            case BodySensorLocationEnum::Hand:    ss << "Hand"; break;
-            case BodySensorLocationEnum::EarLobe: ss << "Ear Lobe"; break;
-            case BodySensorLocationEnum::Foot:    ss << "Foot"; break;
-        }
+        ss << m_btSpecObject.bodySensorLocation;
     }
 };
 

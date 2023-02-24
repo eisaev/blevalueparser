@@ -10,22 +10,22 @@ namespace bvp
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.34.1 Flags field
-constexpr uint16_t BCS_FLAG_BCM_MEASUREMENT_UNITS           = 1 <<   0;
-constexpr uint16_t BCS_FLAG_BCM_TIME_STAMP_PRESENT          = 1 <<   1;
-constexpr uint16_t BCS_FLAG_BCM_USER_ID_PRESENT             = 1 <<   2;
-constexpr uint16_t BCS_FLAG_BCM_BASAL_METABOLISM_PRESENT    = 1 <<   3;
-constexpr uint16_t BCS_FLAG_BCM_MUSCLE_PERCENTAGE_PRESENT   = 1 <<   4;
-constexpr uint16_t BCS_FLAG_BCM_MUSCLE_MASS_PRESENT         = 1 <<   5;
-constexpr uint16_t BCS_FLAG_BCM_FAT_FREE_MASS_PRESENT       = 1 <<   6;
-constexpr uint16_t BCS_FLAG_BCM_SOFT_LEAN_MASS_PRESENT      = 1 <<   7;
-constexpr uint16_t BCS_FLAG_BCM_BODY_WATER_MASS_PRESENT     = 1 <<   8;
-constexpr uint16_t BCS_FLAG_BCM_IMPEDANCE_PRESENT           = 1 <<   9;
-constexpr uint16_t BCS_FLAG_BCM_WEIGHT_PRESENT              = 1 <<  10;
-constexpr uint16_t BCS_FLAG_BCM_HEIGHT_PRESENT              = 1 <<  11;
-constexpr uint16_t BCS_FLAG_BCM_MULTIPLE_PACKET_MEASUREMENT = 1 <<  12;
-constexpr uint16_t BCS_FLAG_BCM_RESERVED1                   = 1 <<  13;
-constexpr uint16_t BCS_FLAG_BCM_RESERVED2                   = 1 <<  14;
-constexpr uint16_t BCS_FLAG_BCM_RESERVED3                   = 1 <<  15;
+constexpr uint16_t BCS_FLAG_BCM_MEASUREMENT_UNITS           = 1 <<  0;
+constexpr uint16_t BCS_FLAG_BCM_TIME_STAMP_PRESENT          = 1 <<  1;
+constexpr uint16_t BCS_FLAG_BCM_USER_ID_PRESENT             = 1 <<  2;
+constexpr uint16_t BCS_FLAG_BCM_BASAL_METABOLISM_PRESENT    = 1 <<  3;
+constexpr uint16_t BCS_FLAG_BCM_MUSCLE_PERCENTAGE_PRESENT   = 1 <<  4;
+constexpr uint16_t BCS_FLAG_BCM_MUSCLE_MASS_PRESENT         = 1 <<  5;
+constexpr uint16_t BCS_FLAG_BCM_FAT_FREE_MASS_PRESENT       = 1 <<  6;
+constexpr uint16_t BCS_FLAG_BCM_SOFT_LEAN_MASS_PRESENT      = 1 <<  7;
+constexpr uint16_t BCS_FLAG_BCM_BODY_WATER_MASS_PRESENT     = 1 <<  8;
+constexpr uint16_t BCS_FLAG_BCM_IMPEDANCE_PRESENT           = 1 <<  9;
+constexpr uint16_t BCS_FLAG_BCM_WEIGHT_PRESENT              = 1 << 10;
+constexpr uint16_t BCS_FLAG_BCM_HEIGHT_PRESENT              = 1 << 11;
+constexpr uint16_t BCS_FLAG_BCM_MULTIPLE_PACKET_MEASUREMENT = 1 << 12;
+constexpr uint16_t BCS_FLAG_BCM_RESERVED1                   = 1 << 13;
+constexpr uint16_t BCS_FLAG_BCM_RESERVED2                   = 1 << 14;
+constexpr uint16_t BCS_FLAG_BCM_RESERVED3                   = 1 << 15;
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.34 Body Composition Measurement

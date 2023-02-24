@@ -19,6 +19,40 @@ enum class TimeSourceEnum : uint8_t
     AtomicClock         = 5,
     CellularNetwork     = 6,
 };
+inline std::ostream &operator<<(std::ostream &os, const TimeSourceEnum value)
+{
+    switch (value)
+    {
+        case TimeSourceEnum::Unknown:               os << "<Unknown>";              break;
+        case TimeSourceEnum::NetworkTimeProtocol:   os << "NetworkTimeProtocol";    break;
+        case TimeSourceEnum::GPS:                   os << "GPS";                    break;
+        case TimeSourceEnum::RadioTimeSignal:       os << "RadioTimeSignal";        break;
+        case TimeSourceEnum::Manual:                os << "Manual";                 break;
+        case TimeSourceEnum::AtomicClock:           os << "AtomicClock";            break;
+        case TimeSourceEnum::CellularNetwork:       os << "CellularNetwork";        break;
+    }
+
+    return os;
+}
+inline TimeSourceEnum &operator%=(TimeSourceEnum &lhs, const TimeSourceEnum &rhs)
+{
+    lhs = TimeSourceEnum::Unknown;
+
+    switch (rhs)
+    {
+        case TimeSourceEnum::Unknown:
+        case TimeSourceEnum::NetworkTimeProtocol:
+        case TimeSourceEnum::GPS:
+        case TimeSourceEnum::RadioTimeSignal:
+        case TimeSourceEnum::Manual:
+        case TimeSourceEnum::AtomicClock:
+        case TimeSourceEnum::CellularNetwork:
+            lhs = rhs;
+            break;
+    }
+
+    return lhs;
+}
 
 struct TimeSourceStruct
 {
@@ -45,51 +79,14 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_btSpecObject.timeSource = TimeSourceEnum(parser.parseUInt8());
-        switch (m_btSpecObject.timeSource)
-        {
-            case TimeSourceEnum::Unknown:
-            case TimeSourceEnum::NetworkTimeProtocol:
-            case TimeSourceEnum::GPS:
-            case TimeSourceEnum::RadioTimeSignal:
-            case TimeSourceEnum::Manual:
-            case TimeSourceEnum::AtomicClock:
-            case TimeSourceEnum::CellularNetwork:
-                break;
-            default:
-                m_btSpecObject.timeSource = TimeSourceEnum::Unknown;
-                break;
-        }
+        m_btSpecObject.timeSource %= TimeSourceEnum(parser.parseUInt8());
 
         return true;
     }
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        switch (m_btSpecObject.timeSource)
-        {
-            case TimeSourceEnum::Unknown:
-                ss << "<Unknown>";
-                break;
-            case TimeSourceEnum::NetworkTimeProtocol:
-                ss << "NetworkTimeProtocol";
-                break;
-            case TimeSourceEnum::GPS:
-                ss << "GPS";
-                break;
-            case TimeSourceEnum::RadioTimeSignal:
-                ss << "RadioTimeSignal";
-                break;
-            case TimeSourceEnum::Manual:
-                ss << "Manual";
-                break;
-            case TimeSourceEnum::AtomicClock:
-                ss << "AtomicClock";
-                break;
-            case TimeSourceEnum::CellularNetwork:
-                ss << "CellularNetwork";
-                break;
-        }
+        ss << m_btSpecObject.timeSource;
     }
 };
 
