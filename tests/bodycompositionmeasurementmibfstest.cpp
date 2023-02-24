@@ -447,8 +447,8 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, Imperial)
 
 TEST_F(BodyCompositionMeasurementMIBFSTest, ToString)
 {
-    //                           RRRMFFFF    FFFFFFFU
-    constexpr char flags[] = { 0b00000100, 0b00000010 };
+    //                             RRRMFFFF       FFFFFFFU
+    constexpr char flags[] = { C(0b00000100), C(0b00000010) };
     constexpr char data[] = {
         flags[1], flags[0],                                     // flags
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp

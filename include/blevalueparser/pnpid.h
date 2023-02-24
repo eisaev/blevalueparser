@@ -16,6 +16,32 @@ enum class VendorIdSourceEnum
     Bluetooth   = 1,
     USB         = 2
 };
+inline std::ostream &operator<<(std::ostream &os, const VendorIdSourceEnum value)
+{
+    switch (value)
+    {
+        case VendorIdSourceEnum::Unknown:   os << "<Unknown>";  break;
+        case VendorIdSourceEnum::Bluetooth: os << "Bluetooth";  break;
+        case VendorIdSourceEnum::USB:       os << "USB";        break;
+    }
+
+    return os;
+}
+inline VendorIdSourceEnum &operator%=(VendorIdSourceEnum &lhs, const VendorIdSourceEnum &rhs)
+{
+    lhs = VendorIdSourceEnum::Unknown;
+
+    switch (rhs)
+    {
+        case VendorIdSourceEnum::Unknown:
+        case VendorIdSourceEnum::Bluetooth:
+        case VendorIdSourceEnum::USB:
+            lhs = rhs;
+            break;
+    }
+
+    return lhs;
+}
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.169.1 Vendor ID Source field
@@ -81,17 +107,7 @@ private:
     virtual bool parse(Parser &parser) override
     {
         // 3.9.1.1 Vendor ID Source Field
-        m_btSpecObject.vendorIdSource.vendorIdSource = VendorIdSourceEnum(parser.parseUInt8());
-        switch (m_btSpecObject.vendorIdSource.vendorIdSource)
-        {
-            case VendorIdSourceEnum::Unknown:
-            case VendorIdSourceEnum::Bluetooth:
-            case VendorIdSourceEnum::USB:
-                break;
-            default:
-                m_btSpecObject.vendorIdSource.vendorIdSource = VendorIdSourceEnum::Unknown;
-                break;
-        }
+        m_btSpecObject.vendorIdSource.vendorIdSource %= VendorIdSourceEnum(parser.parseUInt8());
         // 3.9.1.2 Vendor ID Field
         m_btSpecObject.vendorId = parser.parseUInt16();
         // 3.9.1.3 Product ID Field
@@ -107,20 +123,7 @@ private:
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        ss << "(";
-        switch (m_btSpecObject.vendorIdSource.vendorIdSource)
-        {
-            case VendorIdSourceEnum::Unknown:
-                ss << "<Unknown>";
-                break;
-            case VendorIdSourceEnum::Bluetooth:
-                ss << "Bluetooth";
-                break;
-            case VendorIdSourceEnum::USB:
-                ss << "USB";
-                break;
-        }
-        ss << ") ";
+        ss << "(" << m_btSpecObject.vendorIdSource.vendorIdSource << ") ";
         auto originalFlags = ss.flags();
         ss << "VID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_btSpecObject.vendorId << ", ";
         ss << "PID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_btSpecObject.productId << ", ";

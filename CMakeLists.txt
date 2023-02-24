@@ -18,6 +18,7 @@ set(LIBRARY_SOURCES
     include/blevalueparser/servicetype.h
     # characteristics
     include/blevalueparser/batterylevel.h
+    include/blevalueparser/batterylevelstatus.h
     include/blevalueparser/bodycompositionfeature.h
     include/blevalueparser/bodycompositionmeasurementbase.h
     include/blevalueparser/bodycompositionmeasurement.h

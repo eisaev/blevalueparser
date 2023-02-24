@@ -6,11 +6,11 @@
 namespace bvp
 {
 
+// GATT_Specification_Supplement_v8.pdf
+// 3.33.1 Body Composition Feature field
 constexpr uint8_t BCS_FLAG_BCF_WEIGHT_RESOLUTION_SHIFT = 11;
 constexpr uint8_t BCS_FLAG_BCF_HEIGHT_RESOLUTION_SHIFT = 15;
 
-// GATT_Specification_Supplement_v8.pdf
-// 3.33.1 Body Composition Feature field
 constexpr uint32_t BCS_FLAG_BCF_TIME_STAMP_SUPPORTED        = 1 <<  0;
 constexpr uint32_t BCS_FLAG_BCF_MULTIPLE_USERS_SUPPORTED    = 1 <<  1;
 constexpr uint32_t BCS_FLAG_BCF_BASAL_METABOLISM_SUPPORTED  = 1 <<  2;

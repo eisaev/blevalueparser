@@ -13,6 +13,30 @@ enum class HeartRateControlPointEnum : uint8_t
     Reserved            = 0,  // 0, 2–255 - Reserved for Future Use
     ResetEnergyExpended = 1
 };
+inline std::ostream &operator<<(std::ostream &os, const HeartRateControlPointEnum value)
+{
+    switch (value)
+    {
+        case HeartRateControlPointEnum::Reserved:               os << "<Reserved>";             break;
+        case HeartRateControlPointEnum::ResetEnergyExpended:    os << "ResetEnergyExpended";    break;
+    }
+
+    return os;
+}
+inline HeartRateControlPointEnum &operator%=(HeartRateControlPointEnum &lhs, const HeartRateControlPointEnum &rhs)
+{
+    lhs = HeartRateControlPointEnum::Reserved;
+
+    switch (rhs)
+    {
+        case HeartRateControlPointEnum::Reserved:
+        case HeartRateControlPointEnum::ResetEnergyExpended:
+            lhs = rhs;
+            break;
+    }
+
+    return lhs;
+}
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.111 Heart Rate Control Point
@@ -42,31 +66,14 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        m_btSpecObject.heartRateControlPoint = HeartRateControlPointEnum(parser.parseUInt8());
-        switch (m_btSpecObject.heartRateControlPoint)
-        {
-            case HeartRateControlPointEnum::Reserved:
-            case HeartRateControlPointEnum::ResetEnergyExpended:
-                break;
-            default:
-                m_btSpecObject.heartRateControlPoint = HeartRateControlPointEnum::Reserved;
-                break;
-        }
+        m_btSpecObject.heartRateControlPoint %= HeartRateControlPointEnum(parser.parseUInt8());
 
         return true;
     }
 
     virtual void toStringStream(std::stringstream &ss) const override
     {
-        switch (m_btSpecObject.heartRateControlPoint)
-        {
-            case HeartRateControlPointEnum::Reserved:
-                ss << "<Reserved>";
-                break;
-            case HeartRateControlPointEnum::ResetEnergyExpended:
-                ss << "ResetEnergyExpended";
-                break;
-        }
+        ss << m_btSpecObject.heartRateControlPoint;
     }
 };
 
