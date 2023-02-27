@@ -16,10 +16,6 @@ jobs:
             OS: ubuntu-20.04
             CLANG_TIDY: '-DCMAKE_CXX_CLANG_TIDY="clang-tidy;--export-fixes=clang-tidy.fixes;--fix;--warnings-as-errors=*"'
             TESTS_DIR: build/tests
-          - RUNS_ON: [macos-12, self-hosted]
-            OS: macos-12
-            CLANG_TIDY: ''
-            TESTS_DIR: build/tests/bvptest.app/Contents/MacOS
           - RUNS_ON: [macos-13, self-hosted]
             OS: macos-13
             CLANG_TIDY: ''
