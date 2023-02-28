@@ -120,11 +120,15 @@ protected:
     friend class InternalParserTest_String_Test;
     friend class InternalParserTest_UInt8_Test;
     friend class InternalParserTest_UInt16_Test;
+    friend class InternalParserTest_UInt24_Test;
     friend class InternalParserTest_UInt32_Test;
+    friend class InternalParserTest_UInt48_Test;
     friend class InternalParserTest_UInt64_Test;
     friend class InternalParserTest_Int8_Test;
     friend class InternalParserTest_Int16_Test;
+    friend class InternalParserTest_Int24_Test;
     friend class InternalParserTest_Int32_Test;
+    friend class InternalParserTest_Int48_Test;
     friend class InternalParserTest_Int64_Test;
     friend class InternalParserTest_Raw_OutOfData_Test;
     friend class InternalParserTest_Int_OutOfData_Test;
@@ -179,9 +183,21 @@ protected:
             return parseInt<uint16_t>();
         }
 
+        uint32_t parseUInt24()
+        {
+            constexpr uint8_t size = 24 / 8;
+            return parseInt<uint32_t>(size);
+        }
+
         uint32_t parseUInt32()
         {
             return parseInt<uint32_t>();
+        }
+
+        uint64_t parseUInt48()
+        {
+            constexpr uint8_t size = 48 / 8;
+            return parseInt<uint64_t>(size);
         }
 
         uint64_t parseUInt64()
@@ -199,9 +215,25 @@ protected:
             return parseInt<int16_t>();
         }
 
+        int32_t parseInt24()
+        {
+            constexpr uint8_t size = 24 / 8;
+            constexpr uint8_t shift = 8 * (sizeof(int32_t) - size);
+            constexpr uint16_t divider = 1 << shift;
+            return (parseInt<int32_t>(size) << shift) / divider;
+        }
+
         int32_t parseInt32()
         {
             return parseInt<int32_t>();
+        }
+
+        int64_t parseInt48()
+        {
+            constexpr uint8_t size = 48 / 8;
+            constexpr uint8_t shift = 8 * (sizeof(int64_t) - size);
+            constexpr uint32_t divider = 1 << shift;
+            return (parseInt<int64_t>(size) << shift) / divider;
         }
 
         int64_t parseInt64()
@@ -216,11 +248,10 @@ protected:
         bool m_outOfData;
 
         template <typename T>
-        T parseInt()
+        T parseInt(size_t offsetDiff = sizeof(T))
         {
             uint64_t result = 0;
 
-            constexpr size_t offsetDiff = sizeof(T);
             m_outOfData = m_offset + offsetDiff > m_size;
             if (!m_outOfData)
             {

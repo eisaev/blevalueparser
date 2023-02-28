@@ -19,6 +19,7 @@ set(TEST_SOURCES
     bodysensorlocationtest.cpp
     currenttimetest.cpp
     datetimetest.cpp
+    dateutctest.cpp
     daydatetimetest.cpp
     dayofweektest.cpp
     dstoffsettest.cpp

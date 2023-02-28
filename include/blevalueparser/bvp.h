@@ -10,6 +10,7 @@
 #include "bodysensorlocation.h"
 #include "currenttime.h"
 #include "datetime.h"
+#include "dateutc.h"
 #include "daydatetime.h"
 #include "dayofweek.h"
 #include "dstoffset.h"
@@ -50,6 +51,9 @@ public:
             // 3.70 Date Time
             case CharacteristicType::DateTime:
                 return make_value<DateTime>(data, size);
+            // 3.71 Date UTC
+            case CharacteristicType::DateUTC:
+                return make_value<DateUTC>(data, size);
             // 3.72 Day Date Time
             case CharacteristicType::DayDateTime:
                 return make_value<DayDateTime>(data, size);
@@ -368,7 +372,6 @@ public:
             case CharacteristicType::Count16:
             case CharacteristicType::Count24:
             case CharacteristicType::CountryCode:
-            case CharacteristicType::DateUTC:
             case CharacteristicType::ElectricCurrent:
             case CharacteristicType::ElectricCurrentRange:
             case CharacteristicType::ElectricCurrentSpecification:

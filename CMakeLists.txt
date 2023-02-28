@@ -26,6 +26,7 @@ set(LIBRARY_SOURCES
     include/blevalueparser/bodysensorlocation.h
     include/blevalueparser/currenttime.h
     include/blevalueparser/datetime.h
+    include/blevalueparser/dateutc.h
     include/blevalueparser/daydatetime.h
     include/blevalueparser/dayofweek.h
     include/blevalueparser/dstoffset.h
