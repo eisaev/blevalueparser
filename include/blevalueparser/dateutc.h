@@ -13,12 +13,15 @@ namespace bvp
 
 struct DateUTCStruct
 {
-    uint32_t date = 0;
+    uint32_t date{0};
 };
 
 class DateUTC final : public BaseValueSpec<DateUTCStruct>
 {
 public:
+    friend class BatteryInformation;
+    friend class EstimatedServiceDate;
+
     uint64_t days() const
     {
         return m_btSpecObject.date;
@@ -67,12 +70,12 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss        << std::setfill('0') << std::setw(2) << static_cast<int>(day());
-        ss << "." << std::setfill('0') << std::setw(2) << static_cast<int>(month());
-        ss << "." << std::setfill('0') << std::setw(4) << static_cast<int>(year());
-        ss << " (" << date() << " seconds since 1 Jan 1970)";
+        oss <<        std::setfill('0') << std::setw(2) << static_cast<int>(day());
+        oss << "." << std::setfill('0') << std::setw(2) << static_cast<int>(month());
+        oss << "." << std::setfill('0') << std::setw(4) << static_cast<int>(year());
+        oss << " (" << date() << " seconds since 1 Jan 1970)";
     }
 };
 

@@ -32,26 +32,26 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
-        std::stringstream ss;
-        ss << configuration.hexPrefix;
+        std::ostringstream oss;
+        oss << configuration.hexPrefix;
         while (!parser.atEnd())
         {
-            ss << std::uppercase
-               << std::setfill('0')
-               << std::setw(2)
-               << std::hex
-               << static_cast<int>(parser.parseUInt8())
-               << configuration.hexSeparator;
+            oss << std::uppercase
+                << std::setfill('0')
+                << std::setw(2)
+                << std::hex
+                << static_cast<int>(parser.parseUInt8())
+                << configuration.hexSeparator;
         }
-        m_btSpecObject.hexString = ss.str();
+        m_btSpecObject.hexString = oss.str();
         m_btSpecObject.hexString.pop_back();
 
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << m_btSpecObject.hexString;
+        oss << m_btSpecObject.hexString;
     }
 };
 

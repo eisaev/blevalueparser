@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class HeartRateControlPointTest : public testing::Test
+struct HeartRateControlPointTest : public testing::Test
 {
-protected:
-    explicit HeartRateControlPointTest() {}
-    virtual ~HeartRateControlPointTest() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(HeartRateControlPointTest, Zero)

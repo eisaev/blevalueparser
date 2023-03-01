@@ -11,8 +11,14 @@ find_package(gtest REQUIRED)
 
 set(TEST_SOURCES
     tests.cpp
+    batterycriticalstatustest.cpp
+    batteryenergystatustest.cpp
+    batteryhealthinformationtest.cpp
+    batteryhealthstatustest.cpp
+    batteryinformationtest.cpp
     batteryleveltest.cpp
     batterylevelstatustest.cpp
+    batterytimestatustest.cpp
     bodycompositionfeaturetest.cpp
     bodycompositionmeasurementmibfstest.cpp
     bodycompositionmeasurementtest.cpp
@@ -23,6 +29,7 @@ set(TEST_SOURCES
     daydatetimetest.cpp
     dayofweektest.cpp
     dstoffsettest.cpp
+    estimatedservicedatetest.cpp
     exacttime256test.cpp
     heartratecontrolpointtest.cpp
     heartratemeasurementtest.cpp

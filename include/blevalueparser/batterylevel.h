@@ -10,7 +10,7 @@ namespace bvp
 // 3.27 Battery Level
 struct BatteryLevelStruct
 {
-    uint8_t batteryLevel = 0;
+    uint8_t batteryLevel{0};
 };
 
 // BAS_V1.1.pdf
@@ -45,9 +45,9 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << static_cast<int>(m_btSpecObject.batteryLevel) << "%";
+        oss << static_cast<int>(m_btSpecObject.batteryLevel) << "%";
     }
 };
 

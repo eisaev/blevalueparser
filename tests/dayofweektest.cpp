@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class DayOfWeekTest : public testing::Test
+struct DayOfWeekTest : public testing::Test
 {
-protected:
-    explicit DayOfWeekTest() {}
-    virtual ~DayOfWeekTest() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(DayOfWeekTest, Monday)

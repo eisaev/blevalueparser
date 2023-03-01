@@ -47,7 +47,7 @@ inline VendorIdSourceEnum &operator%=(VendorIdSourceEnum &lhs, const VendorIdSou
 // 3.169.1 Vendor ID Source field
 struct VendorIdSourceStruct
 {
-    VendorIdSourceEnum vendorIdSource = VendorIdSourceEnum::Unknown;
+    VendorIdSourceEnum vendorIdSource{VendorIdSourceEnum::Unknown};
 };
 
 // GATT_Specification_Supplement_v8.pdf
@@ -55,9 +55,9 @@ struct VendorIdSourceStruct
 struct PnPIDStruct
 {
     VendorIdSourceStruct vendorIdSource;
-    uint16_t vendorId = 0;
-    uint16_t productId = 0;
-    uint16_t productVersion = 0;
+    uint16_t vendorId{0};
+    uint16_t productId{0};
+    uint16_t productVersion{0};
 };
 
 // DIS_SPEC_V11r00.pdf
@@ -121,14 +121,17 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << "(" << m_btSpecObject.vendorIdSource.vendorIdSource << ") ";
-        auto originalFlags = ss.flags();
-        ss << "VID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_btSpecObject.vendorId << ", ";
-        ss << "PID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_btSpecObject.productId << ", ";
-        ss.flags(originalFlags);
-        ss << "Version: " << static_cast<int>(majorVersion()) << "." << static_cast<int>(minorVersion()) << "." << static_cast<int>(subMinorVersion());
+        oss <<   "(" << m_btSpecObject.vendorIdSource.vendorIdSource << ")";
+        auto originalFlags = oss.flags();
+        oss <<  " VID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_btSpecObject.vendorId;
+        oss << ", PID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_btSpecObject.productId;
+        oss.flags(originalFlags);
+        oss << ", Version: "
+            <<        static_cast<int>(majorVersion())
+            << "." << static_cast<int>(minorVersion())
+            << "." << static_cast<int>(subMinorVersion());
     }
 };
 

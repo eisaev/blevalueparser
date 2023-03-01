@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class TimeAccuracyTest : public testing::Test
+struct TimeAccuracyTest : public testing::Test
 {
-protected:
-    explicit TimeAccuracyTest() {}
-    virtual ~TimeAccuracyTest() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(TimeAccuracyTest, Mininum)

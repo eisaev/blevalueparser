@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class DSTOffsetTest : public testing::Test
+struct DSTOffsetTest : public testing::Test
 {
-protected:
-    explicit DSTOffsetTest() {}
-    virtual ~DSTOffsetTest() {}
-
     BLEValueParser bleValueParser;
-
-    //    virtual void SetUp() {}
-    //    virtual void TearDown() {}
 };
 
 TEST_F(DSTOffsetTest, Unknown)

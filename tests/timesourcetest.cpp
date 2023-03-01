@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class TimeSourceTest : public testing::Test
+struct TimeSourceTest : public testing::Test
 {
-protected:
-    explicit TimeSourceTest() {}
-    virtual ~TimeSourceTest() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(TimeSourceTest, Unknown)

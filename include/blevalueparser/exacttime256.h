@@ -13,7 +13,7 @@ namespace bvp
 struct ExactTime256Struct
 {
     DayDateTimeStruct dayDateTime;
-    uint8_t fractions256 = 0;
+    uint8_t fractions256{0};
 };
 
 class ExactTime256 final : public BaseValueSpec<ExactTime256Struct>
@@ -82,10 +82,10 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << DayDateTime(m_btSpecObject.dayDateTime, configuration);
-        ss << "." <<  std::setfill('0') << std::setw(3) << static_cast<int>(milliseconds());
+        oss <<        DayDateTime(m_btSpecObject.dayDateTime, configuration);
+        oss << "." << std::setfill('0') << std::setw(3) << static_cast<int>(milliseconds());
     }
 };
 

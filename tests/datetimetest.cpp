@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class DateTimeTest : public testing::Test
+struct DateTimeTest : public testing::Test
 {
-protected:
-    explicit DateTimeTest() {}
-    virtual ~DateTimeTest() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(DateTimeTest, Normal)

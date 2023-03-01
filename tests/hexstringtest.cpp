@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class HexStringTest : public testing::Test
+struct HexStringTest : public testing::Test
 {
-protected:
-    explicit HexStringTest() {}
-    virtual ~HexStringTest() {}
-
     BLEValueParser bleValueParser;
-
-    //    virtual void SetUp() {}
-    //    virtual void TearDown() {}
 };
 
 TEST_F(HexStringTest, Basic)

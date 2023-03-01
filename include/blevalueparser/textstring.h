@@ -34,9 +34,9 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << m_btSpecObject.textString;
+        oss << m_btSpecObject.textString;
     }
 };
 

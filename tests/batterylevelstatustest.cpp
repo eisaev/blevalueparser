@@ -8,16 +8,9 @@
 namespace bvp
 {
 
-class BatteryLevelStatusTest : public testing::Test
+struct BatteryLevelStatusTest : public testing::Test
 {
-protected:
-    explicit BatteryLevelStatusTest() {}
-    virtual ~BatteryLevelStatusTest() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(BatteryLevelStatusTest, ResNone_AS0_BL0_Id0_Res1_FBat1_FExt1_FOther1_CT7_BCL3_BCS3_WlExt3_WdExt3_Bat1)
@@ -27,7 +20,7 @@ TEST_F(BatteryLevelStatusTest, ResNone_AS0_BL0_Id0_Res1_FBat1_FExt1_FOther1_CT7_
     //                                  RFFFTTTL       LSSWWEEB
     constexpr char powerState[] = { C(0b11111111), C(0b11111111) };
     constexpr char data[] = {
-        flags,                          // flags
+        flags,
         powerState[1], powerState[0]    // powerState
     };
 
@@ -69,7 +62,7 @@ TEST_F(BatteryLevelStatusTest, ResAll__AS0_BL0_Id0_Res1_FBat0_FExt0_FOther0_CT7_
     //                                  RFFFTTTL       LSSWWEEB
     constexpr char powerState[] = { C(0b10001110), C(0b01100110) };
     constexpr char data[] = {
-        flags,                          // flags
+        flags,
         powerState[1], powerState[0]    // powerState
     };
 
@@ -111,7 +104,7 @@ TEST_F(BatteryLevelStatusTest, ResPat1_AS0_BL0_Id1_Res0_FBat0_FExt0_FOther1_CT6_
     //                                  RFFFTTTL       LSSWWEEB
     constexpr char powerState[] = { C(0b00011100), C(0b11001101) };
     constexpr char data[] = {
-        flags,                          // flags
+        flags,
         powerState[1], powerState[0],   // powerState
         '\x0A', '\x0B'                  // identifier
     };
@@ -154,7 +147,7 @@ TEST_F(BatteryLevelStatusTest, ResPat2_AS0_BL1_Id0_Res1_FBat0_FExt1_FOther0_CT5_
     //                                  RFFFTTTL       LSSWWEEB
     constexpr char powerState[] = { C(0b10101011), C(0b00110010) };
     constexpr char data[] = {
-        flags,                          // flags
+        flags,
         powerState[1], powerState[0],   // powerState
         '\x2A'                          // batteryLevel
     };
@@ -198,7 +191,7 @@ TEST_F(BatteryLevelStatusTest, ResPat3_AS0_BL1_Id1_Res0_FBat0_FExt1_FOther1_CT4_
     constexpr char powerState[] = { C(0b00111001), C(0b10011001) };
     //                                  RRRRRFSS
     constexpr char data[] = {
-        flags,                          // flags
+        flags,
         powerState[1], powerState[0],   // powerState
         '\x0A', '\x0B',                 // identifier
         '\x2A'                          // batteryLevel
@@ -244,7 +237,7 @@ TEST_F(BatteryLevelStatusTest, ResPat4_AS1_BL0_Id0_Res1_FBat1_FExt0_FOther0_CT3_
     //                                    RRRRRFSS
     constexpr char additionalStatus = C(0b00100011);
     constexpr char data[] = {
-        flags,                          // flags
+        flags,
         powerState[1], powerState[0],   // powerState
         additionalStatus                // additionalStatus
     };
@@ -289,7 +282,7 @@ TEST_F(BatteryLevelStatusTest, ResPat5_AS1_BL0_Id1_Res0_FBat1_FExt0_FOther1_CT2_
     //                                    RRRRRFSS
     constexpr char additionalStatus = C(0b10001110);
     constexpr char data[] = {
-        flags,                          // flags
+        flags,
         powerState[1], powerState[0],   // powerState
         '\x0A', '\x0B',                 // identifier
         additionalStatus                // additionalStatus
@@ -335,7 +328,7 @@ TEST_F(BatteryLevelStatusTest, ResPat6_AS1_BL1_Id0_Res1_FBat1_FExt1_FOther0_CT1_
     //                                    RRRRRFSS
     constexpr char additionalStatus = C(0b01110001);
     constexpr char data[] = {
-        flags,                          // flags
+        flags,
         powerState[1], powerState[0],   // powerState
         '\x2A',                         // batteryLevel
         additionalStatus                // additionalStatus
@@ -381,7 +374,7 @@ TEST_F(BatteryLevelStatusTest, ResNone_AS1_BL1_Id1_Res0_FBat1_FExt1_FOther1_CT0_
     //                                    RRRRRFSS
     constexpr char additionalStatus = C(0b11111100);
     constexpr char data[] = {
-        flags,                          // flags
+        flags,
         powerState[1], powerState[0],   // powerState
         '\x0A', '\x0B',                 // identifier
         '\x2A',                         // batteryLevel
@@ -428,7 +421,7 @@ TEST_F(BatteryLevelStatusTest, ResAll__AS1_BL1_Id1_Res0_FBat0_FExt0_FOther0_CT0_
     //                                    RRRRRFSS
     constexpr char additionalStatus = C(0b00000000);
     constexpr char data[] = {
-        flags,                          // flags
+        flags,
         powerState[1], powerState[0],   // powerState
         '\x0A', '\x0B',                 // identifier
         '\x2A',                         // batteryLevel
@@ -497,7 +490,7 @@ TEST_F(BatteryLevelStatusTest, ToString)
     //                                    RRRRRFSS
     constexpr char additionalStatus = C(0b11111100);
     constexpr char data[] = {
-        flags,                          // flags
+        flags,
         powerState[1], powerState[0],   // powerState
         '\x0A', '\x0B',                 // identifier
         '\x2A',                         // batteryLevel

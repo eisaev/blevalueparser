@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class PnPIDTest : public testing::Test
+struct PnPIDTest : public testing::Test
 {
-protected:
-    explicit PnPIDTest() {}
-    virtual ~PnPIDTest() {}
-
     BLEValueParser bleValueParser;
-
-    //    virtual void SetUp() {}
-    //    virtual void TearDown() {}
 };
 
 TEST_F(PnPIDTest, Unknown)

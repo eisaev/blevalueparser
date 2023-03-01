@@ -42,7 +42,7 @@ inline HeartRateControlPointEnum &operator%=(HeartRateControlPointEnum &lhs, con
 // 3.111 Heart Rate Control Point
 struct HeartRateControlPointStruct
 {
-    HeartRateControlPointEnum heartRateControlPoint = HeartRateControlPointEnum::Reserved;
+    HeartRateControlPointEnum heartRateControlPoint{HeartRateControlPointEnum::Reserved};
 };
 
 // HRS_SPEC_V10.pdf
@@ -71,9 +71,9 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << m_btSpecObject.heartRateControlPoint;
+        oss << m_btSpecObject.heartRateControlPoint;
     }
 };
 

@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class ExactTime256Test : public testing::Test
+struct ExactTime256Test : public testing::Test
 {
-protected:
-    explicit ExactTime256Test() {}
-    virtual ~ExactTime256Test() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(ExactTime256Test, 255)

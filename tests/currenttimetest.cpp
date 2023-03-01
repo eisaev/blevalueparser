@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class CurrentTimeTest : public testing::Test
+struct CurrentTimeTest : public testing::Test
 {
-protected:
-    explicit CurrentTimeTest() {}
-    virtual ~CurrentTimeTest() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(CurrentTimeTest, Manual_255)

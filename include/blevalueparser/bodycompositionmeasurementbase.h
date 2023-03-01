@@ -31,19 +31,19 @@ constexpr uint16_t BCS_FLAG_BCM_RESERVED3                   = 1 << 15;
 // 3.34 Body Composition Measurement
 struct BodyCompositionMeasurementStruct
 {
-    uint16_t flags = 0;
-    uint16_t bodyFatPercentage = 0;
+    uint16_t flags{0};
+    uint16_t bodyFatPercentage{0};  // org.bluetooth.unit.percentage * 0.1
     DateTimeStruct timeStamp;
     UserIndexStruct userID;
-    uint16_t basalMetabolism = 0;
-    uint16_t musclePercentage = 0;
-    uint16_t muscleMass = 0;
-    uint16_t fatFreeMass = 0;
-    uint16_t softLeanMass = 0;
-    uint16_t bodyWaterMass = 0;
-    uint16_t impedance = 0;
-    uint16_t weight = 0;
-    uint16_t height = 0;
+    uint16_t basalMetabolism{0};  // org.bluetooth.unit.energy.joule * 1000
+    uint16_t musclePercentage{0};  // org.bluetooth.unit.percentage * 0.1
+    uint16_t muscleMass{0};
+    uint16_t fatFreeMass{0};
+    uint16_t softLeanMass{0};
+    uint16_t bodyWaterMass{0};
+    uint16_t impedance{0};  // org.bluetooth.unit.electric_resistance.ohm * 0.1
+    uint16_t weight{0};
+    uint16_t height{0};
 };
 
 // BCS_V1.0.0.pdf

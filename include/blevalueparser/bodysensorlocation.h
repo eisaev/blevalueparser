@@ -60,7 +60,7 @@ inline BodySensorLocationEnum &operator%=(BodySensorLocationEnum &lhs, const Bod
 // 3.35 Body Sensor Location
 struct BodySensorLocationStruct
 {
-    BodySensorLocationEnum bodySensorLocation = BodySensorLocationEnum::Unknown;
+    BodySensorLocationEnum bodySensorLocation{BodySensorLocationEnum::Unknown};
 };
 
 // HRS_SPEC_V10.pdf
@@ -89,9 +89,9 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << m_btSpecObject.bodySensorLocation;
+        oss << m_btSpecObject.bodySensorLocation;
     }
 };
 

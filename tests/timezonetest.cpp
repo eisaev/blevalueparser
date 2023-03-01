@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class TimeZoneTest : public testing::Test
+struct TimeZoneTest : public testing::Test
 {
-protected:
-    explicit TimeZoneTest() {}
-    virtual ~TimeZoneTest() {}
-
     BLEValueParser bleValueParser;
-
-    //    virtual void SetUp() {}
-    //    virtual void TearDown() {}
 };
 
 TEST_F(TimeZoneTest, Unknown)

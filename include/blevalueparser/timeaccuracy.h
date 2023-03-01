@@ -11,7 +11,7 @@ namespace bvp
 
 struct TimeAccuracyStruct
 {
-    uint8_t accuracy = 0;
+    uint8_t accuracy{0};
 };
 
 class TimeAccuracy final : public BaseValueSpec<TimeAccuracyStruct>
@@ -61,21 +61,21 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
         if (isUnknown())
         {
-            ss << "<Unknown>";
+            oss << "<Unknown>";
             return;
         }
 
         if (isLarger())
         {
-            ss << ">31625ms";
+            oss << ">31625ms";
             return;
         }
 
-        ss << accuracyMs() << "ms";
+        oss << accuracyMs() << "ms";
     }
 };
 

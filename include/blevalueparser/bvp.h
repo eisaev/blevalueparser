@@ -2,8 +2,14 @@
 
 #include "characteristictype.h"
 #include "basevalue.h"
+#include "batterycriticalstatus.h"
+#include "batteryenergystatus.h"
+#include "batteryhealthinformation.h"
+#include "batteryhealthstatus.h"
+#include "batteryinformation.h"
 #include "batterylevel.h"
 #include "batterylevelstatus.h"
+#include "batterytimestatus.h"
 #include "bodycompositionfeature.h"
 #include "bodycompositionmeasurement.h"
 #include "bodycompositionmeasurementmibfs.h"
@@ -14,6 +20,7 @@
 #include "daydatetime.h"
 #include "dayofweek.h"
 #include "dstoffset.h"
+#include "estimatedservicedate.h"
 #include "exacttime256.h"
 #include "heartratecontrolpoint.h"
 #include "heartratemeasurement.h"
@@ -48,10 +55,11 @@ public:
         switch (characteristicType)
         {
             // Unsorted
+            // GATT_Specification_Supplement_v8.pdf
             // 3.70 Date Time
             case CharacteristicType::DateTime:
                 return make_value<DateTime>(data, size);
-            // 3.71 Date UTC
+            // 3.71 Date UTC (org.bluetooth.unit.time.day)
             case CharacteristicType::DateUTC:
                 return make_value<DateUTC>(data, size);
             // 3.72 Day Date Time
@@ -66,7 +74,7 @@ public:
             // 3.90 Exact Time 256
             case CharacteristicType::ExactTime256:
                 return make_value<ExactTime256>(data, size);
-            // 3.220 Time Accuracy
+            // 3.220 Time Accuracy (org.bluetooth.unit.time.second)
             case CharacteristicType::TimeAccuracy:
                 return make_value<TimeAccuracy>(data, size);
             // 3.228 Time Source
@@ -107,7 +115,7 @@ public:
                 // ISO/IEEE FDIS 11073-20601:2022
                 // ISO/IEEE 11073-20101:2004 for ASN.1 MDER (medical device encoding rules)
                 break;
-            // 3.9 PnPID
+            // 3.9 PnP ID
             case CharacteristicType::PnPID:
                 return make_value<PnPID>(data, size);
 
@@ -123,40 +131,33 @@ public:
                 return make_value<ReferenceTimeInformation>(data, size);
 
             // Battery Service (BAS_V1.1.pdf)
-            // 3.1 Battery Level
+            // 3.1 Battery Level (org.bluetooth.unit.percentage)
             case CharacteristicType::BatteryLevel:
                 return make_value<BatteryLevel>(data, size);
             // 3.2 Battery Level Status
             case CharacteristicType::BatteryLevelStatus:
                 return make_value<BatteryLevelStatus>(data, size);
-            // 3.3 Estimated Service Date
+            // 3.3 Estimated Service Date (org.bluetooth.unit.time.day)
             case CharacteristicType::EstimatedServiceDate:
-                // TODO:
-                break;
+                return make_value<EstimatedServiceDate>(data, size);
             // 3.4 Battery Critical Status
             case CharacteristicType::BatteryCriticalStatus:
-                // TODO:
-                break;
+                return make_value<BatteryCriticalStatus>(data, size);
             // 3.5 Battery Energy Status
             case CharacteristicType::BatteryEnergyStatus:
-                // TODO:
-                break;
+                return make_value<BatteryEnergyStatus>(data, size);
             // 3.6 Battery Time Status
             case CharacteristicType::BatteryTimeStatus:
-                // TODO:
-                break;
+                return make_value<BatteryTimeStatus>(data, size);
             // 3.7 Battery Health Status
             case CharacteristicType::BatteryHealthStatus:
-                // TODO:
-                break;
+                return make_value<BatteryHealthStatus>(data, size);
             // 3.8 Battery Health Information
             case CharacteristicType::BatteryHealthInformation:
-                // TODO:
-                break;
+                return make_value<BatteryHealthInformation>(data, size);
             // 3.9 Battery Information
             case CharacteristicType::BatteryInformation:
-                // TODO:
-                break;
+                return make_value<BatteryInformation>(data, size);
             // 3.10 Manufacturer Name String
             // Implemented for Device Information Service (see ManufacturerNameString)
             // 3.11 Model Number String
@@ -176,10 +177,10 @@ public:
                 return make_value<HeartRateControlPoint>(data, size);
 
             // Body Composition Service (BCS_V1.0.0.pdf)
-            // 3.1 BodyCompositionFeature
+            // 3.1 Body Composition Feature
             case CharacteristicType::BodyCompositionFeature:
                 return make_value<BodyCompositionFeature>(data, size);
-            // 3.2 BodyCompositionMeasurement
+            // 3.2 Body Composition Measurement
             case CharacteristicType::BodyCompositionMeasurement:
                 return make_value<BodyCompositionMeasurement>(data, size);
             // Non standard
