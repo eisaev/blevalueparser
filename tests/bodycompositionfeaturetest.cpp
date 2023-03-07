@@ -8,16 +8,9 @@
 namespace bvp
 {
 
-class BodyCompositionFeatureTest : public testing::Test
+struct BodyCompositionFeatureTest : public testing::Test
 {
-protected:
-    explicit BodyCompositionFeatureTest() {}
-    virtual ~BodyCompositionFeatureTest() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(BodyCompositionFeatureTest, FeaturesAll_WeightResNotSpec_HeightResNotSpec_ReservedEven)

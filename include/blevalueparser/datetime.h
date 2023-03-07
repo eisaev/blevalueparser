@@ -12,12 +12,12 @@ namespace bvp
 // 3.70 Date Time
 struct DateTimeStruct
 {
-    uint16_t year = 0;
-    uint8_t month = 0;
-    uint8_t day = 0;
-    uint8_t hour = 0;
-    uint8_t minute = 0;
-    uint8_t seconds = 0;
+    uint16_t year{0};
+    uint8_t month{0};
+    uint8_t day{0};
+    uint8_t hour{0};
+    uint8_t minute{0};
+    uint8_t seconds{0};
 };
 
 // CTS_SPEC_V1.1.0.pdf
@@ -80,14 +80,14 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << std::setfill('0') << std::setw(2) << static_cast<int>(day()) << ".";
-        ss << std::setfill('0') << std::setw(2) << static_cast<int>(month()) << ".";
-        ss << std::setfill('0') << std::setw(4) << static_cast<int>(year()) << " ";
-        ss << std::setfill('0') << std::setw(2) << static_cast<int>(hour()) << ":";
-        ss << std::setfill('0') << std::setw(2) << static_cast<int>(minute()) << ":";
-        ss << std::setfill('0') << std::setw(2) << static_cast<int>(seconds());
+        oss <<        std::setfill('0') << std::setw(2) << static_cast<int>(day());
+        oss << "." << std::setfill('0') << std::setw(2) << static_cast<int>(month());
+        oss << "." << std::setfill('0') << std::setw(4) << static_cast<int>(year());
+        oss << " " << std::setfill('0') << std::setw(2) << static_cast<int>(hour());
+        oss << ":" << std::setfill('0') << std::setw(2) << static_cast<int>(minute());
+        oss << ":" << std::setfill('0') << std::setw(2) << static_cast<int>(seconds());
     }
 };
 

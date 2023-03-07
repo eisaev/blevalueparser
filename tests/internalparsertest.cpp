@@ -1,6 +1,9 @@
+#include <array>
 #include <gtest/gtest.h>
 
-#include "blevalueparser/bvp.h"
+#include "blevalueparser/basevalue.h"
+
+#define C(x) static_cast<char>(x)
 
 
 namespace bvp
@@ -222,5 +225,73 @@ TEST(InternalParserTest, Int_OutOfData)
     parser.parseInt8();
     EXPECT_TRUE(parser.outOfData());
 }
+
+struct MedFloat16Test : public testing::TestWithParam<std::tuple<int8_t, int16_t, float, std::string>>
+{
+    std::array<char, 2> getData(int16_t mantissa, int8_t exponent) const
+    {
+        const uint8_t exponent_sign = exponent & 0b10000000;
+        const uint8_t exponent_value = static_cast<uint8_t>((static_cast<uint8_t>(exponent) << 4) | exponent_sign);
+        const uint8_t mantissa_sign = static_cast<uint8_t>((mantissa & 0b1000000000000000) >> 12);
+        const uint8_t mantissa_hvalue = static_cast<uint8_t>((mantissa & 0b011100000000) >> 8) | mantissa_sign;
+        const uint8_t mantissa_lvalue = static_cast<uint8_t>(mantissa & 0b000011111111);
+
+        return
+        {
+            C(exponent_value + mantissa_hvalue),
+            C(mantissa_lvalue)
+        };
+    };
+};
+TEST_P(MedFloat16Test, Convert)
+{
+    const int8_t exponent = std::get<0>(GetParam());
+    const int16_t mantissa = std::get<1>(GetParam());
+    const float expectedFloat = std::get<2>(GetParam());
+    const std::string expectedString = std::get<3>(GetParam());
+
+    const auto data = getData(mantissa, exponent);
+    BaseValue::Parser parser{data.data(), data.size()};
+    float abs_error = std::pow(10, exponent);
+    MedFloat16 value = parser.parseMedFloat16();
+
+    EXPECT_NEAR(expectedFloat, value.toFloat(), abs_error);
+    EXPECT_EQ(expectedString, value.toString());
+}
+INSTANTIATE_TEST_SUITE_P(
+    InternalParserTest,
+    MedFloat16Test,
+    // tuples of (exponent, mantissa, expectedFloat, expectedString)
+    ::testing::Values(
+        std::make_tuple( 7, -2048, -20480000000.0, "-2.048e+10"),
+        std::make_tuple(-1, -2048, -204.8, "-204.8"),
+        std::make_tuple(-8, -2048, -0.00002048, "-2.048e-05"),
+
+        std::make_tuple( 0, -2045, -2045.0, "-2045"),
+
+        std::make_tuple( 7, 0, 0.0, "0"),
+        std::make_tuple( 0, 0, 0.0, "0"),
+        std::make_tuple(-1, 0, 0.0, "0"),
+        std::make_tuple(-8, 0, 0.0, "0"),
+
+        std::make_tuple( 7, -1, -10000000.0, "-1e+07"),
+        std::make_tuple( 0, -1, -1.0, "-1"),
+        std::make_tuple(-1, -1, -0.1, "-0.1"),
+        std::make_tuple(-8, -1, -0.00000001, "-1e-08"),
+
+        std::make_tuple( 0, 2045, 2045.0, "2045"),
+
+        std::make_tuple( 7, 2047, 20470000000.0, "2.047e+10"),
+        std::make_tuple(-1, 2047, 204.7, "204.7"),
+        std::make_tuple(-8, 2047, 0.00002047, "2.047e-05"),
+
+           // Special values
+        std::make_tuple( 0, 2047, 2047.0, "<NaN>"),
+        std::make_tuple( 0, 2046, 2046.0, "<+Inf>"),
+        std::make_tuple( 0, -2046, -2046.0, "<-Inf>"),
+        std::make_tuple( 0, -2047, -2047.0, "<Reserved>"),
+        std::make_tuple( 0, -2048, -2048.0, "<Nres>")
+    )
+);
 
 }  // namespace bvp

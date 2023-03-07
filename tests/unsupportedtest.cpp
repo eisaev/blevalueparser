@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class UnsupportedTest : public testing::Test
+struct UnsupportedTest : public testing::Test
 {
-protected:
-    explicit UnsupportedTest() {}
-    virtual ~UnsupportedTest() {}
-
     BLEValueParser bleValueParser;
-
-    //    virtual void SetUp() {}
-    //    virtual void TearDown() {}
 };
 
 TEST_F(UnsupportedTest, ToStringHex)

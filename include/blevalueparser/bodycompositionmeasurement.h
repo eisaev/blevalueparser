@@ -102,69 +102,69 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
         if (isMeasurementUnsuccessful())
         {
-            ss << "<MeasurementUnsuccessful>";
+            oss << "<MeasurementUnsuccessful>";
             return;
         }
 
-        ss << "BodyFatPercentage: " << bodyFatPercentage() << "%";
+        oss << "BodyFatPercentage: " << bodyFatPercentage() << "%";
 
         if (isTimeStampPresent())
         {
-            ss << ", TimeStamp: " << DateTime(m_btSpecObject.timeStamp, configuration);
+            oss << ", TimeStamp: " << DateTime(m_btSpecObject.timeStamp, configuration);
         }
 
         if (isUserIDPresent())
         {
-            ss << ", UserID: " << UserIndex(m_btSpecObject.userID, configuration);
+            oss << ", UserID: " << UserIndex(m_btSpecObject.userID, configuration);
         }
 
         if (isBasalMetabolismPresent())
         {
-            ss << ", BasalMetabolism: " << basalMetabolism() << "kJ";
+            oss << ", BasalMetabolism: " << basalMetabolism() << "kJ";
         }
 
         if (isMusclePercentagePresent())
         {
-            ss << ", MusclePercentage: " << musclePercentage() << "%";
+            oss << ", MusclePercentage: " << musclePercentage() << "%";
         }
 
         if (isMuscleMassPresent())
         {
-            ss << ", MuscleMass: " << muscleMass() << configuration.massUnits();
+            oss << ", MuscleMass: " << muscleMass() << configuration.massUnits();
         }
 
         if (isFatFreeMassPresent())
         {
-            ss << ", FatFreeMass: " << fatFreeMass() << configuration.massUnits();
+            oss << ", FatFreeMass: " << fatFreeMass() << configuration.massUnits();
         }
 
         if (isSoftLeanMassPresent())
         {
-            ss << ", SoftLeanMass: " << softLeanMass() << configuration.massUnits();
+            oss << ", SoftLeanMass: " << softLeanMass() << configuration.massUnits();
         }
 
         if (isBodyWaterMassPresent())
         {
-            ss << ", BodyWaterMass: " << bodyWaterMass() << configuration.massUnits();
+            oss << ", BodyWaterMass: " << bodyWaterMass() << configuration.massUnits();
         }
 
         if (isImpedancePresent())
         {
-            ss << ", Impedance: " << impedance() << "Ω";
+            oss << ", Impedance: " << impedance() << "Ω";
         }
 
         if (isWeightPresent())
         {
-            ss << ", Weight: " << weight() << configuration.massUnits();
+            oss << ", Weight: " << weight() << configuration.massUnits();
         }
 
         if (isHeightPresent())
         {
-            ss << ", Height: " << height() << configuration.lenghtUnits();
+            oss << ", Height: " << height() << configuration.lenghtUnits();
         }
     }
 };

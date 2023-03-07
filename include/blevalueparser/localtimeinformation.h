@@ -48,10 +48,10 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << "TZ: " << TimeZone(m_btSpecObject.timeZone, configuration);
-        ss << ", DST: " << DSTOffset(m_btSpecObject.dstOffset, configuration);
+        oss <<   "TZ: "  << TimeZone(m_btSpecObject.timeZone, configuration);
+        oss << ", DST: " << DSTOffset(m_btSpecObject.dstOffset, configuration);
     }
 };
 

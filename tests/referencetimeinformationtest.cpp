@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class ReferenceTimeInformationTest : public testing::Test
+struct ReferenceTimeInformationTest : public testing::Test
 {
-protected:
-    explicit ReferenceTimeInformationTest() {}
-    virtual ~ReferenceTimeInformationTest() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(ReferenceTimeInformationTest, Unknown_0ms_0d_0h)

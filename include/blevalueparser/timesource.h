@@ -56,7 +56,7 @@ inline TimeSourceEnum &operator%=(TimeSourceEnum &lhs, const TimeSourceEnum &rhs
 
 struct TimeSourceStruct
 {
-    TimeSourceEnum timeSource = TimeSourceEnum::Unknown;
+    TimeSourceEnum timeSource{TimeSourceEnum::Unknown};
 };
 
 class TimeSource final : public BaseValueSpec<TimeSourceStruct>
@@ -84,9 +84,9 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << m_btSpecObject.timeSource;
+        oss << m_btSpecObject.timeSource;
     }
 };
 

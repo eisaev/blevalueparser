@@ -65,23 +65,23 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << (isUnloaded() ? "Unloaded" : isStabilized() ? "Stabilized" : "Unstable");
+        oss << (isUnloaded() ? "Unloaded" : isStabilized() ? "Stabilized" : "Unstable");
 
         if (isTimeStampPresent())
         {
-            ss << ", TimeStamp: " << DateTime(m_btSpecObject.timeStamp, configuration);
+            oss << ", TimeStamp: " << DateTime(m_btSpecObject.timeStamp, configuration);
         }
 
         if (isImpedancePresent())
         {
-            ss << ", Impedance: " << impedance() << "Ω";
+            oss << ", Impedance: " << impedance() << "Ω";
         }
 
         if (isWeightPresent())
         {
-            ss << ", Weight: " << weight() << configuration.massUnits();
+            oss << ", Weight: " << weight() << configuration.massUnits();
         }
     }
 };

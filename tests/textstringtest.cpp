@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class TextStringTest : public testing::Test
+struct TextStringTest : public testing::Test
 {
-protected:
-    explicit TextStringTest() {}
-    virtual ~TextStringTest() {}
-
     BLEValueParser bleValueParser;
-
-    //    virtual void SetUp() {}
-    //    virtual void TearDown() {}
 };
 
 TEST_F(TextStringTest, Basic)

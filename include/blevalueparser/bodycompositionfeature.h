@@ -48,7 +48,7 @@ constexpr uint32_t BCS_FLAG_BCF_RESERVER14                  = 1 << 31;
 // 3.33 Body Composition Feature
 struct BodyCompositionFeatureStruct
 {
-    uint32_t flags = 0;
+    uint32_t flags{0};
 };
 
 // BCS_V1.0.0.pdf
@@ -206,9 +206,9 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << "Features: {"
+        oss << "Features: {"
            << (isTimeStampSupported() ?         " TimeStamp": "")
            << (isMultipleUsersSupported() ?     " MultipleUsers": "")
            << (isBasalMetabolismSupported() ?   " BasalMetabolism": "")
@@ -224,13 +224,13 @@ private:
 
         if (isWeightSupported())
         {
-            ss << ", WeightResolution: " << weightResolution() / 1000.0
+            oss << ", WeightResolution: " << weightResolution() / 1000.0
                << configuration.massUnits();
         }
 
         if (isHeightSupported())
         {
-            ss << ", HeightResolution: " << heightResolution() / 1000.0
+            oss << ", HeightResolution: " << heightResolution() / 1000.0
                << configuration.lenghtUnits();
         }
     }

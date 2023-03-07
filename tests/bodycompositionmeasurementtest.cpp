@@ -8,16 +8,9 @@
 namespace bvp
 {
 
-class BodyCompositionMeasurementTest : public testing::Test
+struct BodyCompositionMeasurementTest : public testing::Test
 {
-protected:
-    explicit BodyCompositionMeasurementTest() {}
-    virtual ~BodyCompositionMeasurementTest() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(BodyCompositionMeasurementTest, FeaturesAll_SinglePacket_ReservedOdd)
@@ -25,7 +18,7 @@ TEST_F(BodyCompositionMeasurementTest, FeaturesAll_SinglePacket_ReservedOdd)
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b10101111), C(0b11111110) };
     constexpr char data[] = {
-        flags[1], flags[0],                                     // flags
+        flags[1], flags[0],
         '\x12', '\x34',                                         // bodyFatPercentage
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x2A',                                                 // userID
@@ -123,7 +116,7 @@ TEST_F(BodyCompositionMeasurementTest, FeaturesNone_MultiplePacket_ReservedEven)
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b01010000), C(0b00000000) };
     constexpr char data[] = {
-        flags[1], flags[0],                                     // flags
+        flags[1], flags[0],
         '\x12', '\x34'                                          // bodyFatPercentage
     };
 
@@ -210,7 +203,7 @@ TEST_F(BodyCompositionMeasurementTest, FeaturesOdd_SinglePacket_ReservedAll)
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b11101010), C(0b10101010) };
     constexpr char data[] = {
-        flags[1], flags[0],                                     // flags
+        flags[1], flags[0],
         '\x12', '\x34',                                         // bodyFatPercentage
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x23', '\x45',                                         // basalMetabolism
@@ -303,7 +296,7 @@ TEST_F(BodyCompositionMeasurementTest, FeaturesEven_MultiplePacket_ReservedNone)
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b00010101), C(0b01010100) };
     constexpr char data[] = {
-        flags[1], flags[0],                                     // flags
+        flags[1], flags[0],
         '\x12', '\x34',                                         // bodyFatPercentage
         '\x2A',                                                 // userID
         '\x34', '\x56',                                         // musclePercentage
@@ -395,7 +388,7 @@ TEST_F(BodyCompositionMeasurementTest, MeasurementUnsuccessful)
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b00000000), C(0b00000000) };
     constexpr char data[] = {
-        flags[1], flags[0],                                     // flags
+        flags[1], flags[0],
         '\xFF', '\xFF'                                          // bodyFatPercentage
     };
 
@@ -415,7 +408,7 @@ TEST_F(BodyCompositionMeasurementTest, Imperial)
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b10101111), C(0b11111111) };
     constexpr char data[] = {
-        flags[1], flags[0],                                     // flags
+        flags[1], flags[0],
         '\x12', '\x34',                                         // bodyFatPercentage
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x2A',                                                 // userID
@@ -493,7 +486,7 @@ TEST_F(BodyCompositionMeasurementTest, ToString)
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b10101111), C(0b11111110) };
     constexpr char data[] = {
-        flags[1], flags[0],                                     // flags
+        flags[1], flags[0],
         '\x12', '\x34',                                         // bodyFatPercentage
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x2A',                                                 // userID

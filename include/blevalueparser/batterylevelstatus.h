@@ -167,11 +167,11 @@ inline std::ostream &operator<<(std::ostream &os, const ServiceRequiredEnum valu
 // 3.28 Battery Level Status
 struct BatteryLevelStatusStruct
 {
-    uint8_t flags = 0;
-    uint16_t powerState = 0;
-    uint16_t identifier = 0;
+    uint8_t flags{0};
+    uint16_t powerState{0};
+    uint16_t identifier{0};
     BatteryLevelStruct batteryLevel;
-    uint8_t additionalStatus = 0;
+    uint8_t additionalStatus{0};
 };
 
 // BAS_V1.1.pdf
@@ -330,56 +330,56 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss <<   "WiredExternalPowerSourceConnected: " << wiredExternalPowerSourceConnected();
-        ss << ", WirelessExternalPowerSourceConnected: " << wirelessExternalPowerSourceConnected();
-        ss << ", BatteryChargeState: " << batteryChargeState();
-        ss << ", BatteryChargeLevel: " << batteryChargeLevel();
-        ss << ", ChargingType: " << chargingType();
+        oss <<   "WiredExternalPowerSourceConnected: " << wiredExternalPowerSourceConnected();
+        oss << ", WirelessExternalPowerSourceConnected: " << wirelessExternalPowerSourceConnected();
+        oss << ", BatteryChargeState: " << batteryChargeState();
+        oss << ", BatteryChargeLevel: " << batteryChargeLevel();
+        oss << ", ChargingType: " << chargingType();
 
         if (hasChargingFault())
         {
-            ss << ", ChargingFaultReason: {";
+            oss << ", ChargingFaultReason: {";
             if (isChargingFaultReasonBattery())
             {
-                ss << " Battery";
+                oss << " Battery";
             }
             if (isChargingFaultReasonExternalPowerSource())
             {
-                ss << " ExternalPowerSource";
+                oss << " ExternalPowerSource";
             }
             if (isChargingFaultReasonOther())
             {
-                ss << " Other";
+                oss << " Other";
             }
-            ss << " }";
+            oss << " }";
         }
 
         if (isIdentifierPresent())
         {
-            auto originalFlags = ss.flags();
-            ss << ", ID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_btSpecObject.identifier;
-            ss.flags(originalFlags);
+            auto originalFlags = oss.flags();
+            oss << ", ID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_btSpecObject.identifier;
+            oss.flags(originalFlags);
         }
 
         if (isBatteryLevelPresent())
         {
-            ss << ", BatteryLevel: " << BatteryLevel(m_btSpecObject.batteryLevel, configuration);
+            oss << ", BatteryLevel: " << BatteryLevel(m_btSpecObject.batteryLevel, configuration);
         }
 
         if (isAdditionalStatusPresent())
         {
-            ss << ", ServiceRequired: " << serviceRequired();
+            oss << ", ServiceRequired: " << serviceRequired();
             if (hasBatteryFault())
             {
-                ss << ", BatteryFailed";
+                oss << ", BatteryFailed";
             }
         }
 
         if (isBatteryPresent())
         {
-            ss << ", BatteryPresent";
+            oss << ", BatteryPresent";
         }
     }
 };

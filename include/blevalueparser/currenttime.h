@@ -28,7 +28,7 @@ struct CurrentTimeStruct
 {
     ExactTime256Struct exactTime256;
     // See CTS_FLAG_*
-    uint8_t adjustReason = 0;
+    uint8_t adjustReason{0};
 };
 
 // CTS_SPEC_V1.1.0.pdf
@@ -123,32 +123,32 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << ExactTime256(m_btSpecObject.exactTime256, configuration);
+        oss << ExactTime256(m_btSpecObject.exactTime256, configuration);
 
-        std::stringstream ssAdjustReasons;
+        std::ostringstream ossAdjustReasons;
         if (isManuallyAdjusted())
         {
-            ssAdjustReasons << " ManuallyAdjusted";
+            ossAdjustReasons << " ManuallyAdjusted";
         }
         if (isExternalReference())
         {
-            ssAdjustReasons << " ExternalReference";
+            ossAdjustReasons << " ExternalReference";
         }
         if (isTZChanged())
         {
-            ssAdjustReasons << " TZChanged";
+            ossAdjustReasons << " TZChanged";
         }
         if (isDSTChanged())
         {
-            ssAdjustReasons << " DSTChanged";
+            ossAdjustReasons << " DSTChanged";
         }
-        const std::string adjustReason = ssAdjustReasons.str();
+        const std::string adjustReason = ossAdjustReasons.str();
 
         if (!adjustReason.empty())
         {
-            ss << " (adjust reason: {" << adjustReason << " })";
+            oss << " (adjust reason: {" << adjustReason << " })";
         }
     }
 };

@@ -50,7 +50,7 @@ inline DSTOffsetEnum &operator%=(DSTOffsetEnum &lhs, const DSTOffsetEnum &rhs)
 
 struct DSTOffsetStruct
 {
-    DSTOffsetEnum dstOffset = DSTOffsetEnum::Unknown;
+    DSTOffsetEnum dstOffset{DSTOffsetEnum::Unknown};
 };
 
 
@@ -79,9 +79,9 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << m_btSpecObject.dstOffset;
+        oss << m_btSpecObject.dstOffset;
     }
 };
 

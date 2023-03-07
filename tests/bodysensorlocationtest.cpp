@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class BodySensorLocationTest : public testing::Test
+struct BodySensorLocationTest : public testing::Test
 {
-protected:
-    explicit BodySensorLocationTest() {}
-    virtual ~BodySensorLocationTest() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(BodySensorLocationTest, Other)

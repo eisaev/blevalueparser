@@ -8,16 +8,9 @@
 namespace bvp
 {
 
-class BodyCompositionMeasurementMIBFSTest : public testing::Test
+struct BodyCompositionMeasurementMIBFSTest : public testing::Test
 {
-protected:
-    explicit BodyCompositionMeasurementMIBFSTest() {}
-    virtual ~BodyCompositionMeasurementMIBFSTest() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(BodyCompositionMeasurementMIBFSTest, NoImpendance_Unstable_Loaded)
@@ -25,7 +18,7 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, NoImpendance_Unstable_Loaded)
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b00000100), C(0b00000010) };
     constexpr char data[] = {
-        flags[1], flags[0],                                     // flags
+        flags[1], flags[0],
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x12', '\x34',                                         // impedance
         '\x56', '\x78'                                          // weight
@@ -114,7 +107,7 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, HasImpendance_Stabilized_Loaded)
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b00100110), C(0b00000010) };
     constexpr char data[] = {
-        flags[1], flags[0],                                     // flags
+        flags[1], flags[0],
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x12', '\x34',                                         // impedance
         '\x56', '\x78'                                          // weight
@@ -203,7 +196,7 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, NoImpendance_Unstable_Unloaded)
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b10000100), C(0b00000010) };
     constexpr char data[] = {
-        flags[1], flags[0],                                     // flags
+        flags[1], flags[0],
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x12', '\x34',                                         // impedance
         '\x56', '\x78'                                          // weight
@@ -292,7 +285,7 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, HasImpendance_Stabilized_Unloaded)
     //                           RRRMFFFF    FFFFFFFU
     constexpr char flags[] = { C(0b10100110), C(0b00000010) };
     constexpr char data[] = {
-        flags[1], flags[0],                                     // flags
+        flags[1], flags[0],
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x12', '\x34',                                         // impedance
         '\x56', '\x78'                                          // weight
@@ -381,7 +374,7 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, Imperial)
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b00000100), C(0b00000011) };
     constexpr char data[] = {
-        flags[1], flags[0],                                     // flags
+        flags[1], flags[0],
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x12', '\x34',                                         // impedance
         '\x56', '\x78'                                          // weight
@@ -450,7 +443,7 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, ToString)
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b00000100), C(0b00000010) };
     constexpr char data[] = {
-        flags[1], flags[0],                                     // flags
+        flags[1], flags[0],
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x00', '\x00',                                         // impedance
         '\xE0', '\x38'                                          // weight

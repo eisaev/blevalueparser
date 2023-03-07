@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <string>
 #include <sstream>
 #include <map>
@@ -27,6 +28,98 @@
 namespace bvp
 {
 
+// ISO/IEEE FDIS 11073-20601:2022(E)
+// F.7 Short floating point data structure—SFLOAT-Type
+class MedFloat16
+{
+public:
+    MedFloat16() :
+        m_mantissa{0},
+        m_exponent{0}
+    {}
+
+    MedFloat16(int16_t mantissa, int8_t exponent) :
+        m_mantissa{mantissa},
+        m_exponent{exponent}
+    {}
+
+    float toFloat() const
+    {
+        return float(m_mantissa * std::pow(10, m_exponent));
+    }
+
+    bool isNaN() const
+    {
+        return NaN == (m_mantissa & 0b0000111111111111);
+    }
+
+    bool isNres() const
+    {
+        return Nres == (m_mantissa & 0b0000111111111111);
+    }
+
+    bool isPlusInfinity() const
+    {
+        return PlusInfinity == (m_mantissa & 0b0000111111111111);
+    }
+
+    bool isMinusInfinity() const
+    {
+        return MinusInfinity == (m_mantissa & 0b0000111111111111);
+    }
+
+    bool isReserved() const
+    {
+        return Reserved == (m_mantissa & 0b0000111111111111);
+    }
+
+    int16_t mantissa() const
+    {
+        return m_mantissa;
+    }
+
+    int16_t exponent() const
+    {
+        return m_exponent;
+    }
+
+    std::string toString() const
+    {
+        if (0 == m_exponent)
+        {
+            switch (m_mantissa & 0b0000111111111111)
+            {
+                case NaN:           return "<NaN>";
+                case Nres:          return "<Nres>";
+                case PlusInfinity:  return "<+Inf>";
+                case MinusInfinity: return "<-Inf>";
+                case Reserved:      return "<Reserved>";
+            }
+        }
+
+        std::ostringstream oss;
+        oss << toFloat();
+        return oss.str();
+    }
+
+private:
+    // Table F.3—SFLOAT-Type special values
+    static constexpr uint16_t NaN           = 0x07FF;
+    static constexpr uint16_t Nres          = 0x0800;
+    static constexpr uint16_t PlusInfinity  = 0x07FE;
+    static constexpr uint16_t MinusInfinity = 0x0802;
+    static constexpr uint16_t Reserved      = 0x0801;
+
+    int16_t m_mantissa;
+    int8_t m_exponent;
+
+    friend std::ostream& operator<<(std::ostream &os, const MedFloat16& rhs)
+    {
+        os << rhs.toString();
+        return os;
+    }
+};
+
 // GATT_Specification_Supplement_v8.pdf
 // 3.34.1 Flags field (Table 3.57: Flags field, 1st bit)
 // See also 3.250.1 Flags field (Table 3.366: Flags field, 1st bit)
@@ -38,11 +131,11 @@ enum class MeasurementUnitsEnum
 
 struct Configuration
 {
-    std::string stringPrefix = "";
-    std::string stringSuffix = "";
-    std::string hexPrefix = "0x ";
-    std::string hexSeparator = ":";
-    MeasurementUnitsEnum measurementUnits = MeasurementUnitsEnum::SI;
+    std::string stringPrefix{""};
+    std::string stringSuffix{""};
+    std::string hexPrefix{"0x "};
+    std::string hexSeparator{":"};
+    MeasurementUnitsEnum measurementUnits{MeasurementUnitsEnum::SI};
 
     float massToUnits(uint16_t value) const
     {
@@ -100,11 +193,11 @@ public:
             return "<Invalid>";
         }
 
-        std::stringstream ss;
-        ss << configuration.stringPrefix;
-        toStringStream(ss);
-        ss << configuration.stringSuffix;
-        return ss.str();
+        std::ostringstream oss;
+        oss << configuration.stringPrefix;
+        toStringStream(oss);
+        oss << configuration.stringSuffix;
+        return oss.str();
     }
 
 protected:
@@ -132,6 +225,7 @@ protected:
     friend class InternalParserTest_Int64_Test;
     friend class InternalParserTest_Raw_OutOfData_Test;
     friend class InternalParserTest_Int_OutOfData_Test;
+    friend class MedFloat16Test_Convert_Test;
 
     class Parser
     {
@@ -241,6 +335,30 @@ protected:
             return parseInt<int64_t>();
         }
 
+        MedFloat16 parseMedFloat16()
+        {
+            uint8_t hi = parseInt<uint8_t>();
+            uint8_t lo = parseInt<uint8_t>();
+
+            const int8_t exponent_sign = hi & 0b10000000;
+            int8_t exponent = (hi & 0b01110000) >> 4;
+            if (exponent_sign)
+            {
+                exponent |= 0b10000000;
+                exponent ^= 0b01111000;
+            }
+
+            int16_t mantissa_sign = (hi & 0b00001000) << 12;
+            int16_t mantissa = ((hi & 0b00000111) << 8) | lo;
+            if (mantissa_sign)
+            {
+                mantissa |= 0b1000000000000000;
+                mantissa ^= 0b0111100000000000;
+            }
+
+            return MedFloat16(mantissa, exponent);
+        }
+
     private:
         const char *m_data;
         size_t m_size;
@@ -285,7 +403,7 @@ protected:
 
     virtual bool checkSize(size_t size) = 0;
     virtual bool parse(Parser &parser) = 0;
-    virtual void toStringStream(std::stringstream &ss) const = 0;
+    virtual void toStringStream(std::ostringstream &oss) const = 0;
 
     friend std::ostream& operator<<(std::ostream &os, const BaseValue& rhs)
     {

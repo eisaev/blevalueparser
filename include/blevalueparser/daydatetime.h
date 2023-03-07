@@ -73,10 +73,10 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << DayOfWeek(m_btSpecObject.dayOfWeek, configuration);
-        ss << " " << DateTime(m_btSpecObject.dateTime, configuration);
+        oss <<        DayOfWeek(m_btSpecObject.dayOfWeek, configuration);
+        oss << " " << DateTime(m_btSpecObject.dateTime, configuration);
     }
 };
 

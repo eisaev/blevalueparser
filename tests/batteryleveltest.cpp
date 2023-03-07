@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class BatteryLevelTest : public testing::Test
+struct BatteryLevelTest : public testing::Test
 {
-protected:
-    explicit BatteryLevelTest() {}
-    virtual ~BatteryLevelTest() {}
-
     BLEValueParser bleValueParser;
-
-//    virtual void SetUp() {}
-//    virtual void TearDown() {}
 };
 
 TEST_F(BatteryLevelTest, Zero)

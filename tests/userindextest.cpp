@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class UserIndexTest : public testing::Test
+struct UserIndexTest : public testing::Test
 {
-protected:
-    explicit UserIndexTest() {}
-    virtual ~UserIndexTest() {}
-
     BLEValueParser bleValueParser;
-
-    //    virtual void SetUp() {}
-    //    virtual void TearDown() {}
 };
 
 TEST_F(UserIndexTest, Min)

@@ -11,7 +11,7 @@ namespace bvp
 
 struct UserIndexStruct
 {
-    uint8_t userIndex = 0;
+    uint8_t userIndex{0};
 };
 
 class UserIndex final : public BaseValueSpec<UserIndexStruct>
@@ -39,15 +39,15 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
         if (0xFF == m_btSpecObject.userIndex)
         {
-            ss << "<Unknown User>";
+            oss << "<Unknown User>";
             return;
         }
 
-        ss << static_cast<int>(m_btSpecObject.userIndex);
+        oss << static_cast<int>(m_btSpecObject.userIndex);
     }
 };
 

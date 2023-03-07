@@ -60,7 +60,7 @@ inline DayOfWeekEnum &operator%=(DayOfWeekEnum &lhs, const DayOfWeekEnum &rhs)
 
 struct DayOfWeekStruct
 {
-    DayOfWeekEnum dayOfWeek = DayOfWeekEnum::Unknown;
+    DayOfWeekEnum dayOfWeek{DayOfWeekEnum::Unknown};
 };
 
 class DayOfWeek final : public BaseValueSpec<DayOfWeekStruct>
@@ -88,9 +88,9 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << m_btSpecObject.dayOfWeek;
+        oss << m_btSpecObject.dayOfWeek;
     }
 };
 

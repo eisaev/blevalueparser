@@ -23,9 +23,9 @@ constexpr uint8_t HRS_FLAG_RESERVER3       = 1 << 7;
 // 3.113 Heart Rate Measurement
 struct HeartRateMeasurementStruct
 {
-    uint8_t flags = 0;
-    uint16_t heartRate = 0;
-    uint16_t energyExpended = 0;
+    uint8_t flags{0};
+    uint16_t heartRate{0};  // org.bluetooth.unit.period.beats_per_minute
+    uint16_t energyExpended{0};  // org.bluetooth.unit.energy.joule * 1000
     std::vector<uint16_t> rrIntervals;
 };
 
@@ -127,35 +127,35 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
         if (isContactSupported())
         {
             if (isContacted())
             {
-                ss << "(connected) ";
+                oss << "(connected) ";
             }
             else
             {
-                ss << "(disconnected) ";
+                oss << "(disconnected) ";
             }
         }
 
-        ss << "HR: " << m_btSpecObject.heartRate << "bpm";
+        oss << "HR: " << m_btSpecObject.heartRate << "bpm";
 
         if (hasEnergyExpended())
         {
-            ss << ", EE: " << m_btSpecObject.energyExpended << "kJ";
+            oss << ", EE: " << m_btSpecObject.energyExpended << "kJ";
         }
 
         if (!m_btSpecObject.rrIntervals.empty())
         {
-            ss << ", RR: { ";
+            oss << ", RR: { ";
             for (auto rrInterval : rrIntervals())
             {
-                ss << rrInterval << "ms; ";
+                oss << rrInterval << "ms; ";
             }
-            ss << "}";
+            oss << "}";
         }
     }
 

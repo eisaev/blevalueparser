@@ -14,8 +14,8 @@ struct ReferenceTimeInformationStruct
 {
     TimeSourceStruct timeSource;
     TimeAccuracyStruct timeAccuracy;
-    uint8_t daysSinceUpdate = 0;
-    uint8_t hoursSinceUpdate = 0;
+    uint8_t daysSinceUpdate{0};
+    uint8_t hoursSinceUpdate{0};
 };
 
 // CTS_SPEC_V1.1.0.pdf
@@ -102,23 +102,23 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << "Src: " << TimeSource(m_btSpecObject.timeSource, configuration);
-        ss << ", Drift: " << TimeAccuracy(m_btSpecObject.timeAccuracy, configuration);
+        oss <<   "Src: "   << TimeSource(m_btSpecObject.timeSource, configuration);
+        oss << ", Drift: " << TimeAccuracy(m_btSpecObject.timeAccuracy, configuration);
 
-        ss << ", Updated: ";
+        oss << ", Updated: ";
         if (isSinceUpdateGreater())
         {
-            ss << ">254days ago";
+            oss << ">254days ago";
             return;
         }
 
         if (m_btSpecObject.daysSinceUpdate)
         {
-            ss << static_cast<int>(m_btSpecObject.daysSinceUpdate) << "days ";
+            oss << static_cast<int>(m_btSpecObject.daysSinceUpdate) << "days ";
         }
-        ss << static_cast<int>(m_btSpecObject.hoursSinceUpdate) << "hours ago";
+        oss << static_cast<int>(m_btSpecObject.hoursSinceUpdate) << "hours ago";
     }
 };
 

@@ -6,16 +6,9 @@
 namespace bvp
 {
 
-class LocalTimeInformationTest : public testing::Test
+struct LocalTimeInformationTest : public testing::Test
 {
-protected:
-    explicit LocalTimeInformationTest() {}
-    virtual ~LocalTimeInformationTest() {}
-
     BLEValueParser bleValueParser;
-
-    //    virtual void SetUp() {}
-    //    virtual void TearDown() {}
 };
 
 TEST_F(LocalTimeInformationTest, TZUnknown_DSTUnknown)

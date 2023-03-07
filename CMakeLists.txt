@@ -17,8 +17,14 @@ set(LIBRARY_SOURCES
     include/blevalueparser/characteristictype.h
     include/blevalueparser/servicetype.h
     # characteristics
+    include/blevalueparser/batterycriticalstatus.h
+    include/blevalueparser/batteryenergystatus.h
+    include/blevalueparser/batteryhealthinformation.h
+    include/blevalueparser/batteryhealthstatus.h
+    include/blevalueparser/batteryinformation.h
     include/blevalueparser/batterylevel.h
     include/blevalueparser/batterylevelstatus.h
+    include/blevalueparser/batterytimestatus.h
     include/blevalueparser/bodycompositionfeature.h
     include/blevalueparser/bodycompositionmeasurementbase.h
     include/blevalueparser/bodycompositionmeasurement.h
@@ -30,6 +36,7 @@ set(LIBRARY_SOURCES
     include/blevalueparser/daydatetime.h
     include/blevalueparser/dayofweek.h
     include/blevalueparser/dstoffset.h
+    include/blevalueparser/estimatedservicedate.h
     include/blevalueparser/exacttime256.h
     include/blevalueparser/heartratecontrolpoint.h
     include/blevalueparser/heartratemeasurement.h

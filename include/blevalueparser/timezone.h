@@ -244,7 +244,7 @@ inline TimeZoneEnum &operator%=(TimeZoneEnum &lhs, const TimeZoneEnum &rhs)
 
 struct TimeZoneStruct
 {
-    TimeZoneEnum timeZone = TimeZoneEnum::Unknown;
+    TimeZoneEnum timeZone{TimeZoneEnum::Unknown};
 };
 
 class TimeZone final : public BaseValueSpec<TimeZoneStruct>
@@ -272,9 +272,9 @@ private:
         return true;
     }
 
-    virtual void toStringStream(std::stringstream &ss) const override
+    virtual void toStringStream(std::ostringstream &oss) const override
     {
-        ss << m_btSpecObject.timeZone;
+        oss << m_btSpecObject.timeZone;
     }
 };
 
