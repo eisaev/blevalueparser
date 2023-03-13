@@ -11,6 +11,9 @@ find_package(gtest REQUIRED)
 
 set(TEST_SOURCES
     tests.cpp
+    alertcategoryidtest.cpp
+    alertcategoryidbitmasktest.cpp
+    alertnotificationcontrolpointtest.cpp
     batterycriticalstatustest.cpp
     batteryenergystatustest.cpp
     batteryhealthinformationtest.cpp
@@ -36,13 +39,17 @@ set(TEST_SOURCES
     hexstringtest.cpp
     internalparsertest.cpp
     localtimeinformationtest.cpp
+    newalerttest.cpp
     pnpidtest.cpp
     referencetimeinformationtest.cpp
+    supportednewalertcategorytest.cpp
+    supportedunreadalertcategorytest.cpp
     textstringtest.cpp
     timeaccuracytest.cpp
     timesourcetest.cpp
     timezonetest.cpp
     unsupportedtest.cpp
+    unreadalertstatustest.cpp
     userindextest.cpp
 )
 

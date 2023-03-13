@@ -25,6 +25,28 @@ TEST(InternalParserTest, String)
     EXPECT_EQ("abcXYZ", parser.parseString());
 }
 
+TEST(InternalParserTest, StringLast)
+{
+    constexpr char data[] = { '\x2A', 'a', 'b', 'c', 'X', 'Y', 'Z' };
+    BaseValue::Parser parser{data, sizeof(data)};
+    parser.parseUInt8();
+    EXPECT_EQ("abcXYZ", parser.parseString());
+}
+
+TEST(InternalParserTest, StringEmpty)
+{
+    BaseValue::Parser parser{{}, 0};
+    EXPECT_EQ("", parser.parseString());
+}
+
+TEST(InternalParserTest, StringLastEmpty)
+{
+    constexpr char data[] = { '\x2A' };
+    BaseValue::Parser parser{data, sizeof(data)};
+    parser.parseUInt8();
+    EXPECT_EQ("", parser.parseString());
+}
+
 TEST(InternalParserTest, UInt8)
 {
     constexpr char data[] = { '\x00', '\x7F', '\x80', '\xFF' };
