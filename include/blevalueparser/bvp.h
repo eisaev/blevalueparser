@@ -1,5 +1,8 @@
 #pragma once
 
+#include "alertcategoryid.h"
+#include "alertcategoryidbitmask.h"
+#include "alertnotificationcontrolpoint.h"
 #include "characteristictype.h"
 #include "basevalue.h"
 #include "batterycriticalstatus.h"
@@ -26,12 +29,16 @@
 #include "heartratemeasurement.h"
 #include "hexstring.h"
 #include "localtimeinformation.h"
+#include "newalert.h"
 #include "pnpid.h"
 #include "referencetimeinformation.h"
+#include "supportednewalertcategory.h"
+#include "supportedunreadalertcategory.h"
 #include "textstring.h"
 #include "timeaccuracy.h"
 #include "timesource.h"
 #include "timezone.h"
+#include "unreadalertstatus.h"
 #include "userindex.h"
 
 
@@ -56,6 +63,12 @@ public:
         {
             // Unsorted
             // GATT_Specification_Supplement_v8.pdf
+            // 3.6 Alert Category ID
+            case CharacteristicType::AlertCategoryID:
+                return make_value<AlertCategoryID>(data, size);
+            // 3.7 Alert Category ID Bit Mask
+            case CharacteristicType::AlertCategoryIDBitMask:
+                return make_value<AlertCategoryIDBitMask>(data, size);
             // 3.70 Date Time
             case CharacteristicType::DateTime:
                 return make_value<DateTime>(data, size);
@@ -188,6 +201,23 @@ public:
             case CharacteristicType::BodyCompositionMeasurementMIBFS:
                 return make_value<BodyCompositionMeasurementMIBFS>(data, size);
 
+            // Alert Notification Service (ANS_SPEC_V10.pdf)
+            // 3.1 Supported New Alert Category
+            case CharacteristicType::SupportedNewAlertCategory:
+                return make_value<SupportedNewAlertCategory>(data, size);
+            // 3.2 New Alert
+            case CharacteristicType::NewAlert:
+                return make_value<NewAlert>(data, size);
+            // 3.3 Supported Unread Alert Category
+            case CharacteristicType::SupportedUnreadAlertCategory:
+                return make_value<SupportedUnreadAlertCategory>(data, size);
+            // 3.4 Unread Alert Status
+            case CharacteristicType::UnreadAlertStatus:
+                return make_value<UnreadAlertStatus>(data, size);
+            // 3.5 Alert Notification Control Point
+            case CharacteristicType::AlertNotificationControlPoint:
+                return make_value<AlertNotificationControlPoint>(data, size);
+
             // Other
             case CharacteristicType::DeviceName:
             case CharacteristicType::Appearance:
@@ -216,13 +246,6 @@ public:
             case CharacteristicType::AlertStatus:
             case CharacteristicType::RingerControlPoint:
             case CharacteristicType::RingerSetting:
-            case CharacteristicType::AlertCategoryIDBitMask:
-            case CharacteristicType::AlertCategoryID:
-            case CharacteristicType::AlertNotificationControlPoint:
-            case CharacteristicType::UnreadAlertStatus:
-            case CharacteristicType::NewAlert:
-            case CharacteristicType::SupportedNewAlertCategory:
-            case CharacteristicType::SupportedUnreadAlertCategory:
             case CharacteristicType::BloodPressureFeature:
             case CharacteristicType::HIDInformation:
             case CharacteristicType::ReportMap:

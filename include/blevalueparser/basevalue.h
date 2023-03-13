@@ -211,6 +211,9 @@ protected:
     friend class InternalParserTest;
     friend class InternalParserTest_Raw_Test;
     friend class InternalParserTest_String_Test;
+    friend class InternalParserTest_StringLast_Test;
+    friend class InternalParserTest_StringEmpty_Test;
+    friend class InternalParserTest_StringLastEmpty_Test;
     friend class InternalParserTest_UInt8_Test;
     friend class InternalParserTest_UInt16_Test;
     friend class InternalParserTest_UInt24_Test;
@@ -262,8 +265,9 @@ protected:
 
         std::string parseString()
         {
-            std::string result{m_data, m_size};
+            std::string result{m_data + m_offset, m_size - m_offset};
             m_offset += m_size;
+
             return result;
         }
 

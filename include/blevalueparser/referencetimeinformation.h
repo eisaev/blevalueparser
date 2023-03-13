@@ -56,7 +56,7 @@ public:
 
     bool isSinceUpdateGreater() const
     {
-        return 255 == (daysSinceUpdate() & hoursSinceUpdate());
+        return s_greater == (daysSinceUpdate() & hoursSinceUpdate());
     }
 
     uint32_t timeSinceUpdateH() const
@@ -66,11 +66,16 @@ public:
             return UINT32_MAX;
         }
 
-        return m_btSpecObject.daysSinceUpdate * 24 + m_btSpecObject.hoursSinceUpdate;
+        return m_btSpecObject.daysSinceUpdate * s_hoursPerDay + m_btSpecObject.hoursSinceUpdate;
     }
 
 private:
     BVP_CTORS(BaseValueSpec, ReferenceTimeInformation, ReferenceTimeInformationStruct)
+
+    static constexpr uint8_t s_greater = 255;
+    static constexpr uint8_t s_max = s_greater - 1;
+    static constexpr uint8_t s_hoursPerDay = 24;
+    static constexpr uint8_t s_maxHours = s_hoursPerDay - 1;
 
     virtual bool checkSize(size_t size) override
     {
@@ -85,16 +90,16 @@ private:
         m_btSpecObject.timeAccuracy = TimeAccuracy(parser, configuration).getBtSpecObject();
         m_btSpecObject.daysSinceUpdate = parser.parseUInt8();
         m_btSpecObject.hoursSinceUpdate = parser.parseUInt8();
-        if (255 != m_btSpecObject.hoursSinceUpdate &&
-            23 < m_btSpecObject.hoursSinceUpdate)
+        if (s_greater != m_btSpecObject.hoursSinceUpdate &&
+            s_maxHours < m_btSpecObject.hoursSinceUpdate)
         {
             return false;
         }
 
-        if ((255 == m_btSpecObject.daysSinceUpdate &&
-             255 != m_btSpecObject.hoursSinceUpdate) ||
-            (255 == m_btSpecObject.hoursSinceUpdate &&
-             255 != m_btSpecObject.daysSinceUpdate))
+        if ((s_greater == m_btSpecObject.daysSinceUpdate &&
+             s_greater != m_btSpecObject.hoursSinceUpdate) ||
+            (s_greater == m_btSpecObject.hoursSinceUpdate &&
+             s_greater != m_btSpecObject.daysSinceUpdate))
         {
             return false;
         }
@@ -110,7 +115,7 @@ private:
         oss << ", Updated: ";
         if (isSinceUpdateGreater())
         {
-            oss << ">254days ago";
+            oss << ">" << static_cast<int>(s_max) << "days ago";
             return;
         }
 

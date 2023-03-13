@@ -17,6 +17,9 @@ set(LIBRARY_SOURCES
     include/blevalueparser/characteristictype.h
     include/blevalueparser/servicetype.h
     # characteristics
+    include/blevalueparser/alertcategoryid.h
+    include/blevalueparser/alertcategoryidbitmask.h
+    include/blevalueparser/alertnotificationcontrolpoint.h
     include/blevalueparser/batterycriticalstatus.h
     include/blevalueparser/batteryenergystatus.h
     include/blevalueparser/batteryhealthinformation.h
@@ -42,12 +45,17 @@ set(LIBRARY_SOURCES
     include/blevalueparser/heartratemeasurement.h
     include/blevalueparser/hexstring.h
     include/blevalueparser/localtimeinformation.h
+    include/blevalueparser/newalert.h
     include/blevalueparser/pnpid.h
     include/blevalueparser/referencetimeinformation.h
+    include/blevalueparser/supportedalertcategorybase.h
+    include/blevalueparser/supportednewalertcategory.h
+    include/blevalueparser/supportedunreadalertcategory.h
     include/blevalueparser/textstring.h
     include/blevalueparser/timeaccuracy.h
     include/blevalueparser/timesource.h
     include/blevalueparser/timezone.h
+    include/blevalueparser/unreadalertstatus.h
     include/blevalueparser/userindex.h
 )
 
