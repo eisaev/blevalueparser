@@ -282,7 +282,7 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, NoImpendance_Unstable_Unloaded)
 
 TEST_F(BodyCompositionMeasurementMIBFSTest, HasImpendance_Stabilized_Unloaded)
 {
-    //                           RRRMFFFF    FFFFFFFU
+    //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b10100110), C(0b00000010) };
     constexpr char data[] = {
         flags[1], flags[0],
