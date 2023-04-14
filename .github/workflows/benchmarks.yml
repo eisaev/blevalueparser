@@ -32,12 +32,19 @@ jobs:
       working-directory: ${{env.BUILD_DIR}}/benchmarks
       run: ./bvpbenchmark --benchmark_out_format=json --benchmark_out=benchmark-results.json
 
+    - name: Download Previous Result
+      uses: actions/cache@v1
+      with:
+        path: ./cache
+        key: ${{ runner.os }}-benchmark
+
     - name: Store Result
       uses: benchmark-action/github-action-benchmark@v1
       with:
         name: C++ Benchmark
         tool: 'googlecpp'
         output-file-path: ${{env.BUILD_DIR}}/benchmarks/benchmark-results.json
+        external-data-json-path: ./cache/benchmark-results.json
         github-token: ${{ secrets.GITHUB_TOKEN }}
         summary-always: true
         # Show alert with commit comment on detecting possible performance regression
