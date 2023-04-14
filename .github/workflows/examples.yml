@@ -61,7 +61,7 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -G Ninja -B ${{env.BUILD_DIR}}/gui -DBUILD_TESTS=OFF -DBUILD_TUI_EXAMPLE=OFF -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} ${{matrix.RUNNER.CLANG_TIDY}}
+      run: cmake -G Ninja -B ${{env.BUILD_DIR}}/gui -DBUILD_BENCHMARKS=OFF -DBUILD_TESTS=OFF -DBUILD_TUI_EXAMPLE=OFF -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} ${{matrix.RUNNER.CLANG_TIDY}}
 
     - name: Build
       # Build your program with the given configuration
@@ -110,7 +110,7 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -G Ninja -B ${{env.BUILD_DIR}}/tui -DBUILD_TESTS=OFF -DBUILD_GUI_EXAMPLE=OFF -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} ${{matrix.RUNNER.CLANG_TIDY}}
+      run: cmake -G Ninja -B ${{env.BUILD_DIR}}/tui -DBUILD_BENCHMARKS=OFF -DBUILD_TESTS=OFF -DBUILD_GUI_EXAMPLE=OFF -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} ${{matrix.RUNNER.CLANG_TIDY}}
 
     - name: Build
       # Build your program with the given configuration

@@ -26,7 +26,7 @@ jobs:
       uses: seanmiddleditch/gha-setup-ninja@v3
 
     - name: Configure CMake
-      run: cmake -G Ninja -B ${{env.COVERAGE_PATH}} -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_CXX_FLAGS_DEBUG="-g --coverage"
+      run: cmake -G Ninja -B ${{env.COVERAGE_PATH}} -DBUILD_BENCHMARKS=OFF -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_CXX_FLAGS_DEBUG="-g --coverage"
 
     - name: Build
       run: cmake --build ${{env.COVERAGE_PATH}} --config ${{env.BUILD_TYPE}} --target bvptest
