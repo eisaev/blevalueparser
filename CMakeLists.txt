@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 3.19)
 
 project(blevalueparser VERSION 0.1 LANGUAGES CXX)
 
-option(BUILD_EXAMPLES "Build examples" ON)
 option(BUILD_TESTS "Build tests" ON)
+option(BUILD_BENCHMARKS "Build benchmarks" ON)
+option(BUILD_EXAMPLES "Build examples" ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
@@ -74,6 +75,10 @@ set(CMAKE_CXX_FLAGS_DEBUG " -Og -fno-inline ${CMAKE_CXX_FLAGS_DEBUG} ")
 
 if(BUILD_TESTS)
     add_subdirectory("tests")
+endif()
+
+if(BUILD_BENCHMARKS)
+    add_subdirectory("benchmarks")
 endif()
 
 if(BUILD_EXAMPLES)

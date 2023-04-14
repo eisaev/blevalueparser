@@ -32,18 +32,35 @@ private:
 
     virtual bool parse(Parser &parser) override
     {
+// Don't use stringstreams in parser! It's slooooOOO00OOOoooow!
+#if 0  // x1: ~184ns, x8: ~691ns, x64: ~5050ns, x512: ~36550ns
         std::ostringstream oss;
         oss << configuration.hexPrefix;
+        oss << std::uppercase
+            << std::setfill('0')
+            << std::setw(2)
+            << std::hex;
         while (!parser.atEnd())
         {
-            oss << std::uppercase
-                << std::setfill('0')
-                << std::setw(2)
-                << std::hex
-                << static_cast<int>(parser.parseUInt8())
+            oss << static_cast<int>(parser.parseUInt8())
                 << configuration.hexSeparator;
         }
         m_btSpecObject.hexString = oss.str();
+#else  // x1: ~40ns (x4.6), x8: ~157ns (x4.4), x64: ~743ns (x6.8), x512: ~4504ns (x8.1)
+        m_btSpecObject.hexString = configuration.hexPrefix;
+
+        constexpr std::array<char, 16> hexChars{
+            '0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+        };
+        while (!parser.atEnd())
+        {
+            uint8_t byte = parser.parseUInt8();
+            m_btSpecObject.hexString.push_back(hexChars[(byte & 0xF0) >> 4]);
+            m_btSpecObject.hexString.push_back(hexChars[byte & 0x0F]);
+            m_btSpecObject.hexString.append(configuration.hexSeparator);
+        }
+#endif
         m_btSpecObject.hexString.pop_back();
 
         return true;

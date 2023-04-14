@@ -90,6 +90,7 @@ TEST_F(AlertCategoryIDBitMaskTest, ReservedOdd_CategoryEven)
 
     EXPECT_EQ("{ Email Call SMS/MMS Schedule InstantMessage }", result->toString());
 }
+
 TEST_F(AlertCategoryIDBitMaskTest, ReservedNone_CategoryAll)
 {
     //                             RRRRRRIH       SVXMCNEA
