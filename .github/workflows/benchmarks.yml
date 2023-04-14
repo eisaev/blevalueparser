@@ -1,0 +1,48 @@
+name: Benchmarks
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  benchmark:
+    name: Benchmark Check
+    runs-on: [ubuntu-20.04, self-hosted]
+
+    env:
+      BUILD_DIR: ${{github.workspace}}/build
+      BUILD_TYPE: MinSizeRel
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install Ninja
+      uses: seanmiddleditch/gha-setup-ninja@v3
+
+    - name: Configure CMake
+      run: cmake -G Ninja -B ${{env.BUILD_DIR}} -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build
+      run: cmake --build ${{env.BUILD_DIR}} --config ${{env.BUILD_TYPE}} --target bvpbenchmark
+
+    - name: Run
+      working-directory: ${{env.BUILD_DIR}}/benchmarks
+      run: ./bvpbenchmark --benchmark_out_format=json --benchmark_out=benchmark-results.json
+
+    - name: Store Result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: C++ Benchmark
+          tool: 'googlecpp'
+          output-file-path: ${{env.BUILD_DIR}}/benchmarks/benchmark_results.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          summary-always: true
+          # Show alert with commit comment on detecting possible performance regression
+          alert-threshold: '150%'
+          comment-on-alert: true
+          fail-on-alert: true
+          alert-comment-cc-users: '@eisaev'
+
