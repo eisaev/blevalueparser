@@ -33,20 +33,20 @@ private:
     virtual bool parse(Parser &parser) override
     {
 // Don't use stringstreams in parser! It's slooooOOO00OOOoooow!
-#if 0  // x1: ~184ns, x8: ~691ns, x64: ~5050ns, x512: ~36550ns
+#if 0  // x1: ~187ns, x8: ~820ns, x64: ~5303ns, x512: ~41865ns
         std::ostringstream oss;
         oss << configuration.hexPrefix;
-        oss << std::uppercase
-            << std::setfill('0')
-            << std::setw(2)
-            << std::hex;
         while (!parser.atEnd())
         {
-            oss << static_cast<int>(parser.parseUInt8())
+            oss << std::uppercase
+                << std::setfill('0')
+                << std::setw(2)
+                << std::hex
+                << static_cast<int>(parser.parseUInt8())
                 << configuration.hexSeparator;
         }
         m_btSpecObject.hexString = oss.str();
-#else  // x1: ~40ns (x4.6), x8: ~157ns (x4.4), x64: ~743ns (x6.8), x512: ~4504ns (x8.1)
+#else  // x1: ~40ns (x4.6), x8: ~157ns (x5.2), x64: ~743ns (x7.1), x512: ~4504ns (x9.3)
         m_btSpecObject.hexString = configuration.hexPrefix;
 
         constexpr std::array<char, 16> hexChars{
