@@ -10,7 +10,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(gbenchmark REQUIRED)
 
 set(BENCHMARK_SOURCES
+    benchmarks.cpp
+    datagenerator.cpp
+    datagenerator.h
     parserbenchmark.cpp
+    stringbenchmark.cpp
 )
 
 add_executable(${PROJECT_NAME} ${BENCHMARK_SOURCES})
