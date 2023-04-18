@@ -14,9 +14,9 @@ struct TextStringStruct
 class TextString final : public BaseValueSpec<TextStringStruct>
 {
 public:
-    std::string textString() const
+    BVP_GETTER(std::string, textString, TextStringStruct)
     {
-        return m_btSpecObject.textString;
+        return btSpecObject.textString;
     }
 
 private:
@@ -28,10 +28,13 @@ private:
         return true;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(TextStringStruct)
     {
-        m_btSpecObject.textString = parser.parseString();
-        return true;
+        bool result{true};
+
+        btSpecObject.textString = parser.parseString();
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

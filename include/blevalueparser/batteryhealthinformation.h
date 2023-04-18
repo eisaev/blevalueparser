@@ -30,49 +30,49 @@ struct BatteryHealthInformationStruct
 class BatteryHealthInformation final : public BaseValueSpec<BatteryHealthInformationStruct>
 {
 public:
-    bool isCycleCountDesignedLifetimePresent() const
+    BVP_GETTER(bool, isCycleCountDesignedLifetimePresent, BatteryHealthInformationStruct)
     {
-        return (m_btSpecObject.flags & BHI_FLAG_CYCLE_COUNT_DESIGNED_LIFETIME_PRESENT) != 0;
+        return (btSpecObject.flags & BHI_FLAG_CYCLE_COUNT_DESIGNED_LIFETIME_PRESENT) != 0;
     }
 
-    bool isMinAndMaxDesignedOperatingTemperaturePresent() const
+    BVP_GETTER(bool, isMinAndMaxDesignedOperatingTemperaturePresent, BatteryHealthInformationStruct)
     {
-        return (m_btSpecObject.flags & BHI_FLAG_MIN_AND_MAX_DESIGNED_OPERATING_TEMPERATURE_PRESENT) != 0;
+        return (btSpecObject.flags & BHI_FLAG_MIN_AND_MAX_DESIGNED_OPERATING_TEMPERATURE_PRESENT) != 0;
     }
 
-    uint16_t cycleCountDesignedLifetime() const
+    BVP_GETTER(uint16_t, cycleCountDesignedLifetime, BatteryHealthInformationStruct)
     {
-        return m_btSpecObject.cycleCountDesignedLifetime;
+        return btSpecObject.cycleCountDesignedLifetime;
     }
 
-    int8_t minDesignedOperatingTemperature() const
+    BVP_GETTER(int8_t, minDesignedOperatingTemperature, BatteryHealthInformationStruct)
     {
-        return m_btSpecObject.minDesignedOperatingTemperature;
+        return btSpecObject.minDesignedOperatingTemperature;
     }
 
-    int8_t maxDesignedOperatingTemperature() const
+    BVP_GETTER(int8_t, maxDesignedOperatingTemperature, BatteryHealthInformationStruct)
     {
-        return m_btSpecObject.maxDesignedOperatingTemperature;
+        return btSpecObject.maxDesignedOperatingTemperature;
     }
 
-    bool isMinDesignedOperatingTemperatureGreater() const
+    BVP_GETTER(bool, isMinDesignedOperatingTemperatureGreater, BatteryHealthInformationStruct)
     {
-        return s_greater == m_btSpecObject.minDesignedOperatingTemperature;
+        return s_greater == btSpecObject.minDesignedOperatingTemperature;
     }
 
-    bool isMinDesignedOperatingTemperatureLess() const
+    BVP_GETTER(bool, isMinDesignedOperatingTemperatureLess, BatteryHealthInformationStruct)
     {
-        return s_less == m_btSpecObject.minDesignedOperatingTemperature;
+        return s_less == btSpecObject.minDesignedOperatingTemperature;
     }
 
-    bool isMaxDesignedOperatingTemperatureGreater() const
+    BVP_GETTER(bool, isMaxDesignedOperatingTemperatureGreater, BatteryHealthInformationStruct)
     {
-        return s_greater == m_btSpecObject.maxDesignedOperatingTemperature;
+        return s_greater == btSpecObject.maxDesignedOperatingTemperature;
     }
 
-    bool isMaxDesignedOperatingTemperatureLess() const
+    BVP_GETTER(bool, isMaxDesignedOperatingTemperatureLess, BatteryHealthInformationStruct)
     {
-        return s_less == m_btSpecObject.maxDesignedOperatingTemperature;
+        return s_less == btSpecObject.maxDesignedOperatingTemperature;
     }
 
 private:
@@ -88,25 +88,27 @@ private:
         return size > 0 && size < 6;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(BatteryHealthInformationStruct)
     {
-        m_btSpecObject.flags = parser.parseUInt8();
+        bool result{true};
 
-        if (isCycleCountDesignedLifetimePresent())
+        btSpecObject.flags = parser.parseUInt8();
+
+        if (isCycleCountDesignedLifetimePresent(btSpecObject))
         {
-            m_btSpecObject.cycleCountDesignedLifetime = parser.parseUInt16();
+            btSpecObject.cycleCountDesignedLifetime = parser.parseUInt16();
         }
-        if (isMinAndMaxDesignedOperatingTemperaturePresent())
+        if (isMinAndMaxDesignedOperatingTemperaturePresent(btSpecObject))
         {
-            m_btSpecObject.minDesignedOperatingTemperature = parser.parseInt8();
-            m_btSpecObject.maxDesignedOperatingTemperature = parser.parseInt8();
-            if (m_btSpecObject.minDesignedOperatingTemperature > m_btSpecObject.maxDesignedOperatingTemperature)
+            btSpecObject.minDesignedOperatingTemperature = parser.parseInt8();
+            btSpecObject.maxDesignedOperatingTemperature = parser.parseInt8();
+            if (btSpecObject.minDesignedOperatingTemperature > btSpecObject.maxDesignedOperatingTemperature)
             {
                 return false;
             }
         }
 
-        return true;
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

@@ -51,9 +51,9 @@ struct HeartRateControlPointStruct
 class HeartRateControlPoint final : public BaseValueSpec<HeartRateControlPointStruct>
 {
 public:
-    HeartRateControlPointEnum controlPointType() const
+    BVP_GETTER(HeartRateControlPointEnum, controlPointType, HeartRateControlPointStruct)
     {
-        return m_btSpecObject.heartRateControlPoint;
+        return btSpecObject.heartRateControlPoint;
     }
 
 private:
@@ -64,11 +64,13 @@ private:
         return size == 1;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(HeartRateControlPointStruct)
     {
-        m_btSpecObject.heartRateControlPoint %= HeartRateControlPointEnum(parser.parseUInt8());
+        bool result{true};
 
-        return true;
+        btSpecObject.heartRateControlPoint %= HeartRateControlPointEnum(parser.parseUInt8());
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

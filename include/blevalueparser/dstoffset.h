@@ -59,9 +59,9 @@ class DSTOffset final : public BaseValueSpec<DSTOffsetStruct>
 public:
     friend class LocalTimeInformation;
 
-    DSTOffsetEnum dstOffset() const
+    BVP_GETTER(DSTOffsetEnum, dstOffset, DSTOffsetStruct)
     {
-        return m_btSpecObject.dstOffset;
+        return btSpecObject.dstOffset;
     }
 
 private:
@@ -72,11 +72,13 @@ private:
         return size == 1;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(DSTOffsetStruct)
     {
-        m_btSpecObject.dstOffset %= DSTOffsetEnum(parser.parseUInt8());
+        bool result{true};
 
-        return true;
+        btSpecObject.dstOffset %= DSTOffsetEnum(parser.parseUInt8());
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

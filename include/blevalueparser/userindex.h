@@ -19,9 +19,9 @@ class UserIndex final : public BaseValueSpec<UserIndexStruct>
 public:
     friend class BodyCompositionMeasurement;
 
-    uint8_t userIndex() const
+    BVP_GETTER(uint8_t, userIndex, UserIndexStruct)
     {
-        return m_btSpecObject.userIndex;
+        return btSpecObject.userIndex;
     }
 
 private:
@@ -32,11 +32,13 @@ private:
         return size == 1;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(UserIndexStruct)
     {
-        m_btSpecObject.userIndex = parser.parseUInt8();
+        bool result{true};
 
-        return true;
+        btSpecObject.userIndex = parser.parseUInt8();
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

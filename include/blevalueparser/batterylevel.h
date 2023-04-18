@@ -21,9 +21,9 @@ class BatteryLevel final : public BaseValueSpec<BatteryLevelStruct>
 public:
     friend class BatteryLevelStatus;
 
-    uint8_t level() const
+    BVP_GETTER(uint8_t, level, BatteryLevelStruct)
     {
-        return m_btSpecObject.batteryLevel;
+        return btSpecObject.batteryLevel;
     }
 
 private:
@@ -34,15 +34,17 @@ private:
         return size == 1;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(BatteryLevelStruct)
     {
-        m_btSpecObject.batteryLevel = parser.parseUInt8();
-        if (m_btSpecObject.batteryLevel > 100)
+        bool result{true};
+
+        btSpecObject.batteryLevel = parser.parseUInt8();
+        if (btSpecObject.batteryLevel > 100)
         {
             return false;
         }
 
-        return true;
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

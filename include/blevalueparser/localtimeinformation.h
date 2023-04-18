@@ -22,14 +22,14 @@ struct LocalTimeInformationStruct
 class LocalTimeInformation final : public BaseValueSpec<LocalTimeInformationStruct>
 {
 public:
-    TimeZoneEnum timeZone() const
+    BVP_GETTER(TimeZoneEnum, timeZone, LocalTimeInformationStruct)
     {
-        return m_btSpecObject.timeZone.timeZone;
+        return btSpecObject.timeZone.timeZone;
     }
 
-    DSTOffsetEnum dstOffset() const
+    BVP_GETTER(DSTOffsetEnum, dstOffset, LocalTimeInformationStruct)
     {
-        return m_btSpecObject.dstOffset.dstOffset;
+        return btSpecObject.dstOffset.dstOffset;
     }
 
 private:
@@ -40,18 +40,20 @@ private:
         return size == 2;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(LocalTimeInformationStruct)
     {
-        m_btSpecObject.timeZone = TimeZone(parser, configuration).getBtSpecObject();
-        m_btSpecObject.dstOffset = DSTOffset(parser, configuration).getBtSpecObject();
+        bool result{true};
 
-        return true;
+        result &= TimeZone::parse(parser, btSpecObject.timeZone);
+        result &= DSTOffset::parse(parser, btSpecObject.dstOffset);
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override
     {
-        oss <<   "TZ: "  << TimeZone(m_btSpecObject.timeZone, configuration);
-        oss << ", DST: " << DSTOffset(m_btSpecObject.dstOffset, configuration);
+        oss <<   "TZ: "  << TimeZone(m_btSpecObject.timeZone, configuration());
+        oss << ", DST: " << DSTOffset(m_btSpecObject.dstOffset, configuration());
     }
 };
 

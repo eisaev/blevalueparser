@@ -17,7 +17,7 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, NoImpendance_Unstable_Loaded)
 {
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b00000100), C(0b00000010) };
-    constexpr char data[] = {
+    char data[] = {
         flags[1], flags[0],
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x12', '\x34',                                         // impedance
@@ -81,7 +81,8 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, NoImpendance_Unstable_Loaded)
 
     EXPECT_EQ("Unstable, TimeStamp: 06.02.2023 18:28:00, Weight: 154.03kg", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    data[0] |= 1;  // Imperial
+    result = bleValueParser.make_value<BodyCompositionMeasurementMIBFS>(data, sizeof(data));
     EXPECT_FLOAT_EQ(0.0, result->bodyFatPercentage());
     EXPECT_EQ(2023, result->year());
     EXPECT_EQ(02, result->month());
@@ -106,7 +107,7 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, HasImpendance_Stabilized_Loaded)
 {
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b00100110), C(0b00000010) };
-    constexpr char data[] = {
+    char data[] = {
         flags[1], flags[0],
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x12', '\x34',                                         // impedance
@@ -170,7 +171,8 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, HasImpendance_Stabilized_Loaded)
 
     EXPECT_EQ("Stabilized, TimeStamp: 06.02.2023 18:28:00, Impedance: 1333Ω, Weight: 154.03kg", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    data[0] |= 1;  // Imperial
+    result = bleValueParser.make_value<BodyCompositionMeasurementMIBFS>(data, sizeof(data));
     EXPECT_FLOAT_EQ(0.0, result->bodyFatPercentage());
     EXPECT_EQ(2023, result->year());
     EXPECT_EQ(02, result->month());
@@ -195,7 +197,7 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, NoImpendance_Unstable_Unloaded)
 {
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b10000100), C(0b00000010) };
-    constexpr char data[] = {
+    char data[] = {
         flags[1], flags[0],
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x12', '\x34',                                         // impedance
@@ -259,7 +261,8 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, NoImpendance_Unstable_Unloaded)
 
     EXPECT_EQ("Unloaded, TimeStamp: 06.02.2023 18:28:00, Weight: 154.03kg", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    data[0] |= 1;  // Imperial
+    result = bleValueParser.make_value<BodyCompositionMeasurementMIBFS>(data, sizeof(data));
     EXPECT_FLOAT_EQ(0.0, result->bodyFatPercentage());
     EXPECT_EQ(2023, result->year());
     EXPECT_EQ(02, result->month());
@@ -284,7 +287,7 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, HasImpendance_Stabilized_Unloaded)
 {
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b10100110), C(0b00000010) };
-    constexpr char data[] = {
+    char data[] = {
         flags[1], flags[0],
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
         '\x12', '\x34',                                         // impedance
@@ -348,7 +351,8 @@ TEST_F(BodyCompositionMeasurementMIBFSTest, HasImpendance_Stabilized_Unloaded)
 
     EXPECT_EQ("Unloaded, TimeStamp: 06.02.2023 18:28:00, Impedance: 1333Ω, Weight: 154.03kg", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    data[0] |= 1;  // Imperial
+    result = bleValueParser.make_value<BodyCompositionMeasurementMIBFS>(data, sizeof(data));
     EXPECT_FLOAT_EQ(0.0, result->bodyFatPercentage());
     EXPECT_EQ(2023, result->year());
     EXPECT_EQ(02, result->month());

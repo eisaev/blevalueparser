@@ -18,29 +18,29 @@ struct EstimatedServiceDateStruct
 class EstimatedServiceDate final : public BaseValueSpec<EstimatedServiceDateStruct>
 {
 public:
-    uint64_t days() const
+    BVP_GETTER(uint64_t, days, EstimatedServiceDateStruct)
     {
-        return DateUTC(m_btSpecObject.estimatedServiceDate, configuration).days();
+        return DateUTC::days(btSpecObject.estimatedServiceDate);
     }
 
-    time_t date() const
+    BVP_GETTER(time_t, date, EstimatedServiceDateStruct)
     {
-        return DateUTC(m_btSpecObject.estimatedServiceDate, configuration).date();
+        return DateUTC::date(btSpecObject.estimatedServiceDate);
     }
 
-    uint16_t year() const
+    BVP_GETTER(uint16_t, year, EstimatedServiceDateStruct)
     {
-        return DateUTC(m_btSpecObject.estimatedServiceDate, configuration).year();
+        return DateUTC::year(btSpecObject.estimatedServiceDate);
     }
 
-    uint8_t month() const
+    BVP_GETTER(uint8_t, month, EstimatedServiceDateStruct)
     {
-        return DateUTC(m_btSpecObject.estimatedServiceDate, configuration).month();
+        return DateUTC::month(btSpecObject.estimatedServiceDate);
     }
 
-    uint8_t day() const
+    BVP_GETTER(uint8_t, day, EstimatedServiceDateStruct)
     {
-        return DateUTC(m_btSpecObject.estimatedServiceDate, configuration).day();
+        return DateUTC::day(btSpecObject.estimatedServiceDate);
     }
 
 private:
@@ -51,16 +51,18 @@ private:
         return size == 3;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(EstimatedServiceDateStruct)
     {
-        m_btSpecObject.estimatedServiceDate = DateUTC(parser, configuration).getBtSpecObject();
+        bool result{true};
 
-        return true;
+        result &= DateUTC::parse(parser, btSpecObject.estimatedServiceDate);
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override
     {
-        oss << DateUTC(m_btSpecObject.estimatedServiceDate, configuration);
+        oss << DateUTC(m_btSpecObject.estimatedServiceDate, configuration());
     }
 };
 

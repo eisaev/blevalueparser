@@ -24,49 +24,49 @@ struct ReferenceTimeInformationStruct
 class ReferenceTimeInformation final : public BaseValueSpec<ReferenceTimeInformationStruct>
 {
 public:
-    TimeSourceEnum timeSource() const
+    BVP_GETTER(TimeSourceEnum, timeSource, ReferenceTimeInformationStruct)
     {
-        return m_btSpecObject.timeSource.timeSource;
+        return btSpecObject.timeSource.timeSource;
     }
 
-    bool isTimeAccuracyLarger() const
+    BVP_GETTER(bool, isTimeAccuracyLarger, ReferenceTimeInformationStruct)
     {
-        return TimeAccuracy(m_btSpecObject.timeAccuracy, configuration).isLarger();
+        return TimeAccuracy::isLarger(btSpecObject.timeAccuracy);
     }
 
-    bool isTimeAccuracyUnknown() const
+    BVP_GETTER(bool, isTimeAccuracyUnknown, ReferenceTimeInformationStruct)
     {
-        return TimeAccuracy(m_btSpecObject.timeAccuracy, configuration).isUnknown();
+        return TimeAccuracy::isUnknown(btSpecObject.timeAccuracy);
     }
 
-    uint16_t timeAccuracyMs() const
+    BVP_GETTER(uint16_t, timeAccuracyMs, ReferenceTimeInformationStruct)
     {
-        return TimeAccuracy(m_btSpecObject.timeAccuracy, configuration).accuracyMs();
+        return TimeAccuracy::accuracyMs(btSpecObject.timeAccuracy);
     }
 
-    uint8_t daysSinceUpdate() const
+    BVP_GETTER(uint8_t, daysSinceUpdate, ReferenceTimeInformationStruct)
     {
-        return m_btSpecObject.daysSinceUpdate;
+        return btSpecObject.daysSinceUpdate;
     }
 
-    uint8_t hoursSinceUpdate() const
+    BVP_GETTER(uint8_t, hoursSinceUpdate, ReferenceTimeInformationStruct)
     {
-        return m_btSpecObject.hoursSinceUpdate;
+        return btSpecObject.hoursSinceUpdate;
     }
 
-    bool isSinceUpdateGreater() const
+    BVP_GETTER(bool, isSinceUpdateGreater, ReferenceTimeInformationStruct)
     {
-        return s_greater == (daysSinceUpdate() & hoursSinceUpdate());
+        return s_greater == (daysSinceUpdate(btSpecObject) & hoursSinceUpdate(btSpecObject));
     }
 
-    uint32_t timeSinceUpdateH() const
+    BVP_GETTER(uint32_t, timeSinceUpdateH, ReferenceTimeInformationStruct)
     {
-        if (isSinceUpdateGreater())
+        if (isSinceUpdateGreater(btSpecObject))
         {
             return UINT32_MAX;
         }
 
-        return m_btSpecObject.daysSinceUpdate * s_hoursPerDay + m_btSpecObject.hoursSinceUpdate;
+        return btSpecObject.daysSinceUpdate * s_hoursPerDay + btSpecObject.hoursSinceUpdate;
     }
 
 private:
@@ -82,35 +82,37 @@ private:
         return size == 4;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(ReferenceTimeInformationStruct)
     {
+        bool result{true};
+
         // GATT_Specification_Supplement_v8.pdf
         // 3.178 Reference Time Information
-        m_btSpecObject.timeSource = TimeSource(parser, configuration).getBtSpecObject();
-        m_btSpecObject.timeAccuracy = TimeAccuracy(parser, configuration).getBtSpecObject();
-        m_btSpecObject.daysSinceUpdate = parser.parseUInt8();
-        m_btSpecObject.hoursSinceUpdate = parser.parseUInt8();
-        if (s_greater != m_btSpecObject.hoursSinceUpdate &&
-            s_maxHours < m_btSpecObject.hoursSinceUpdate)
+        result &= TimeSource::parse(parser, btSpecObject.timeSource);
+        result &= TimeAccuracy::parse(parser, btSpecObject.timeAccuracy);
+        btSpecObject.daysSinceUpdate = parser.parseUInt8();
+        btSpecObject.hoursSinceUpdate = parser.parseUInt8();
+        if (s_greater != btSpecObject.hoursSinceUpdate &&
+            s_maxHours < btSpecObject.hoursSinceUpdate)
         {
             return false;
         }
 
-        if ((s_greater == m_btSpecObject.daysSinceUpdate &&
-             s_greater != m_btSpecObject.hoursSinceUpdate) ||
-            (s_greater == m_btSpecObject.hoursSinceUpdate &&
-             s_greater != m_btSpecObject.daysSinceUpdate))
+        if ((s_greater == btSpecObject.daysSinceUpdate &&
+             s_greater != btSpecObject.hoursSinceUpdate) ||
+            (s_greater == btSpecObject.hoursSinceUpdate &&
+             s_greater != btSpecObject.daysSinceUpdate))
         {
             return false;
         }
 
-        return true;
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override
     {
-        oss <<   "Src: "   << TimeSource(m_btSpecObject.timeSource, configuration);
-        oss << ", Drift: " << TimeAccuracy(m_btSpecObject.timeAccuracy, configuration);
+        oss <<   "Src: "   << TimeSource(m_btSpecObject.timeSource, configuration());
+        oss << ", Drift: " << TimeAccuracy(m_btSpecObject.timeAccuracy, configuration());
 
         oss << ", Updated: ";
         if (isSinceUpdateGreater())

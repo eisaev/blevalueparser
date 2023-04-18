@@ -20,49 +20,49 @@ constexpr uint16_t BCS_FLAG_BCM_MIBFS_UNLOADED   = BCS_FLAG_BCM_RESERVED3;
 class BodyCompositionMeasurementMIBFS final : public BodyCompositionMeasurementBase
 {
 public:
-    bool isStabilized() const
+    BVP_GETTER(bool, isStabilized, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_MIBFS_STABILIZED) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_MIBFS_STABILIZED) != 0;
     }
 
-    bool isUnknown1() const
+    BVP_GETTER(bool, isUnknown, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_MIBFS_UNKNOWN1) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_MIBFS_UNKNOWN1) != 0;
     }
 
-    bool isUnloaded() const
+    BVP_GETTER(bool, isUnloaded, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_MIBFS_UNLOADED) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_MIBFS_UNLOADED) != 0;
     }
 
 private:
     BVP_CTORS(BodyCompositionMeasurementBase, BodyCompositionMeasurementMIBFS, BodyCompositionMeasurementStruct)
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(BodyCompositionMeasurementStruct)
     {
-        // 3.2.1.1 Flags Field
-        m_btSpecObject.flags = parser.parseUInt16();
+        bool result{true};
 
-        configuration.measurementUnits = measurementUnits();
+        // 3.2.1.1 Flags Field
+        btSpecObject.flags = parser.parseUInt16();
 
         // 3.2.1.3 Time Stamp Field
-        if (isTimeStampPresent())
+        if (isTimeStampPresent(btSpecObject))
         {
-            m_btSpecObject.timeStamp = DateTime(parser, configuration).getBtSpecObject();
+            result &= DateTime::parse(parser, btSpecObject.timeStamp);
         }
 
         // 3.2.1.11 Impedance
         // Unit is 1/10 of an Ohm
         // Always present in data on Xiaomi scales
-        m_btSpecObject.impedance = parser.parseUInt16();
+        btSpecObject.impedance = parser.parseUInt16();
 
         // 3.2.1.12 Weight
-        if (isWeightPresent())
+        if (isWeightPresent(btSpecObject))
         {
-            m_btSpecObject.weight = parser.parseUInt16();
+            btSpecObject.weight = parser.parseUInt16();
         }
 
-        return true;
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override
@@ -71,7 +71,7 @@ private:
 
         if (isTimeStampPresent())
         {
-            oss << ", TimeStamp: " << DateTime(m_btSpecObject.timeStamp, configuration);
+            oss << ", TimeStamp: " << DateTime(m_btSpecObject.timeStamp, configuration());
         }
 
         if (isImpedancePresent())
@@ -81,7 +81,7 @@ private:
 
         if (isWeightPresent())
         {
-            oss << ", Weight: " << weight() << configuration.massUnits();
+            oss << ", Weight: " << weight() << configuration().massUnits();
         }
     }
 };

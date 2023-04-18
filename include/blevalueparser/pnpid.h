@@ -66,34 +66,34 @@ struct PnPIDStruct
 class PnPID final : public BaseValueSpec<PnPIDStruct>
 {
 public:
-    VendorIdSourceEnum vendorIdSource() const
+    BVP_GETTER(VendorIdSourceEnum, vendorIdSource, PnPIDStruct)
     {
-        return m_btSpecObject.vendorIdSource.vendorIdSource;
+        return btSpecObject.vendorIdSource.vendorIdSource;
     }
 
-    uint16_t vendorId() const
+    BVP_GETTER(uint16_t, vendorId, PnPIDStruct)
     {
-        return m_btSpecObject.vendorId;
+        return btSpecObject.vendorId;
     }
 
-    uint16_t productId() const
+    BVP_GETTER(uint16_t, productId, PnPIDStruct)
     {
-        return m_btSpecObject.productId;
+        return btSpecObject.productId;
     }
 
-    uint8_t majorVersion() const
+    BVP_GETTER(uint8_t, majorVersion, PnPIDStruct)
     {
-        return m_btSpecObject.productVersion >> 8;
+        return btSpecObject.productVersion >> 8;
     }
 
-    uint8_t minorVersion() const
+    BVP_GETTER(uint8_t, minorVersion, PnPIDStruct)
     {
-        return m_btSpecObject.productVersion >> 4 & 0b1111;
+        return btSpecObject.productVersion >> 4 & 0b1111;
     }
 
-    uint8_t subMinorVersion() const
+    BVP_GETTER(uint8_t, subMinorVersion, PnPIDStruct)
     {
-        return m_btSpecObject.productVersion & 0b1111;
+        return btSpecObject.productVersion & 0b1111;
     }
 
 private:
@@ -104,21 +104,23 @@ private:
         return size == 7;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(PnPIDStruct)
     {
+        bool result{true};
+
         // 3.9.1.1 Vendor ID Source Field
-        m_btSpecObject.vendorIdSource.vendorIdSource %= VendorIdSourceEnum(parser.parseUInt8());
+        btSpecObject.vendorIdSource.vendorIdSource %= VendorIdSourceEnum(parser.parseUInt8());
         // 3.9.1.2 Vendor ID Field
-        m_btSpecObject.vendorId = parser.parseUInt16();
+        btSpecObject.vendorId = parser.parseUInt16();
         // 3.9.1.3 Product ID Field
-        m_btSpecObject.productId = parser.parseUInt16();
+        btSpecObject.productId = parser.parseUInt16();
 
         // 3.9.1.4 Product Version Field
         // The value of the field value is 0xJJMN for version JJ.M.N
         // (JJ – major version number, M – minor version number, N – sub-minor version number)
-        m_btSpecObject.productVersion = parser.parseUInt16();
+        btSpecObject.productVersion = parser.parseUInt16();
 
-        return true;
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

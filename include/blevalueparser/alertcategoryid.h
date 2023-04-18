@@ -89,13 +89,9 @@ public:
     friend class UnreadAlertStatus;
     friend class AlertNotificationControlPoint;
 
-    static AlertCategoryIDEnum categoryID(const AlertCategoryIDStruct &btSpecObject)
+    BVP_GETTER(AlertCategoryIDEnum, categoryID, AlertCategoryIDStruct)
     {
         return btSpecObject.categoryID;
-    }
-    AlertCategoryIDEnum categoryID() const
-    {
-        return categoryID(m_btSpecObject);
     }
 
 private:
@@ -106,17 +102,13 @@ private:
         return size == 1;
     }
 
-    static bool parse(Parser &parser, AlertCategoryIDStruct &btSpecObject)
+    BVP_PARSE(AlertCategoryIDStruct)
     {
         bool result{true};
 
         btSpecObject.categoryID %= AlertCategoryIDEnum(parser.parseUInt8());
 
         return result;
-    }
-    virtual bool parse(Parser &parser) override
-    {
-        return parse(parser, m_btSpecObject);
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

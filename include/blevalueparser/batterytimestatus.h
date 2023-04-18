@@ -30,59 +30,59 @@ struct BatteryTimeStatusStruct
 class BatteryTimeStatus final : public BaseValueSpec<BatteryTimeStatusStruct>
 {
 public:
-    bool isTimeUntilDischargedOnStandbyPresent() const
+    BVP_GETTER(bool, isTimeUntilDischargedOnStandbyPresent, BatteryTimeStatusStruct)
     {
-        return (m_btSpecObject.flags & BTS_FLAG_TIME_UNTIL_DISCHARGED_ON_STANDBY_PRESENT) != 0;
+        return (btSpecObject.flags & BTS_FLAG_TIME_UNTIL_DISCHARGED_ON_STANDBY_PRESENT) != 0;
     }
 
-    bool isTimeUntilRechargedPresent() const
+    BVP_GETTER(bool, isTimeUntilRechargedPresent, BatteryTimeStatusStruct)
     {
-        return (m_btSpecObject.flags & BTS_FLAG_TIME_UNTIL_RECHARGED_PRESENT) != 0;
+        return (btSpecObject.flags & BTS_FLAG_TIME_UNTIL_RECHARGED_PRESENT) != 0;
     }
 
-    uint32_t timeUntilDischarged() const
+    BVP_GETTER(uint32_t, timeUntilDischarged, BatteryTimeStatusStruct)
     {
-        return m_btSpecObject.timeUntilDischarged;
+        return btSpecObject.timeUntilDischarged;
     }
 
-    uint32_t timeUntilDischargedOnStandby() const
+    BVP_GETTER(uint32_t, timeUntilDischargedOnStandby, BatteryTimeStatusStruct)
     {
-        return m_btSpecObject.timeUntilDischargedOnStandby;
+        return btSpecObject.timeUntilDischargedOnStandby;
     }
 
-    uint32_t timeUntilRecharged() const
+    BVP_GETTER(uint32_t, timeUntilRecharged, BatteryTimeStatusStruct)
     {
-        return m_btSpecObject.timeUntilRecharged;
+        return btSpecObject.timeUntilRecharged;
     }
 
-    bool isTimeUntilDischargedUnknown() const
+    BVP_GETTER(bool, isTimeUntilDischargedUnknown, BatteryTimeStatusStruct)
     {
-        return s_unknown == m_btSpecObject.timeUntilDischarged;
+        return s_unknown == btSpecObject.timeUntilDischarged;
     }
 
-    bool isTimeUntilDischargedOnStandbyUnknown() const
+    BVP_GETTER(bool, isTimeUntilDischargedOnStandbyUnknown, BatteryTimeStatusStruct)
     {
-        return s_unknown == m_btSpecObject.timeUntilDischargedOnStandby;
+        return s_unknown == btSpecObject.timeUntilDischargedOnStandby;
     }
 
-    bool isTimeUntilRechargedUnknown() const
+    BVP_GETTER(bool, isTimeUntilRechargedUnknown, BatteryTimeStatusStruct)
     {
-        return s_unknown == m_btSpecObject.timeUntilRecharged;
+        return s_unknown == btSpecObject.timeUntilRecharged;
     }
 
-    bool isTimeUntilDischargedGreater() const
+    BVP_GETTER(bool, isTimeUntilDischargedGreater, BatteryTimeStatusStruct)
     {
-        return s_greater == m_btSpecObject.timeUntilDischarged;
+        return s_greater == btSpecObject.timeUntilDischarged;
     }
 
-    bool isTimeUntilDischargedOnStandbyGreater() const
+    BVP_GETTER(bool, isTimeUntilDischargedOnStandbyGreater, BatteryTimeStatusStruct)
     {
-        return s_greater == m_btSpecObject.timeUntilDischargedOnStandby;
+        return s_greater == btSpecObject.timeUntilDischargedOnStandby;
     }
 
-    bool isTimeUntilRechargedGreater() const
+    BVP_GETTER(bool, isTimeUntilRechargedGreater, BatteryTimeStatusStruct)
     {
-        return s_greater == m_btSpecObject.timeUntilRecharged;
+        return s_greater == btSpecObject.timeUntilRecharged;
     }
 
 private:
@@ -97,21 +97,23 @@ private:
         return size > 3 && size < 11;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(BatteryTimeStatusStruct)
     {
-        m_btSpecObject.flags = parser.parseUInt8();
-        m_btSpecObject.timeUntilDischarged = parser.parseUInt24();
+        bool result{true};
 
-        if (isTimeUntilDischargedOnStandbyPresent())
+        btSpecObject.flags = parser.parseUInt8();
+        btSpecObject.timeUntilDischarged = parser.parseUInt24();
+
+        if (isTimeUntilDischargedOnStandbyPresent(btSpecObject))
         {
-            m_btSpecObject.timeUntilDischargedOnStandby = parser.parseUInt24();
+            btSpecObject.timeUntilDischargedOnStandby = parser.parseUInt24();
         }
-        if (isTimeUntilRechargedPresent())
+        if (isTimeUntilRechargedPresent(btSpecObject))
         {
-            m_btSpecObject.timeUntilRecharged = parser.parseUInt24();
+            btSpecObject.timeUntilRecharged = parser.parseUInt24();
         }
 
-        return true;
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

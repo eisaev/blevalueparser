@@ -30,34 +30,34 @@ public:
     friend class BodyCompositionMeasurement;
     friend class BodyCompositionMeasurementMIBFS;
 
-    uint16_t year() const
+    BVP_GETTER(uint16_t, year, DateTimeStruct)
     {
-        return m_btSpecObject.year;
+        return btSpecObject.year;
     }
 
-    uint8_t month() const
+    BVP_GETTER(uint8_t, month, DateTimeStruct)
     {
-        return m_btSpecObject.month;
+        return btSpecObject.month;
     }
 
-    uint8_t day() const
+    BVP_GETTER(uint8_t, day, DateTimeStruct)
     {
-        return m_btSpecObject.day;
+        return btSpecObject.day;
     }
 
-    uint8_t hour() const
+    BVP_GETTER(uint8_t, hour, DateTimeStruct)
     {
-        return m_btSpecObject.hour;
+        return btSpecObject.hour;
     }
 
-    uint8_t minute() const
+    BVP_GETTER(uint8_t, minute, DateTimeStruct)
     {
-        return m_btSpecObject.minute;
+        return btSpecObject.minute;
     }
 
-    uint8_t seconds() const
+    BVP_GETTER(uint8_t, seconds, DateTimeStruct)
     {
-        return m_btSpecObject.seconds;
+        return btSpecObject.seconds;
     }
 
 private:
@@ -68,16 +68,18 @@ private:
         return size == 7;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(DateTimeStruct)
     {
-        m_btSpecObject.year = parser.parseUInt16();
-        m_btSpecObject.month = parser.parseUInt8();
-        m_btSpecObject.day = parser.parseUInt8();
-        m_btSpecObject.hour = parser.parseUInt8();
-        m_btSpecObject.minute = parser.parseUInt8();
-        m_btSpecObject.seconds = parser.parseUInt8();
+        bool result{true};
 
-        return true;
+        btSpecObject.year = parser.parseUInt16();
+        btSpecObject.month = parser.parseUInt8();
+        btSpecObject.day = parser.parseUInt8();
+        btSpecObject.hour = parser.parseUInt8();
+        btSpecObject.minute = parser.parseUInt8();
+        btSpecObject.seconds = parser.parseUInt8();
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

@@ -24,94 +24,54 @@ struct SupportedAlertCategoryBaseStruct
 class SupportedAlertCategoryBase : public BaseValueSpec<SupportedAlertCategoryBaseStruct>
 {
 public:
-    static bool isSimpleAlertSupported(const SupportedAlertCategoryBaseStruct &btSpecObject)
+    BVP_GETTER(bool, isSimpleAlertSupported, SupportedAlertCategoryBaseStruct)
     {
         return AlertCategoryIDBitMask::hasSimpleAlert(btSpecObject.categoryIDBitMask);
     }
-    bool isSimpleAlertSupported() const
-    {
-        return isSimpleAlertSupported(m_btSpecObject);
-    }
 
-    static bool isEmailSupported(const SupportedAlertCategoryBaseStruct &btSpecObject)
+    BVP_GETTER(bool, isEmailSupported, SupportedAlertCategoryBaseStruct)
     {
         return AlertCategoryIDBitMask::hasEmail(btSpecObject.categoryIDBitMask);
     }
-    bool isEmailSupported() const
-    {
-        return isEmailSupported(m_btSpecObject);
-    }
 
-    static bool isNewsSupported(const SupportedAlertCategoryBaseStruct &btSpecObject)
+    BVP_GETTER(bool, isNewsSupported, SupportedAlertCategoryBaseStruct)
     {
         return AlertCategoryIDBitMask::hasNews(btSpecObject.categoryIDBitMask);
     }
-    bool isNewsSupported() const
-    {
-        return isNewsSupported(m_btSpecObject);
-    }
 
-    static bool isCallSupported(const SupportedAlertCategoryBaseStruct &btSpecObject)
+    BVP_GETTER(bool, isCallSupported, SupportedAlertCategoryBaseStruct)
     {
         return AlertCategoryIDBitMask::hasCall(btSpecObject.categoryIDBitMask);
     }
-    bool isCallSupported() const
-    {
-        return isCallSupported(m_btSpecObject);
-    }
 
-    static bool isMissedCallSupported(const SupportedAlertCategoryBaseStruct &btSpecObject)
+    BVP_GETTER(bool, isMissedCallSupported, SupportedAlertCategoryBaseStruct)
     {
         return AlertCategoryIDBitMask::hasMissedCall(btSpecObject.categoryIDBitMask);
     }
-    bool isMissedCallSupported() const
-    {
-        return isMissedCallSupported(m_btSpecObject);
-    }
 
-    static bool isSMSMMSSupported(const SupportedAlertCategoryBaseStruct &btSpecObject)
+    BVP_GETTER(bool, isSMSMMSSupported, SupportedAlertCategoryBaseStruct)
     {
         return AlertCategoryIDBitMask::hasSMSMMS(btSpecObject.categoryIDBitMask);
     }
-    bool isSMSMMSSupported() const
-    {
-        return isSMSMMSSupported(m_btSpecObject);
-    }
 
-    static bool isVoiceMailSupported(const SupportedAlertCategoryBaseStruct &btSpecObject)
+    BVP_GETTER(bool, isVoiceMailSupported, SupportedAlertCategoryBaseStruct)
     {
         return AlertCategoryIDBitMask::hasVoiceMail(btSpecObject.categoryIDBitMask);
     }
-    bool isVoiceMailSupported() const
-    {
-        return isVoiceMailSupported(m_btSpecObject);
-    }
 
-    static bool isScheduleSupported(const SupportedAlertCategoryBaseStruct &btSpecObject)
+    BVP_GETTER(bool, isScheduleSupported, SupportedAlertCategoryBaseStruct)
     {
         return AlertCategoryIDBitMask::hasSchedule(btSpecObject.categoryIDBitMask);
     }
-    bool isScheduleSupported() const
-    {
-        return isScheduleSupported(m_btSpecObject);
-    }
 
-    static bool isHighPrioritizedAlertSupported(const SupportedAlertCategoryBaseStruct &btSpecObject)
+    BVP_GETTER(bool, isHighPrioritizedAlertSupported, SupportedAlertCategoryBaseStruct)
     {
         return AlertCategoryIDBitMask::hasHighPrioritizedAlert(btSpecObject.categoryIDBitMask);
     }
-    bool isHighPrioritizedAlertSupported() const
-    {
-        return isHighPrioritizedAlertSupported(m_btSpecObject);
-    }
 
-    static bool isInstantMessageSupported(const SupportedAlertCategoryBaseStruct &btSpecObject)
+    BVP_GETTER(bool, isInstantMessageSupported, SupportedAlertCategoryBaseStruct)
     {
         return AlertCategoryIDBitMask::hasInstantMessage(btSpecObject.categoryIDBitMask);
-    }
-    bool isInstantMessageSupported() const
-    {
-        return isInstantMessageSupported(m_btSpecObject);
     }
 
 protected:
@@ -128,7 +88,7 @@ protected:
         return size == 2;
     }
 
-    static bool parse(Parser &parser, SupportedAlertCategoryBaseStruct &btSpecObject)
+    BVP_PARSE(SupportedAlertCategoryBaseStruct)
     {
         bool result{true};
 
@@ -136,14 +96,10 @@ protected:
 
         return result;
     }
-    virtual bool parse(Parser &parser) override
-    {
-        return parse(parser, m_btSpecObject);
-    }
 
     virtual void toStringStream(std::ostringstream &oss) const override
     {
-        oss << "SupportedCategories: " << AlertCategoryIDBitMask(m_btSpecObject.categoryIDBitMask, configuration);
+        oss << "SupportedCategories: " << AlertCategoryIDBitMask(m_btSpecObject.categoryIDBitMask, configuration());
     }
 };
 

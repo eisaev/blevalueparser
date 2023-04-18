@@ -5,7 +5,20 @@
 #include <sstream>
 #include <map>
 
-#define BVP_CTORS(TBase, T, TStruct) \
+#define BVP_GETTER(TReturn, Name, TStruct)\
+    TReturn Name() const\
+    {\
+        return Name(m_btSpecObject);\
+    }\
+    static TReturn Name(const TStruct &btSpecObject)
+#define BVP_GETTER_CONF(TReturn, Name, TStruct)\
+TReturn Name() const\
+    {\
+        return Name(m_btSpecObject, configuration());\
+    }\
+    static TReturn Name(const TStruct &btSpecObject, const Configuration &configuration)
+
+#define BVP_CTORS(TBase, T, TStruct)\
     friend class BLEValueParser;\
 \
     explicit T(Parser &parser, const Configuration &configuration) :\
@@ -23,6 +36,19 @@
     explicit T(const TStruct &btSpecObject, const Configuration &configuration) :\
         TBase{btSpecObject, configuration}\
     {}
+
+#define BVP_PARSE(TStruct)\
+    virtual bool parse(Parser &parser) override\
+    {\
+        return parse(parser, m_btSpecObject);\
+    }\
+    static bool parse(Parser &parser, TStruct &btSpecObject)
+#define BVP_PARSE_CONF(TStruct)\
+    virtual bool parse(Parser &parser) override\
+    {\
+        return parse(parser, m_btSpecObject, configuration);\
+    }\
+    static bool parse(Parser &parser, TStruct &btSpecObject, Configuration &configuration)
 
 
 namespace bvp
@@ -179,8 +205,6 @@ class BaseValue
 public:
     virtual ~BaseValue() = default;
 
-    Configuration configuration;
-
     bool isValid() const
     {
         return m_isValid;
@@ -194,18 +218,25 @@ public:
         }
 
         std::ostringstream oss;
-        oss << configuration.stringPrefix;
+        oss << configuration().stringPrefix;
         toStringStream(oss);
-        oss << configuration.stringSuffix;
+        oss << configuration().stringSuffix;
         return oss.str();
+    }
+
+    virtual Configuration configuration() const
+    {
+        return m_configuration;
     }
 
 protected:
     explicit BaseValue(const Configuration &configuration) :
-        configuration{configuration}
+        m_configuration{configuration}
     {}
 
     bool m_isValid{false};
+
+    mutable Configuration m_configuration;
 
     // For testing protected Parser class
     friend class InternalParserTest;

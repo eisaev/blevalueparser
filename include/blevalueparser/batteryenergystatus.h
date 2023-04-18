@@ -33,64 +33,64 @@ struct BatteryEnergyStatusStruct
 class BatteryEnergyStatus final : public BaseValueSpec<BatteryEnergyStatusStruct>
 {
 public:
-    bool isExternalSourcePowerPresent() const
+    BVP_GETTER(bool, isExternalSourcePowerPresent, BatteryEnergyStatusStruct)
     {
-        return (m_btSpecObject.flags & BES_FLAG_EXTERNAL_SOURCE_POWER_PRESENT) != 0;
+        return (btSpecObject.flags & BES_FLAG_EXTERNAL_SOURCE_POWER_PRESENT) != 0;
     }
 
-    bool isPresentVoltagePresent() const
+    BVP_GETTER(bool, isPresentVoltagePresent, BatteryEnergyStatusStruct)
     {
-        return (m_btSpecObject.flags & BES_FLAG_PRESENT_VOLTAGE_PRESENT) != 0;
+        return (btSpecObject.flags & BES_FLAG_PRESENT_VOLTAGE_PRESENT) != 0;
     }
 
-    bool isAvailableEnergyPresent() const
+    BVP_GETTER(bool, isAvailableEnergyPresent, BatteryEnergyStatusStruct)
     {
-        return (m_btSpecObject.flags & BES_FLAG_AVAILABLE_ENERGY_PRESENT) != 0;
+        return (btSpecObject.flags & BES_FLAG_AVAILABLE_ENERGY_PRESENT) != 0;
     }
 
-    bool isAvailableBatteryCapacityPresent() const
+    BVP_GETTER(bool, isAvailableBatteryCapacityPresent, BatteryEnergyStatusStruct)
     {
-        return (m_btSpecObject.flags & BES_FLAG_AVAILABLE_BATTERY_CAPACITY_PRESENT) != 0;
+        return (btSpecObject.flags & BES_FLAG_AVAILABLE_BATTERY_CAPACITY_PRESENT) != 0;
     }
 
-    bool isChargeRatePresent() const
+    BVP_GETTER(bool, isChargeRatePresent, BatteryEnergyStatusStruct)
     {
-        return (m_btSpecObject.flags & BES_FLAG_CHARGE_RATE_PRESENT) != 0;
+        return (btSpecObject.flags & BES_FLAG_CHARGE_RATE_PRESENT) != 0;
     }
 
-    bool isAvailableEnergyAtLastChargePresent() const
+    BVP_GETTER(bool, isAvailableEnergyAtLastChargePresent, BatteryEnergyStatusStruct)
     {
-        return (m_btSpecObject.flags & BES_FLAG_AVAILABLE_ENERGY_AT_LAST_CHARGE_PRESENT) != 0;
+        return (btSpecObject.flags & BES_FLAG_AVAILABLE_ENERGY_AT_LAST_CHARGE_PRESENT) != 0;
     }
 
-    MedFloat16 externalSourcePower() const
+    BVP_GETTER(MedFloat16, externalSourcePower, BatteryEnergyStatusStruct)
     {
-        return m_btSpecObject.externalSourcePower;
+        return btSpecObject.externalSourcePower;
     }
 
-    MedFloat16 presentVoltage() const
+    BVP_GETTER(MedFloat16, presentVoltage, BatteryEnergyStatusStruct)
     {
-        return m_btSpecObject.presentVoltage;
+        return btSpecObject.presentVoltage;
     }
 
-    MedFloat16 availableEnergy() const
+    BVP_GETTER(MedFloat16, availableEnergy, BatteryEnergyStatusStruct)
     {
-        return m_btSpecObject.availableEnergy;
+        return btSpecObject.availableEnergy;
     }
 
-    MedFloat16 availableBatteryCapacity() const
+    BVP_GETTER(MedFloat16, availableBatteryCapacity, BatteryEnergyStatusStruct)
     {
-        return m_btSpecObject.availableBatteryCapacity;
+        return btSpecObject.availableBatteryCapacity;
     }
 
-    MedFloat16 chargeRate() const
+    BVP_GETTER(MedFloat16, chargeRate, BatteryEnergyStatusStruct)
     {
-        return m_btSpecObject.chargeRate;
+        return btSpecObject.chargeRate;
     }
 
-    MedFloat16 availableEnergyAtLastCharge() const
+    BVP_GETTER(MedFloat16, availableEnergyAtLastCharge, BatteryEnergyStatusStruct)
     {
-        return m_btSpecObject.availableEnergyAtLastCharge;
+        return btSpecObject.availableEnergyAtLastCharge;
     }
 
 private:
@@ -101,36 +101,38 @@ private:
         return size > 0 && size < 14;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(BatteryEnergyStatusStruct)
     {
-        m_btSpecObject.flags = parser.parseUInt8();
+        bool result{true};
 
-        if (isExternalSourcePowerPresent())
+        btSpecObject.flags = parser.parseUInt8();
+
+        if (isExternalSourcePowerPresent(btSpecObject))
         {
-            m_btSpecObject.externalSourcePower = parser.parseMedFloat16();
+            btSpecObject.externalSourcePower = parser.parseMedFloat16();
         }
-        if (isPresentVoltagePresent())
+        if (isPresentVoltagePresent(btSpecObject))
         {
-            m_btSpecObject.presentVoltage = parser.parseMedFloat16();
+            btSpecObject.presentVoltage = parser.parseMedFloat16();
         }
-        if (isAvailableEnergyPresent())
+        if (isAvailableEnergyPresent(btSpecObject))
         {
-            m_btSpecObject.availableEnergy = parser.parseMedFloat16();
+            btSpecObject.availableEnergy = parser.parseMedFloat16();
         }
-        if (isAvailableBatteryCapacityPresent())
+        if (isAvailableBatteryCapacityPresent(btSpecObject))
         {
-            m_btSpecObject.availableBatteryCapacity = parser.parseMedFloat16();
+            btSpecObject.availableBatteryCapacity = parser.parseMedFloat16();
         }
-        if (isChargeRatePresent())
+        if (isChargeRatePresent(btSpecObject))
         {
-            m_btSpecObject.chargeRate = parser.parseMedFloat16();
+            btSpecObject.chargeRate = parser.parseMedFloat16();
         }
-        if (isAvailableEnergyAtLastChargePresent())
+        if (isAvailableEnergyAtLastChargePresent(btSpecObject))
         {
-            m_btSpecObject.availableEnergyAtLastCharge = parser.parseMedFloat16();
+            btSpecObject.availableEnergyAtLastCharge = parser.parseMedFloat16();
         }
 
-        return true;
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

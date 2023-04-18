@@ -38,94 +38,54 @@ class AlertCategoryIDBitMask final : public BaseValueSpec<AlertCategoryIDBitMask
 public:
     friend class SupportedAlertCategoryBase;
 
-    static bool hasSimpleAlert(const AlertCategoryIDBitMaskStruct &btSpecObject)
+    BVP_GETTER(bool, hasSimpleAlert, AlertCategoryIDBitMaskStruct)
     {
         return (btSpecObject.categoryIDBitMask & ACI_FLAG_SIMPLE_ALERT) != 0;
     }
-    bool hasSimpleAlert() const
-    {
-        return hasSimpleAlert(m_btSpecObject);
-    }
 
-    static bool hasEmail(const AlertCategoryIDBitMaskStruct &btSpecObject)
+    BVP_GETTER(bool, hasEmail, AlertCategoryIDBitMaskStruct)
     {
         return (btSpecObject.categoryIDBitMask & ACI_FLAG_EMAIL) != 0;
     }
-    bool hasEmail() const
-    {
-        return hasEmail(m_btSpecObject);
-    }
 
-    static bool hasNews(const AlertCategoryIDBitMaskStruct &btSpecObject)
+    BVP_GETTER(bool, hasNews, AlertCategoryIDBitMaskStruct)
     {
         return (btSpecObject.categoryIDBitMask & ACI_FLAG_NEWS) != 0;
     }
-    bool hasNews() const
-    {
-        return hasNews(m_btSpecObject);
-    }
 
-    static bool hasCall(const AlertCategoryIDBitMaskStruct &btSpecObject)
+    BVP_GETTER(bool, hasCall, AlertCategoryIDBitMaskStruct)
     {
         return (btSpecObject.categoryIDBitMask & ACI_FLAG_CALL) != 0;
     }
-    bool hasCall() const
-    {
-        return hasCall(m_btSpecObject);
-    }
 
-    static bool hasMissedCall(const AlertCategoryIDBitMaskStruct &btSpecObject)
+    BVP_GETTER(bool, hasMissedCall, AlertCategoryIDBitMaskStruct)
     {
         return (btSpecObject.categoryIDBitMask & ACI_FLAG_MISSED_CALL) != 0;
     }
-    bool hasMissedCall() const
-    {
-        return hasMissedCall(m_btSpecObject);
-    }
 
-    static bool hasSMSMMS(const AlertCategoryIDBitMaskStruct &btSpecObject)
+    BVP_GETTER(bool, hasSMSMMS, AlertCategoryIDBitMaskStruct)
     {
         return (btSpecObject.categoryIDBitMask & ACI_FLAG_SMS_MMS) != 0;
     }
-    bool hasSMSMMS() const
-    {
-        return hasSMSMMS(m_btSpecObject);
-    }
 
-    static bool hasVoiceMail(const AlertCategoryIDBitMaskStruct &btSpecObject)
+    BVP_GETTER(bool, hasVoiceMail, AlertCategoryIDBitMaskStruct)
     {
         return (btSpecObject.categoryIDBitMask & ACI_FLAG_VOICE_MAIL) != 0;
     }
-    bool hasVoiceMail() const
-    {
-        return hasVoiceMail(m_btSpecObject);
-    }
 
-    static bool hasSchedule(const AlertCategoryIDBitMaskStruct &btSpecObject)
+    BVP_GETTER(bool, hasSchedule, AlertCategoryIDBitMaskStruct)
     {
         return (btSpecObject.categoryIDBitMask & ACI_FLAG_SCHEDULE) != 0;
     }
-    bool hasSchedule() const
-    {
-        return hasSchedule(m_btSpecObject);
-    }
 
-    static bool hasHighPrioritizedAlert(const AlertCategoryIDBitMaskStruct &btSpecObject)
+    BVP_GETTER(bool, hasHighPrioritizedAlert, AlertCategoryIDBitMaskStruct)
     {
         return (btSpecObject.categoryIDBitMask & ACI_FLAG_HIGH_PRIORITIZED_ALERT) != 0;
     }
-    bool hasHighPrioritizedAlert() const
-    {
-        return hasHighPrioritizedAlert(m_btSpecObject);
-    }
 
-    static bool hasInstantMessage(const AlertCategoryIDBitMaskStruct &btSpecObject)
+    BVP_GETTER(bool, hasInstantMessage, AlertCategoryIDBitMaskStruct)
     {
         return (btSpecObject.categoryIDBitMask & ACI_FLAG_INSTANT_MESSAGE) != 0;
-    }
-    bool hasInstantMessage() const
-    {
-        return hasInstantMessage(m_btSpecObject);
     }
 
 private:
@@ -136,17 +96,13 @@ private:
         return size == 2;
     }
 
-    static bool parse(Parser &parser, AlertCategoryIDBitMaskStruct &btSpecObject)
+    BVP_PARSE(AlertCategoryIDBitMaskStruct)
     {
         bool result{true};
 
         btSpecObject.categoryIDBitMask = parser.parseUInt16();
 
         return result;
-    }
-    virtual bool parse(Parser &parser) override
-    {
-        return parse(parser, m_btSpecObject);
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

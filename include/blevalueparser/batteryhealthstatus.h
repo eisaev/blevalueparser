@@ -31,54 +31,54 @@ struct BatteryHealthStatusStruct
 class BatteryHealthStatus final : public BaseValueSpec<BatteryHealthStatusStruct>
 {
 public:
-    bool isBatteryHealthSummaryPresent() const
+    BVP_GETTER(bool, isBatteryHealthSummaryPresent, BatteryHealthStatusStruct)
     {
-        return (m_btSpecObject.flags & BHS_FLAG_BATTERY_HEALTH_SUMMARY_PRESENT) != 0;
+        return (btSpecObject.flags & BHS_FLAG_BATTERY_HEALTH_SUMMARY_PRESENT) != 0;
     }
 
-    bool isCycleCountPresent() const
+    BVP_GETTER(bool, isCycleCountPresent, BatteryHealthStatusStruct)
     {
-        return (m_btSpecObject.flags & BHS_FLAG_CYCLE_COUNT_PRESENT) != 0;
+        return (btSpecObject.flags & BHS_FLAG_CYCLE_COUNT_PRESENT) != 0;
     }
 
-    bool isCurrentTemperaturePresent() const
+    BVP_GETTER(bool, isCurrentTemperaturePresent, BatteryHealthStatusStruct)
     {
-        return (m_btSpecObject.flags & BHS_FLAG_CURRENT_TEMPERATURE_PRESENT) != 0;
+        return (btSpecObject.flags & BHS_FLAG_CURRENT_TEMPERATURE_PRESENT) != 0;
     }
 
-    bool isDeepDischargeCountPresent() const
+    BVP_GETTER(bool, isDeepDischargeCountPresent, BatteryHealthStatusStruct)
     {
-        return (m_btSpecObject.flags & BHS_FLAG_DEEP_DISCHARGE_COUNT_PRESENT) != 0;
+        return (btSpecObject.flags & BHS_FLAG_DEEP_DISCHARGE_COUNT_PRESENT) != 0;
     }
 
-    uint8_t batteryHealthSummary() const
+    BVP_GETTER(uint8_t, batteryHealthSummary, BatteryHealthStatusStruct)
     {
-        return m_btSpecObject.batteryHealthSummary;
+        return btSpecObject.batteryHealthSummary;
     }
 
-    uint16_t cycleCount() const
+    BVP_GETTER(uint16_t, cycleCount, BatteryHealthStatusStruct)
     {
-        return m_btSpecObject.cycleCount;
+        return btSpecObject.cycleCount;
     }
 
-    int8_t currentTemperature() const
+    BVP_GETTER(int8_t, currentTemperature, BatteryHealthStatusStruct)
     {
-        return m_btSpecObject.currentTemperature;
+        return btSpecObject.currentTemperature;
     }
 
-    uint16_t deepDischargeCount() const
+    BVP_GETTER(uint16_t, deepDischargeCount, BatteryHealthStatusStruct)
     {
-        return m_btSpecObject.deepDischargeCount;
+        return btSpecObject.deepDischargeCount;
     }
 
-    bool isCurrentTemperatureGreater() const
+    BVP_GETTER(bool, isCurrentTemperatureGreater, BatteryHealthStatusStruct)
     {
-        return s_greater == m_btSpecObject.currentTemperature;
+        return s_greater == btSpecObject.currentTemperature;
     }
 
-    bool isCurrentTemperatureLess() const
+    BVP_GETTER(bool, isCurrentTemperatureLess, BatteryHealthStatusStruct)
     {
-        return s_less == m_btSpecObject.currentTemperature;
+        return s_less == btSpecObject.currentTemperature;
     }
 
 private:
@@ -94,32 +94,34 @@ private:
         return size > 0 && size < 8;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(BatteryHealthStatusStruct)
     {
-        m_btSpecObject.flags = parser.parseUInt8();
+        bool result{true};
 
-        if (isBatteryHealthSummaryPresent())
+        btSpecObject.flags = parser.parseUInt8();
+
+        if (isBatteryHealthSummaryPresent(btSpecObject))
         {
-            m_btSpecObject.batteryHealthSummary = parser.parseUInt8();
-            if (m_btSpecObject.batteryHealthSummary > 100)
+            btSpecObject.batteryHealthSummary = parser.parseUInt8();
+            if (btSpecObject.batteryHealthSummary > 100)
             {
                 return false;
             }
         }
-        if (isCycleCountPresent())
+        if (isCycleCountPresent(btSpecObject))
         {
-            m_btSpecObject.cycleCount = parser.parseUInt16();
+            btSpecObject.cycleCount = parser.parseUInt16();
         }
-        if (isCurrentTemperaturePresent())
+        if (isCurrentTemperaturePresent(btSpecObject))
         {
-            m_btSpecObject.currentTemperature = parser.parseInt8();
+            btSpecObject.currentTemperature = parser.parseInt8();
         }
-        if (isDeepDischargeCountPresent())
+        if (isDeepDischargeCountPresent(btSpecObject))
         {
-            m_btSpecObject.deepDischargeCount = parser.parseUInt16();
+            btSpecObject.deepDischargeCount = parser.parseUInt16();
         }
 
-        return true;
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

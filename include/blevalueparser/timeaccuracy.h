@@ -19,28 +19,28 @@ class TimeAccuracy final : public BaseValueSpec<TimeAccuracyStruct>
 public:
     friend class ReferenceTimeInformation;
 
-    bool isLarger() const
+    BVP_GETTER(bool, isLarger, TimeAccuracyStruct)
     {
         // A value of 254 means drift is larger than 31.625s.
-        return m_btSpecObject.accuracy == s_timeAccuracyLarge;
+        return btSpecObject.accuracy == s_timeAccuracyLarge;
     }
 
-    bool isUnknown() const
+    BVP_GETTER(bool, isUnknown, TimeAccuracyStruct)
     {
         // A value of 255 means drift is unknown.
-        return m_btSpecObject.accuracy == s_timeAccuracyUnknown;
+        return btSpecObject.accuracy == s_timeAccuracyUnknown;
     }
 
-    uint16_t accuracyMs() const
+    BVP_GETTER(uint16_t, accuracyMs, TimeAccuracyStruct)
     {
-        if (m_btSpecObject.accuracy >= s_timeAccuracyLarge)
+        if (btSpecObject.accuracy >= s_timeAccuracyLarge)
         {
             return UINT16_MAX;
         }
 
         // This field represents accuracy (drift) of time information
         // in steps of 1/8 of a second (125ms) compared to a reference time source.
-        return m_btSpecObject.accuracy * 125;
+        return btSpecObject.accuracy * 125;
     }
 
 private:
@@ -54,11 +54,13 @@ private:
         return size == 1;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(TimeAccuracyStruct)
     {
-        m_btSpecObject.accuracy = parser.parseUInt8();
+        bool result{true};
 
-        return true;
+        btSpecObject.accuracy = parser.parseUInt8();
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

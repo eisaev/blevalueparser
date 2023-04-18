@@ -8,9 +8,16 @@
 namespace bvp
 {
 
-struct BodyCompositionFeatureTest : public testing::Test
+class BodyCompositionFeatureTest : public testing::Test
 {
+public:
+    BodyCompositionFeatureTest()
+    {
+        bleValueParserImperial.configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    }
+
     BLEValueParser bleValueParser;
+    BLEValueParser bleValueParserImperial;
 };
 
 TEST_F(BodyCompositionFeatureTest, FeaturesAll_WeightResNotSpec_HeightResNotSpec_ReservedEven)
@@ -41,7 +48,7 @@ TEST_F(BodyCompositionFeatureTest, FeaturesAll_WeightResNotSpec_HeightResNotSpec
 
     EXPECT_EQ("Features: { TimeStamp MultipleUsers BasalMetabolism MusclePercentage MuscleMass FatFreeMass SoftLeanMass BodyWaterMass Impedance Weight Height }, WeightResolution: 0kg, HeightResolution: 0m", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    result = bleValueParserImperial.make_value<BodyCompositionFeature>(data, sizeof(data));
     EXPECT_EQ(0, result->weightResolution());
     EXPECT_EQ(0, result->heightResolution());
     EXPECT_EQ("Features: { TimeStamp MultipleUsers BasalMetabolism MusclePercentage MuscleMass FatFreeMass SoftLeanMass BodyWaterMass Impedance Weight Height }, WeightResolution: 0lb, HeightResolution: 0in", result->toString());
@@ -75,7 +82,7 @@ TEST_F(BodyCompositionFeatureTest, FeaturesNone_WeightRes0500_HeightRes0010_Rese
 
     EXPECT_EQ("Features: { }", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    result = bleValueParserImperial.make_value<BodyCompositionFeature>(data, sizeof(data));
     EXPECT_EQ(1000, result->weightResolution());
     EXPECT_EQ(1000, result->heightResolution());
     EXPECT_EQ("Features: { }", result->toString());
@@ -109,7 +116,7 @@ TEST_F(BodyCompositionFeatureTest, FeaturesEven_WeightRes0200_HeightRes0005_Rese
 
     EXPECT_EQ("Features: { MultipleUsers MusclePercentage FatFreeMass BodyWaterMass Weight }, WeightResolution: 0.2kg", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    result = bleValueParserImperial.make_value<BodyCompositionFeature>(data, sizeof(data));
     EXPECT_EQ(500, result->weightResolution());
     EXPECT_EQ(500, result->heightResolution());
     EXPECT_EQ("Features: { MultipleUsers MusclePercentage FatFreeMass BodyWaterMass Weight }, WeightResolution: 0.5lb", result->toString());
@@ -143,7 +150,7 @@ TEST_F(BodyCompositionFeatureTest, FeaturesOdd_WeightRes0100_HeightRes0001_Reser
 
     EXPECT_EQ("Features: { TimeStamp BasalMetabolism MuscleMass SoftLeanMass Impedance Height }, HeightResolution: 0.001m", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    result = bleValueParserImperial.make_value<BodyCompositionFeature>(data, sizeof(data));
     EXPECT_EQ(200, result->weightResolution());
     EXPECT_EQ(100, result->heightResolution());
     EXPECT_EQ("Features: { TimeStamp BasalMetabolism MuscleMass SoftLeanMass Impedance Height }, HeightResolution: 0.1in", result->toString());
@@ -177,7 +184,7 @@ TEST_F(BodyCompositionFeatureTest, FeaturesPat1_WeightRes0050_HeightResReserved_
 
     EXPECT_EQ("Features: { TimeStamp MultipleUsers MusclePercentage MuscleMass SoftLeanMass BodyWaterMass Weight Height }, WeightResolution: 0.05kg, HeightResolution: 0m", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    result = bleValueParserImperial.make_value<BodyCompositionFeature>(data, sizeof(data));
     EXPECT_EQ(100, result->weightResolution());
     EXPECT_EQ(0, result->heightResolution());
     EXPECT_EQ("Features: { TimeStamp MultipleUsers MusclePercentage MuscleMass SoftLeanMass BodyWaterMass Weight Height }, WeightResolution: 0.1lb, HeightResolution: 0in", result->toString());
@@ -211,7 +218,7 @@ TEST_F(BodyCompositionFeatureTest, FeaturesPat2_WeightRes0020_HeightRes0001_Rese
 
     EXPECT_EQ("Features: { BasalMetabolism FatFreeMass Impedance }", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    result = bleValueParserImperial.make_value<BodyCompositionFeature>(data, sizeof(data));
     EXPECT_EQ(50, result->weightResolution());
     EXPECT_EQ(100, result->heightResolution());
     EXPECT_EQ("Features: { BasalMetabolism FatFreeMass Impedance }", result->toString());
@@ -245,7 +252,7 @@ TEST_F(BodyCompositionFeatureTest, FeaturesPat3_WeightRes0010_HeightRes0005_Rese
 
     EXPECT_EQ("Features: { BasalMetabolism MuscleMass FatFreeMass BodyWaterMass Impedance Weight }, WeightResolution: 0.01kg", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    result = bleValueParserImperial.make_value<BodyCompositionFeature>(data, sizeof(data));
     EXPECT_EQ(20, result->weightResolution());
     EXPECT_EQ(500, result->heightResolution());
     EXPECT_EQ("Features: { BasalMetabolism MuscleMass FatFreeMass BodyWaterMass Impedance Weight }, WeightResolution: 0.02lb", result->toString());
@@ -279,7 +286,7 @@ TEST_F(BodyCompositionFeatureTest, FeaturesPat4_WeightRes0005_HeightRes0010_Rese
 
     EXPECT_EQ("Features: { MultipleUsers BasalMetabolism MusclePercentage FatFreeMass SoftLeanMass Impedance }", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    result = bleValueParserImperial.make_value<BodyCompositionFeature>(data, sizeof(data));
     EXPECT_EQ(10, result->weightResolution());
     EXPECT_EQ(1000, result->heightResolution());
     EXPECT_EQ("Features: { MultipleUsers BasalMetabolism MusclePercentage FatFreeMass SoftLeanMass Impedance }", result->toString());
@@ -313,7 +320,7 @@ TEST_F(BodyCompositionFeatureTest, FeaturesPat5_WeightResReserved_HeightResNotSp
 
     EXPECT_EQ("Features: { TimeStamp MusclePercentage MuscleMass BodyWaterMass Impedance }", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    result = bleValueParserImperial.make_value<BodyCompositionFeature>(data, sizeof(data));
     EXPECT_EQ(0, result->weightResolution());
     EXPECT_EQ(0, result->heightResolution());
     EXPECT_EQ("Features: { TimeStamp MusclePercentage MuscleMass BodyWaterMass Impedance }", result->toString());

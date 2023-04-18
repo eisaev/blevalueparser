@@ -35,39 +35,49 @@ struct HeartRateMeasurementStruct
 class HeartRateMeasurement final : public BaseValueSpec<HeartRateMeasurementStruct>
 {
 public:
-    bool isContactSupported() const
+    BVP_GETTER(bool, isContactSupported, HeartRateMeasurementStruct)
     {
-        return (m_btSpecObject.flags & HRS_FLAG_CONTACT_SUPPORT) != 0;
+        return (btSpecObject.flags & HRS_FLAG_CONTACT_SUPPORT) != 0;
     }
 
-    bool isContacted() const
+    BVP_GETTER(bool, isContacted, HeartRateMeasurementStruct)
     {
-        return (m_btSpecObject.flags & HRS_FLAG_CONTACT_STATUS) != 0;
+        return (btSpecObject.flags & HRS_FLAG_CONTACT_STATUS) != 0;
     }
 
-    uint16_t heartRate() const
+    BVP_GETTER(bool, isWideFormat, HeartRateMeasurementStruct)
     {
-        return m_btSpecObject.heartRate;
+        return (btSpecObject.flags & HRS_FLAG_VALUE_FORMAT) != 0;
     }
 
-    bool hasEnergyExpended() const
+    BVP_GETTER(uint16_t, heartRate, HeartRateMeasurementStruct)
     {
-        return (m_btSpecObject.flags & HRS_FLAG_ENERGY_EXPENDED) != 0;
+        return btSpecObject.heartRate;
     }
 
-    uint16_t energyExpended() const
+    BVP_GETTER(bool, hasEnergyExpended, HeartRateMeasurementStruct)
     {
-        return m_btSpecObject.energyExpended;
+        return (btSpecObject.flags & HRS_FLAG_ENERGY_EXPENDED) != 0;
     }
 
-    std::vector<uint16_t> rrIntervals() const
+    BVP_GETTER(uint16_t, energyExpended, HeartRateMeasurementStruct)
+    {
+        return btSpecObject.energyExpended;
+    }
+
+    BVP_GETTER(bool, hasRRIntervals, HeartRateMeasurementStruct)
+    {
+        return (btSpecObject.flags & HRS_FLAG_RR_INTERVALS) != 0;
+    }
+
+    BVP_GETTER(std::vector<uint16_t>, rrIntervals, HeartRateMeasurementStruct)
     {
         std::vector<uint16_t> result;
-        result.reserve(m_btSpecObject.rrIntervals.size());
+        result.reserve(btSpecObject.rrIntervals.size());
         // GATT_Specification_Supplement_v8.pdf
         // 3.113.2 RR-Interval field
         // Each RR-Interval value is represented by a uint16 with 1/1024 second as the unit.
-        for (auto rrInterval : m_btSpecObject.rrIntervals)
+        for (auto rrInterval : btSpecObject.rrIntervals)
         {
             result.push_back(rrInterval * 1000 / 1024);
         }
@@ -83,48 +93,50 @@ private:
         return size > 1 && size < 21;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(HeartRateMeasurementStruct)
     {
+        bool result{true};
+
         // 3.1.1.1 Flags Field
-        m_btSpecObject.flags = parser.parseUInt8();
+        btSpecObject.flags = parser.parseUInt8();
 
         // 3.1.1.2 Heart Rate Measurement Value Field
-        if (isWideFormat())
+        if (isWideFormat(btSpecObject))
         {
-            m_btSpecObject.heartRate = parser.parseUInt16();
+            btSpecObject.heartRate = parser.parseUInt16();
         }
         else
         {
-            m_btSpecObject.heartRate = parser.parseUInt8();
+            btSpecObject.heartRate = parser.parseUInt8();
         }
 
         // 3.1.1.3 Energy Expended Field
-        if (hasEnergyExpended())
+        if (hasEnergyExpended(btSpecObject))
         {
-            m_btSpecObject.energyExpended = parser.parseUInt16();
+            btSpecObject.energyExpended = parser.parseUInt16();
         }
 
         // 3.1.1.4 RR-Interval Field
-        if (hasRRIntervals())
+        if (hasRRIntervals(btSpecObject))
         {
             uint8_t maxRRCount = 9;
-            if (isWideFormat())
+            if (isWideFormat(btSpecObject))
             {
                 --maxRRCount;
             }
-            if (hasEnergyExpended())
+            if (hasEnergyExpended(btSpecObject))
             {
                 --maxRRCount;
             }
-            m_btSpecObject.rrIntervals.reserve(maxRRCount);
+            btSpecObject.rrIntervals.reserve(maxRRCount);
 
             for (uint8_t i = 0; i < maxRRCount && !parser.atEnd(); ++i)
             {
-                m_btSpecObject.rrIntervals.push_back(parser.parseUInt16());
+                btSpecObject.rrIntervals.push_back(parser.parseUInt16());
             }
         }
 
-        return true;
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override
@@ -157,16 +169,6 @@ private:
             }
             oss << "}";
         }
-    }
-
-    bool isWideFormat() const
-    {
-        return (m_btSpecObject.flags & HRS_FLAG_VALUE_FORMAT) != 0;
-    }
-
-    bool hasRRIntervals() const
-    {
-        return (m_btSpecObject.flags & HRS_FLAG_RR_INTERVALS) != 0;
     }
 };
 

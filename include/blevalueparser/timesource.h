@@ -64,9 +64,9 @@ class TimeSource final : public BaseValueSpec<TimeSourceStruct>
 public:
     friend class ReferenceTimeInformation;
 
-    TimeSourceEnum timeSource() const
+    BVP_GETTER(TimeSourceEnum, timeSource, TimeSourceStruct)
     {
-        return m_btSpecObject.timeSource;
+        return btSpecObject.timeSource;
     }
 
 private:
@@ -77,11 +77,13 @@ private:
         return size == 1;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(TimeSourceStruct)
     {
-        m_btSpecObject.timeSource %= TimeSourceEnum(parser.parseUInt8());
+        bool result{true};
 
-        return true;
+        btSpecObject.timeSource %= TimeSourceEnum(parser.parseUInt8());
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

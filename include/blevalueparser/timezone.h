@@ -252,9 +252,9 @@ class TimeZone final : public BaseValueSpec<TimeZoneStruct>
 public:
     friend class LocalTimeInformation;
 
-    TimeZoneEnum timeZone() const
+    BVP_GETTER(TimeZoneEnum, timeZone, TimeZoneStruct)
     {
-        return m_btSpecObject.timeZone;
+        return btSpecObject.timeZone;
     }
 
 private:
@@ -265,11 +265,13 @@ private:
         return size == 1;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(TimeZoneStruct)
     {
-        m_btSpecObject.timeZone %= TimeZoneEnum(parser.parseInt8());
+        bool result{true};
 
-        return true;
+        btSpecObject.timeZone %= TimeZoneEnum(parser.parseInt8());
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

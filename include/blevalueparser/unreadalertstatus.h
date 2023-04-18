@@ -21,31 +21,19 @@ struct UnreadAlertStatusStruct
 class UnreadAlertStatus final : public BaseValueSpec<UnreadAlertStatusStruct>
 {
 public:
-    static AlertCategoryIDEnum categoryID(const UnreadAlertStatusStruct &btSpecObject)
+    BVP_GETTER(AlertCategoryIDEnum, categoryID, UnreadAlertStatusStruct)
     {
         return btSpecObject.categoryID.categoryID;
     }
-    AlertCategoryIDEnum categoryID() const
-    {
-        return categoryID(m_btSpecObject);
-    }
 
-    static uint8_t unreadCount(const UnreadAlertStatusStruct &btSpecObject)
+    BVP_GETTER(uint8_t, unreadCount, UnreadAlertStatusStruct)
     {
         return btSpecObject.unreadCount;
     }
-    uint8_t unreadCount() const
-    {
-        return unreadCount(m_btSpecObject);
-    }
 
-    static bool isUnreadCountGreater(const UnreadAlertStatusStruct &btSpecObject)
+    BVP_GETTER(bool, isUnreadCountGreater, UnreadAlertStatusStruct)
     {
         return s_greater == btSpecObject.unreadCount;
-    }
-    bool isUnreadCountGreater() const
-    {
-        return isUnreadCountGreater(m_btSpecObject);
     }
 
 private:
@@ -59,7 +47,7 @@ private:
         return size == 2;
     }
 
-    static bool parse(Parser &parser, UnreadAlertStatusStruct &btSpecObject)
+    BVP_PARSE(UnreadAlertStatusStruct)
     {
         bool result{true};
 
@@ -67,10 +55,6 @@ private:
         btSpecObject.unreadCount = parser.parseUInt8();
 
         return result;
-    }
-    virtual bool parse(Parser &parser) override
-    {
-        return parse(parser, m_btSpecObject);
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

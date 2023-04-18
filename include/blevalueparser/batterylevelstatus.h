@@ -180,123 +180,123 @@ struct BatteryLevelStatusStruct
 class BatteryLevelStatus final : public BaseValueSpec<BatteryLevelStatusStruct>
 {
 public:
-    bool isIdentifierPresent() const
+    BVP_GETTER(bool, isIdentifierPresent, BatteryLevelStatusStruct)
     {
-        return (m_btSpecObject.flags & BAS_FLAG_IDENTIFIER_PRESENT) != 0;
+        return (btSpecObject.flags & BAS_FLAG_IDENTIFIER_PRESENT) != 0;
     }
 
-    bool isBatteryLevelPresent() const
+    BVP_GETTER(bool, isBatteryLevelPresent, BatteryLevelStatusStruct)
     {
-        return (m_btSpecObject.flags & BAS_FLAG_BATTERY_LEVEL_PRESENT) != 0;
+        return (btSpecObject.flags & BAS_FLAG_BATTERY_LEVEL_PRESENT) != 0;
     }
 
-    bool isAdditionalStatusPresent() const
+    BVP_GETTER(bool, isAdditionalStatusPresent, BatteryLevelStatusStruct)
     {
-        return (m_btSpecObject.flags & BAS_FLAG_ADDITIONAL_STATUS_PRESENT) != 0;
+        return (btSpecObject.flags & BAS_FLAG_ADDITIONAL_STATUS_PRESENT) != 0;
     }
 
-    bool isBatteryPresent() const
+    BVP_GETTER(bool, isBatteryPresent, BatteryLevelStatusStruct)
     {
-        return (m_btSpecObject.powerState & BAS_PS_BATTERY_PRESENT) != 0;
+        return (btSpecObject.powerState & BAS_PS_BATTERY_PRESENT) != 0;
     }
 
-    ExternalPowerSourceConnectedEnum wiredExternalPowerSourceConnected() const
+    BVP_GETTER(ExternalPowerSourceConnectedEnum, wiredExternalPowerSourceConnected, BatteryLevelStatusStruct)
     {
         uint16_t value =
-            (m_btSpecObject.powerState & BAS_PS_WIRED_EXTERNAL_POWER_SOURCE_CONNECTED0) +
-            (m_btSpecObject.powerState & BAS_PS_WIRED_EXTERNAL_POWER_SOURCE_CONNECTED1);
+            (btSpecObject.powerState & BAS_PS_WIRED_EXTERNAL_POWER_SOURCE_CONNECTED0) +
+            (btSpecObject.powerState & BAS_PS_WIRED_EXTERNAL_POWER_SOURCE_CONNECTED1);
         value = value >> BAS_PS_WIRED_EXTERNAL_POWER_SOURCE_CONNECTED_SHIFT;
 
         return ExternalPowerSourceConnectedEnum(value);
     }
 
-    ExternalPowerSourceConnectedEnum wirelessExternalPowerSourceConnected() const
+    BVP_GETTER(ExternalPowerSourceConnectedEnum, wirelessExternalPowerSourceConnected, BatteryLevelStatusStruct)
     {
         uint16_t value =
-            (m_btSpecObject.powerState & BAS_PS_WIRELESS_EXTERNAL_POWER_SOURCE_CONNECTED0) +
-            (m_btSpecObject.powerState & BAS_PS_WIRELESS_EXTERNAL_POWER_SOURCE_CONNECTED1);
+            (btSpecObject.powerState & BAS_PS_WIRELESS_EXTERNAL_POWER_SOURCE_CONNECTED0) +
+            (btSpecObject.powerState & BAS_PS_WIRELESS_EXTERNAL_POWER_SOURCE_CONNECTED1);
         value = value >> BAS_PS_WIRELESS_EXTERNAL_POWER_SOURCE_CONNECTED_SHIFT;
 
         return ExternalPowerSourceConnectedEnum(value);
     }
 
-    BatteryChargeStateEnum batteryChargeState() const
+    BVP_GETTER(BatteryChargeStateEnum, batteryChargeState, BatteryLevelStatusStruct)
     {
         uint16_t value =
-            (m_btSpecObject.powerState & BAS_PS_BATTERY_CHARGE_STATE0) +
-            (m_btSpecObject.powerState & BAS_PS_BATTERY_CHARGE_STATE1);
+            (btSpecObject.powerState & BAS_PS_BATTERY_CHARGE_STATE0) +
+            (btSpecObject.powerState & BAS_PS_BATTERY_CHARGE_STATE1);
         value = value >> BAS_PS_BATTERY_CHARGE_STATE_SHIFT;
 
         return BatteryChargeStateEnum(value);
     }
 
-    BatteryChargeLevelEnum batteryChargeLevel() const
+    BVP_GETTER(BatteryChargeLevelEnum, batteryChargeLevel, BatteryLevelStatusStruct)
     {
         uint16_t value =
-            (m_btSpecObject.powerState & BAS_PS_BATTERY_CHARGE_LEVEL0) +
-            (m_btSpecObject.powerState & BAS_PS_BATTERY_CHARGE_LEVEL1);
+            (btSpecObject.powerState & BAS_PS_BATTERY_CHARGE_LEVEL0) +
+            (btSpecObject.powerState & BAS_PS_BATTERY_CHARGE_LEVEL1);
         value = value >> BAS_PS_BATTERY_CHARGE_LEVEL_SHIFT;
 
         return BatteryChargeLevelEnum(value);
     }
 
-    ChargingTypeEnum chargingType() const
+    BVP_GETTER(ChargingTypeEnum, chargingType, BatteryLevelStatusStruct)
     {
         uint16_t value =
-            (m_btSpecObject.powerState & BAS_PS_CHARGING_TYPE0) +
-            (m_btSpecObject.powerState & BAS_PS_CHARGING_TYPE1) +
-            (m_btSpecObject.powerState & BAS_PS_CHARGING_TYPE2);
+            (btSpecObject.powerState & BAS_PS_CHARGING_TYPE0) +
+            (btSpecObject.powerState & BAS_PS_CHARGING_TYPE1) +
+            (btSpecObject.powerState & BAS_PS_CHARGING_TYPE2);
         value = value >> BAS_PS_CHARGING_TYPE_SHIFT;
 
         return ChargingTypeEnum(value);
     }
 
-    bool isChargingFaultReasonBattery() const
+    BVP_GETTER(bool, isChargingFaultReasonBattery, BatteryLevelStatusStruct)
     {
-        return (m_btSpecObject.powerState & BAS_PS_CHARGING_FAULT_REASON_BATTERY) != 0;
+        return (btSpecObject.powerState & BAS_PS_CHARGING_FAULT_REASON_BATTERY) != 0;
     }
 
-    bool isChargingFaultReasonExternalPowerSource() const
+    BVP_GETTER(bool, isChargingFaultReasonExternalPowerSource, BatteryLevelStatusStruct)
     {
-        return (m_btSpecObject.powerState & BAS_PS_CHARGING_FAULT_REASON_EXTERNAL_POWER_SOURCE) != 0;
+        return (btSpecObject.powerState & BAS_PS_CHARGING_FAULT_REASON_EXTERNAL_POWER_SOURCE) != 0;
     }
 
-    bool isChargingFaultReasonOther() const
+    BVP_GETTER(bool, isChargingFaultReasonOther, BatteryLevelStatusStruct)
     {
-        return (m_btSpecObject.powerState & BAS_PS_CHARGING_FAULT_REASON_OTHER) != 0;
+        return (btSpecObject.powerState & BAS_PS_CHARGING_FAULT_REASON_OTHER) != 0;
     }
 
-    bool hasChargingFault() const
+    BVP_GETTER(bool, hasChargingFault, BatteryLevelStatusStruct)
     {
         return
-            isChargingFaultReasonBattery() ||
-            isChargingFaultReasonExternalPowerSource() ||
-            isChargingFaultReasonOther();
+            isChargingFaultReasonBattery(btSpecObject) ||
+            isChargingFaultReasonExternalPowerSource(btSpecObject) ||
+            isChargingFaultReasonOther(btSpecObject);
     }
 
-    uint16_t identifier() const
+    BVP_GETTER(uint16_t, identifier, BatteryLevelStatusStruct)
     {
-        return m_btSpecObject.identifier;
+        return btSpecObject.identifier;
     }
 
-    uint8_t batteryLevel() const
+    BVP_GETTER(uint8_t, batteryLevel, BatteryLevelStatusStruct)
     {
-        return m_btSpecObject.batteryLevel.batteryLevel;
+        return btSpecObject.batteryLevel.batteryLevel;
     }
 
-    ServiceRequiredEnum serviceRequired() const
+    BVP_GETTER(ServiceRequiredEnum, serviceRequired, BatteryLevelStatusStruct)
     {
         uint8_t value =
-            (m_btSpecObject.additionalStatus & BAS_AS_SERVICE_REQUIRED0) +
-            (m_btSpecObject.additionalStatus & BAS_AS_SERVICE_REQUIRED1);
+            (btSpecObject.additionalStatus & BAS_AS_SERVICE_REQUIRED0) +
+            (btSpecObject.additionalStatus & BAS_AS_SERVICE_REQUIRED1);
         value = value >> BAS_AS_SERVICE_REQUIRED_SHIFT;
 
         return ServiceRequiredEnum(value);
     }
 
-    bool hasBatteryFault() const
+    BVP_GETTER(bool, hasBatteryFault, BatteryLevelStatusStruct)
     {
-        return (m_btSpecObject.additionalStatus & BAS_AS_BATTERY_FAULT) != 0;
+        return (btSpecObject.additionalStatus & BAS_AS_BATTERY_FAULT) != 0;
     }
 
 private:
@@ -307,27 +307,29 @@ private:
         return size > 2 && size < 8;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(BatteryLevelStatusStruct)
     {
-        m_btSpecObject.flags = parser.parseUInt8();
-        m_btSpecObject.powerState = parser.parseUInt16();
+        bool result{true};
 
-        if (isIdentifierPresent())
+        btSpecObject.flags = parser.parseUInt8();
+        btSpecObject.powerState = parser.parseUInt16();
+
+        if (isIdentifierPresent(btSpecObject))
         {
-            m_btSpecObject.identifier = parser.parseUInt16();
+            btSpecObject.identifier = parser.parseUInt16();
         }
 
-        if (isBatteryLevelPresent())
+        if (isBatteryLevelPresent(btSpecObject))
         {
-            m_btSpecObject.batteryLevel = BatteryLevel(parser, configuration).getBtSpecObject();
+            result &= BatteryLevel::parse(parser, btSpecObject.batteryLevel);
         }
 
-        if (isAdditionalStatusPresent())
+        if (isAdditionalStatusPresent(btSpecObject))
         {
-            m_btSpecObject.additionalStatus = parser.parseUInt8();
+            btSpecObject.additionalStatus = parser.parseUInt8();
         }
 
-        return true;
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override
@@ -365,7 +367,7 @@ private:
 
         if (isBatteryLevelPresent())
         {
-            oss << ", BatteryLevel: " << BatteryLevel(m_btSpecObject.batteryLevel, configuration);
+            oss << ", BatteryLevel: " << BatteryLevel(m_btSpecObject.batteryLevel, configuration());
         }
 
         if (isAdditionalStatusPresent())
