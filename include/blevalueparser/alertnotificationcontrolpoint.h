@@ -68,22 +68,14 @@ struct AlertNotificationControlPointStruct
 class AlertNotificationControlPoint final : public BaseValueSpec<AlertNotificationControlPointStruct>
 {
 public:
-    static AlertNotificationControlPointCommandIDEnum commandID(const AlertNotificationControlPointStruct &btSpecObject)
+    BVP_GETTER(AlertNotificationControlPointCommandIDEnum, commandID, AlertNotificationControlPointStruct)
     {
-            return btSpecObject.commandID;
-    }
-    AlertNotificationControlPointCommandIDEnum commandID() const
-    {
-            return commandID(m_btSpecObject);
+        return btSpecObject.commandID;
     }
 
-    static AlertCategoryIDEnum categoryID(const AlertNotificationControlPointStruct &btSpecObject)
+    BVP_GETTER(AlertCategoryIDEnum, categoryID, AlertNotificationControlPointStruct)
     {
-            return btSpecObject.categoryID.categoryID;
-    }
-    AlertCategoryIDEnum categoryID() const
-    {
-            return categoryID(m_btSpecObject);
+        return btSpecObject.categoryID.categoryID;
     }
 
 private:
@@ -94,7 +86,7 @@ private:
         return size == 2;
     }
 
-    static bool parse(Parser &parser, AlertNotificationControlPointStruct &btSpecObject)
+    BVP_PARSE(AlertNotificationControlPointStruct)
     {
         bool result{true};
 
@@ -102,10 +94,6 @@ private:
         result &= AlertCategoryID::parse(parser, btSpecObject.categoryID);
 
         return result;
-    }
-    virtual bool parse(Parser &parser) override
-    {
-        return parse(parser, m_btSpecObject);
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

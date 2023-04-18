@@ -22,31 +22,19 @@ struct NewAlertStruct
 class NewAlert final : public BaseValueSpec<NewAlertStruct>
 {
 public:
-    static AlertCategoryIDEnum categoryID(const NewAlertStruct &btSpecObject)
+    BVP_GETTER(AlertCategoryIDEnum, categoryID, NewAlertStruct)
     {
         return btSpecObject.categoryID.categoryID;
     }
-    AlertCategoryIDEnum categoryID() const
-    {
-        return categoryID(m_btSpecObject);
-    }
 
-    static uint8_t numberOfNewAlert(const NewAlertStruct &btSpecObject)
+    BVP_GETTER(uint8_t, numberOfNewAlert, NewAlertStruct)
     {
         return btSpecObject.numberOfNewAlert;
     }
-    uint8_t numberOfNewAlert() const
-    {
-        return numberOfNewAlert(m_btSpecObject);
-    }
 
-    static std::string recentAlertBrief(const NewAlertStruct &btSpecObject)
+    BVP_GETTER(std::string, recentAlertBrief, NewAlertStruct)
     {
         return btSpecObject.textStringInformation;
-    }
-    std::string recentAlertBrief() const
-    {
-        return recentAlertBrief(m_btSpecObject);
     }
 
 private:
@@ -57,7 +45,7 @@ private:
         return size > 1 && size < 21;
     }
 
-    static bool parse(Parser &parser, NewAlertStruct &btSpecObject)
+    BVP_PARSE(NewAlertStruct)
     {
         bool result{true};
 
@@ -66,10 +54,6 @@ private:
         btSpecObject.textStringInformation = parser.parseString();
 
         return result;
-    }
-    virtual bool parse(Parser &parser) override
-    {
-        return parse(parser, m_btSpecObject);
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

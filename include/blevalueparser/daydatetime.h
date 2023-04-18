@@ -22,39 +22,39 @@ class DayDateTime final : public BaseValueSpec<DayDateTimeStruct>
 public:
     friend class ExactTime256;
 
-    uint16_t year() const
+    BVP_GETTER(uint16_t, year, DayDateTimeStruct)
     {
-        return m_btSpecObject.dateTime.year;
+        return btSpecObject.dateTime.year;
     }
 
-    uint8_t month() const
+    BVP_GETTER(uint8_t, month, DayDateTimeStruct)
     {
-        return m_btSpecObject.dateTime.month;
+        return btSpecObject.dateTime.month;
     }
 
-    uint8_t day() const
+    BVP_GETTER(uint8_t, day, DayDateTimeStruct)
     {
-        return m_btSpecObject.dateTime.day;
+        return btSpecObject.dateTime.day;
     }
 
-    uint8_t hour() const
+    BVP_GETTER(uint8_t, hour, DayDateTimeStruct)
     {
-        return m_btSpecObject.dateTime.hour;
+        return btSpecObject.dateTime.hour;
     }
 
-    uint8_t minute() const
+    BVP_GETTER(uint8_t, minute, DayDateTimeStruct)
     {
-        return m_btSpecObject.dateTime.minute;
+        return btSpecObject.dateTime.minute;
     }
 
-    uint8_t seconds() const
+    BVP_GETTER(uint8_t, seconds, DayDateTimeStruct)
     {
-        return m_btSpecObject.dateTime.seconds;
+        return btSpecObject.dateTime.seconds;
     }
 
-    DayOfWeekEnum dayOfWeek() const
+    BVP_GETTER(DayOfWeekEnum, dayOfWeek, DayDateTimeStruct)
     {
-        return m_btSpecObject.dayOfWeek.dayOfWeek;
+        return btSpecObject.dayOfWeek.dayOfWeek;
     }
 
 private:
@@ -65,18 +65,20 @@ private:
         return size == 8;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(DayDateTimeStruct)
     {
-        m_btSpecObject.dateTime = DateTime(parser, configuration).getBtSpecObject();
-        m_btSpecObject.dayOfWeek = DayOfWeek(parser, configuration).getBtSpecObject();
+        bool result{true};
 
-        return true;
+        result &= DateTime::parse(parser, btSpecObject.dateTime);
+        result &= DayOfWeek::parse(parser, btSpecObject.dayOfWeek);
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override
     {
-        oss <<        DayOfWeek(m_btSpecObject.dayOfWeek, configuration);
-        oss << " " << DateTime(m_btSpecObject.dateTime, configuration);
+        oss <<        DayOfWeek(m_btSpecObject.dayOfWeek, configuration());
+        oss << " " << DateTime(m_btSpecObject.dateTime, configuration());
     }
 };
 

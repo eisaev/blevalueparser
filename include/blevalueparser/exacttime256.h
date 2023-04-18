@@ -21,49 +21,49 @@ class ExactTime256 final : public BaseValueSpec<ExactTime256Struct>
 public:
     friend class CurrentTime;
 
-    uint16_t year() const
+    BVP_GETTER(uint16_t, year, ExactTime256Struct)
     {
-        return m_btSpecObject.dayDateTime.dateTime.year;
+        return btSpecObject.dayDateTime.dateTime.year;
     }
 
-    uint8_t month() const
+    BVP_GETTER(uint8_t, month, ExactTime256Struct)
     {
-        return m_btSpecObject.dayDateTime.dateTime.month;
+        return btSpecObject.dayDateTime.dateTime.month;
     }
 
-    uint8_t day() const
+    BVP_GETTER(uint8_t, day, ExactTime256Struct)
     {
-        return m_btSpecObject.dayDateTime.dateTime.day;
+        return btSpecObject.dayDateTime.dateTime.day;
     }
 
-    uint8_t hour() const
+    BVP_GETTER(uint8_t, hour, ExactTime256Struct)
     {
-        return m_btSpecObject.dayDateTime.dateTime.hour;
+        return btSpecObject.dayDateTime.dateTime.hour;
     }
 
-    uint8_t minute() const
+    BVP_GETTER(uint8_t, minute, ExactTime256Struct)
     {
-        return m_btSpecObject.dayDateTime.dateTime.minute;
+        return btSpecObject.dayDateTime.dateTime.minute;
     }
 
-    uint8_t seconds() const
+    BVP_GETTER(uint8_t, seconds, ExactTime256Struct)
     {
-        return m_btSpecObject.dayDateTime.dateTime.seconds;
+        return btSpecObject.dayDateTime.dateTime.seconds;
     }
 
-    DayOfWeekEnum dayOfWeek() const
+    BVP_GETTER(DayOfWeekEnum, dayOfWeek, ExactTime256Struct)
     {
-        return m_btSpecObject.dayDateTime.dayOfWeek.dayOfWeek;
+        return btSpecObject.dayDateTime.dayOfWeek.dayOfWeek;
     }
 
-    uint8_t fractionsOfSeconds() const
+    BVP_GETTER(uint8_t, fractionsOfSeconds, ExactTime256Struct)
     {
-        return m_btSpecObject.fractions256;
+        return btSpecObject.fractions256;
     }
 
-    uint16_t milliseconds() const
+    BVP_GETTER(uint16_t, milliseconds, ExactTime256Struct)
     {
-        return m_btSpecObject.fractions256 * 1000 / 256;
+        return btSpecObject.fractions256 * 1000 / 256;
     }
 
 private:
@@ -74,17 +74,19 @@ private:
         return size == 9;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(ExactTime256Struct)
     {
-        m_btSpecObject.dayDateTime = DayDateTime(parser, configuration).getBtSpecObject();
-        m_btSpecObject.fractions256 = parser.parseUInt8();
+        bool result{true};
 
-        return true;
+        result &= DayDateTime::parse(parser, btSpecObject.dayDateTime);
+        btSpecObject.fractions256 = parser.parseUInt8();
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override
     {
-        oss <<        DayDateTime(m_btSpecObject.dayDateTime, configuration);
+        oss <<        DayDateTime(m_btSpecObject.dayDateTime, configuration());
         oss << "." << std::setfill('0') << std::setw(3) << static_cast<int>(milliseconds());
     }
 };

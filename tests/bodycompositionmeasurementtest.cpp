@@ -17,7 +17,7 @@ TEST_F(BodyCompositionMeasurementTest, FeaturesAll_SinglePacket_ReservedOdd)
 {
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b10101111), C(0b11111110) };
-    constexpr char data[] = {
+    char data[] = {
         flags[1], flags[0],
         '\x12', '\x34',                                         // bodyFatPercentage
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
@@ -90,7 +90,8 @@ TEST_F(BodyCompositionMeasurementTest, FeaturesAll_SinglePacket_ReservedOdd)
 
     EXPECT_EQ("BodyFatPercentage: 1333%, TimeStamp: 06.02.2023 18:28:00, UserID: 42, BasalMetabolism: 17699kJ, MusclePercentage: 2206.8%, MuscleMass: 132.185kg, FatFreeMass: 154.03kg, SoftLeanMass: 175.875kg, BodyWaterMass: 197.72kg, Impedance: 4391.3Ω, Weight: 241.41kg, Height: 52.651m", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    data[0] |= 1;  // Imperial
+    result = bleValueParser.make_value<BodyCompositionMeasurement>(data, sizeof(data));
     EXPECT_FLOAT_EQ(1333.0, result->bodyFatPercentage());
     EXPECT_EQ(2023, result->year());
     EXPECT_EQ(02, result->month());
@@ -115,7 +116,7 @@ TEST_F(BodyCompositionMeasurementTest, FeaturesNone_MultiplePacket_ReservedEven)
 {
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b01010000), C(0b00000000) };
-    constexpr char data[] = {
+    char data[] = {
         flags[1], flags[0],
         '\x12', '\x34'                                          // bodyFatPercentage
     };
@@ -177,7 +178,8 @@ TEST_F(BodyCompositionMeasurementTest, FeaturesNone_MultiplePacket_ReservedEven)
 
     EXPECT_EQ("BodyFatPercentage: 1333%", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    data[0] |= 1;  // Imperial
+    result = bleValueParser.make_value<BodyCompositionMeasurement>(data, sizeof(data));
     EXPECT_FLOAT_EQ(1333.0, result->bodyFatPercentage());
     EXPECT_EQ(0, result->year());
     EXPECT_EQ(0, result->month());
@@ -202,7 +204,7 @@ TEST_F(BodyCompositionMeasurementTest, FeaturesOdd_SinglePacket_ReservedAll)
 {
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b11101010), C(0b10101010) };
-    constexpr char data[] = {
+    char data[] = {
         flags[1], flags[0],
         '\x12', '\x34',                                         // bodyFatPercentage
         '\xE7', '\x07', '\x02', '\x06', '\x12', '\x1C', '\x00', // timeStamp
@@ -270,7 +272,8 @@ TEST_F(BodyCompositionMeasurementTest, FeaturesOdd_SinglePacket_ReservedAll)
 
     EXPECT_EQ("BodyFatPercentage: 1333%, TimeStamp: 06.02.2023 18:28:00, BasalMetabolism: 17699kJ, MuscleMass: 132.185kg, SoftLeanMass: 175.875kg, Impedance: 4391.3Ω, Height: 52.651m", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    data[0] |= 1;  // Imperial
+    result = bleValueParser.make_value<BodyCompositionMeasurement>(data, sizeof(data));
     EXPECT_FLOAT_EQ(1333.0, result->bodyFatPercentage());
     EXPECT_EQ(2023, result->year());
     EXPECT_EQ(02, result->month());
@@ -295,7 +298,7 @@ TEST_F(BodyCompositionMeasurementTest, FeaturesEven_MultiplePacket_ReservedNone)
 {
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b00010101), C(0b01010100) };
-    constexpr char data[] = {
+    char data[] = {
         flags[1], flags[0],
         '\x12', '\x34',                                         // bodyFatPercentage
         '\x2A',                                                 // userID
@@ -362,7 +365,8 @@ TEST_F(BodyCompositionMeasurementTest, FeaturesEven_MultiplePacket_ReservedNone)
 
     EXPECT_EQ("BodyFatPercentage: 1333%, UserID: 42, MusclePercentage: 2206.8%, FatFreeMass: 154.03kg, BodyWaterMass: 197.72kg, Weight: 241.41kg", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    data[0] |= 1;  // Imperial
+    result = bleValueParser.make_value<BodyCompositionMeasurement>(data, sizeof(data));
     EXPECT_FLOAT_EQ(1333.0, result->bodyFatPercentage());
     EXPECT_EQ(0, result->year());
     EXPECT_EQ(0, result->month());
@@ -387,7 +391,7 @@ TEST_F(BodyCompositionMeasurementTest, MeasurementUnsuccessful)
 {
     //                             RRRMFFFF       FFFFFFFU
     constexpr char flags[] = { C(0b00000000), C(0b00000000) };
-    constexpr char data[] = {
+    char data[] = {
         flags[1], flags[0],
         '\xFF', '\xFF'                                          // bodyFatPercentage
     };
@@ -399,7 +403,8 @@ TEST_F(BodyCompositionMeasurementTest, MeasurementUnsuccessful)
 
     EXPECT_EQ("<MeasurementUnsuccessful>", result->toString());
 
-    result->configuration.measurementUnits = MeasurementUnitsEnum::Imperial;
+    data[0] |= 1;  // Imperial
+    result = bleValueParser.make_value<BodyCompositionMeasurement>(data, sizeof(data));
     EXPECT_EQ("<MeasurementUnsuccessful>", result->toString());
 }
 

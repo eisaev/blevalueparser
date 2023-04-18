@@ -68,9 +68,9 @@ class DayOfWeek final : public BaseValueSpec<DayOfWeekStruct>
 public:
     friend class DayDateTime;
 
-    DayOfWeekEnum dayOfWeek() const
+    BVP_GETTER(DayOfWeekEnum, dayOfWeek, DayOfWeekStruct)
     {
-        return m_btSpecObject.dayOfWeek;
+        return btSpecObject.dayOfWeek;
     }
 
 private:
@@ -81,11 +81,13 @@ private:
         return size == 1;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(DayOfWeekStruct)
     {
-        m_btSpecObject.dayOfWeek %= DayOfWeekEnum(parser.parseUInt8());
+        bool result{true};
 
-        return true;
+        btSpecObject.dayOfWeek %= DayOfWeekEnum(parser.parseUInt8());
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

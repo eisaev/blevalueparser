@@ -54,159 +54,165 @@ class BodyCompositionMeasurementBase : public BaseValueSpec<BodyCompositionMeasu
 public:
     virtual ~BodyCompositionMeasurementBase() = default;
 
-    bool isMeasurementUnsuccessful() const
+    BVP_GETTER(bool, isMeasurementUnsuccessful, BodyCompositionMeasurementStruct)
     {
-        return 0xFFFF == m_btSpecObject.bodyFatPercentage;
+        return 0xFFFF == btSpecObject.bodyFatPercentage;
     }
 
-    MeasurementUnitsEnum measurementUnits() const
+    BVP_GETTER(MeasurementUnitsEnum, measurementUnits, BodyCompositionMeasurementStruct)
     {
-        return MeasurementUnitsEnum(m_btSpecObject.flags & BCS_FLAG_BCM_MEASUREMENT_UNITS);
+        return MeasurementUnitsEnum(btSpecObject.flags & BCS_FLAG_BCM_MEASUREMENT_UNITS);
     }
 
-    bool isTimeStampPresent() const
+    BVP_GETTER(bool, isTimeStampPresent, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_TIME_STAMP_PRESENT) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_TIME_STAMP_PRESENT) != 0;
     }
 
-    bool isUserIDPresent() const
+    BVP_GETTER(bool, isUserIDPresent, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_USER_ID_PRESENT) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_USER_ID_PRESENT) != 0;
     }
 
-    bool isBasalMetabolismPresent() const
+    BVP_GETTER(bool, isBasalMetabolismPresent, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_BASAL_METABOLISM_PRESENT) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_BASAL_METABOLISM_PRESENT) != 0;
     }
 
-    bool isMusclePercentagePresent() const
+    BVP_GETTER(bool, isMusclePercentagePresent, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_MUSCLE_PERCENTAGE_PRESENT) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_MUSCLE_PERCENTAGE_PRESENT) != 0;
     }
 
-    bool isMuscleMassPresent() const
+    BVP_GETTER(bool, isMuscleMassPresent, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_MUSCLE_MASS_PRESENT) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_MUSCLE_MASS_PRESENT) != 0;
     }
 
-    bool isFatFreeMassPresent() const
+    BVP_GETTER(bool, isFatFreeMassPresent, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_FAT_FREE_MASS_PRESENT) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_FAT_FREE_MASS_PRESENT) != 0;
     }
 
-    bool isSoftLeanMassPresent() const
+    BVP_GETTER(bool, isSoftLeanMassPresent, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_SOFT_LEAN_MASS_PRESENT) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_SOFT_LEAN_MASS_PRESENT) != 0;
     }
 
-    bool isBodyWaterMassPresent() const
+    BVP_GETTER(bool, isBodyWaterMassPresent, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_BODY_WATER_MASS_PRESENT) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_BODY_WATER_MASS_PRESENT) != 0;
     }
 
-    bool isImpedancePresent() const
+    BVP_GETTER(bool, isImpedancePresent, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_IMPEDANCE_PRESENT) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_IMPEDANCE_PRESENT) != 0;
     }
 
-    bool isWeightPresent() const
+    BVP_GETTER(bool, isWeightPresent, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_WEIGHT_PRESENT) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_WEIGHT_PRESENT) != 0;
     }
 
-    bool isHeightPresent() const
+    BVP_GETTER(bool, isHeightPresent, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_HEIGHT_PRESENT) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_HEIGHT_PRESENT) != 0;
     }
 
-    bool isMultiplePacketMeasurement() const
+    BVP_GETTER(bool, isMultiplePacketMeasurement, BodyCompositionMeasurementStruct)
     {
-        return (m_btSpecObject.flags & BCS_FLAG_BCM_MULTIPLE_PACKET_MEASUREMENT) != 0;
+        return (btSpecObject.flags & BCS_FLAG_BCM_MULTIPLE_PACKET_MEASUREMENT) != 0;
     }
 
-    float bodyFatPercentage() const
+    BVP_GETTER(float, bodyFatPercentage, BodyCompositionMeasurementStruct)
     {
-        return m_btSpecObject.bodyFatPercentage / 10.0;
+        return btSpecObject.bodyFatPercentage / 10.0;
     }
 
-    uint16_t year() const
+    BVP_GETTER(uint16_t, year, BodyCompositionMeasurementStruct)
     {
-        return m_btSpecObject.timeStamp.year;
+        return btSpecObject.timeStamp.year;
     }
 
-    uint8_t month() const
+    BVP_GETTER(uint8_t, month, BodyCompositionMeasurementStruct)
     {
-        return m_btSpecObject.timeStamp.month;
+        return btSpecObject.timeStamp.month;
     }
 
-    uint8_t day() const
+    BVP_GETTER(uint8_t, day, BodyCompositionMeasurementStruct)
     {
-        return m_btSpecObject.timeStamp.day;
+        return btSpecObject.timeStamp.day;
     }
 
-    uint8_t hour() const
+    BVP_GETTER(uint8_t, hour, BodyCompositionMeasurementStruct)
     {
-        return m_btSpecObject.timeStamp.hour;
+        return btSpecObject.timeStamp.hour;
     }
 
-    uint8_t minute() const
+    BVP_GETTER(uint8_t, minute, BodyCompositionMeasurementStruct)
     {
-        return m_btSpecObject.timeStamp.minute;
+        return btSpecObject.timeStamp.minute;
     }
 
-    uint8_t seconds() const
+    BVP_GETTER(uint8_t, seconds, BodyCompositionMeasurementStruct)
     {
-        return m_btSpecObject.timeStamp.seconds;
+        return btSpecObject.timeStamp.seconds;
     }
 
-    uint8_t userID() const
+    BVP_GETTER(uint8_t, userID, BodyCompositionMeasurementStruct)
     {
-        return m_btSpecObject.userID.userIndex;
+        return btSpecObject.userID.userIndex;
     }
 
-    uint16_t basalMetabolism() const
+    BVP_GETTER(uint16_t, basalMetabolism, BodyCompositionMeasurementStruct)
     {
-        return m_btSpecObject.basalMetabolism;
+        return btSpecObject.basalMetabolism;
     }
 
-    float musclePercentage() const
+    BVP_GETTER(float, musclePercentage, BodyCompositionMeasurementStruct)
     {
-        return m_btSpecObject.musclePercentage / 10.0;
+        return btSpecObject.musclePercentage / 10.0;
     }
 
-    float muscleMass() const
+    BVP_GETTER_CONF(float, muscleMass, BodyCompositionMeasurementStruct)
     {
-        return configuration.massToUnits(m_btSpecObject.muscleMass);
+        return configuration.massToUnits(btSpecObject.muscleMass);
     }
 
-    float fatFreeMass() const
+    BVP_GETTER_CONF(float, fatFreeMass, BodyCompositionMeasurementStruct)
     {
-        return configuration.massToUnits(m_btSpecObject.fatFreeMass);
+        return configuration.massToUnits(btSpecObject.fatFreeMass);
     }
 
-    float softLeanMass() const
+    BVP_GETTER_CONF(float, softLeanMass, BodyCompositionMeasurementStruct)
     {
-        return configuration.massToUnits(m_btSpecObject.softLeanMass);
+        return configuration.massToUnits(btSpecObject.softLeanMass);
     }
 
-    float bodyWaterMass() const
+    BVP_GETTER_CONF(float, bodyWaterMass, BodyCompositionMeasurementStruct)
     {
-        return configuration.massToUnits(m_btSpecObject.bodyWaterMass);
+        return configuration.massToUnits(btSpecObject.bodyWaterMass);
     }
 
-    float impedance() const
+    BVP_GETTER(float, impedance, BodyCompositionMeasurementStruct)
     {
-        return m_btSpecObject.impedance / 10.0;
+        return btSpecObject.impedance / 10.0;
     }
 
-    float weight() const
+    BVP_GETTER_CONF(float, weight, BodyCompositionMeasurementStruct)
     {
-        return configuration.massToUnits(m_btSpecObject.weight);
+        return configuration.massToUnits(btSpecObject.weight);
     }
 
-    float height() const
+    BVP_GETTER_CONF(float, height, BodyCompositionMeasurementStruct)
     {
-        return configuration.lenghtToUnits(m_btSpecObject.height);
+        return configuration.lenghtToUnits(btSpecObject.height);
+    }
+
+    virtual Configuration configuration() const override
+    {
+        m_configuration.measurementUnits = measurementUnits();
+        return m_configuration;
     }
 
 protected:

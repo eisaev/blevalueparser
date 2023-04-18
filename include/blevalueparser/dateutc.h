@@ -22,33 +22,33 @@ public:
     friend class BatteryInformation;
     friend class EstimatedServiceDate;
 
-    uint64_t days() const
+    BVP_GETTER(uint64_t, days, DateUTCStruct)
     {
-        return m_btSpecObject.date;
+        return btSpecObject.date;
     }
 
-    time_t date() const
+    BVP_GETTER(time_t, date, DateUTCStruct)
     {
-        return m_btSpecObject.date * secondsPerDay;
+        return btSpecObject.date * secondsPerDay;
     }
 
-    uint16_t year() const
+    BVP_GETTER(uint16_t, year, DateUTCStruct)
     {
-        time_t dt = date();
+        time_t dt = date(btSpecObject);
         tm *tm = localtime(&dt);
         return 1900 + tm->tm_year;
     }
 
-    uint8_t month() const
+    BVP_GETTER(uint8_t, month, DateUTCStruct)
     {
-        time_t dt = date();
+        time_t dt = date(btSpecObject);
         tm *tm = localtime(&dt);
         return 1 + tm->tm_mon;
     }
 
-    uint8_t day() const
+    BVP_GETTER(uint8_t, day, DateUTCStruct)
     {
-        time_t dt = date();
+        time_t dt = date(btSpecObject);
         tm *tm = localtime(&dt);
         return tm->tm_mday;
     }
@@ -63,11 +63,13 @@ private:
         return size == 3;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(DateUTCStruct)
     {
-        m_btSpecObject.date = parser.parseUInt24();
+        bool result{true};
 
-        return true;
+        btSpecObject.date = parser.parseUInt24();
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

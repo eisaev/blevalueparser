@@ -30,14 +30,14 @@ struct BatteryCriticalStatusStruct
 class BatteryCriticalStatus final : public BaseValueSpec<BatteryCriticalStatusStruct>
 {
 public:
-    bool isCriticalPowerState() const
+    BVP_GETTER(bool, isCriticalPowerState, BatteryCriticalStatusStruct)
     {
-        return (m_btSpecObject.batteryCriticalStatus & BCS_FLAG_CRITICAL_POWER_STATE) != 0;
+        return (btSpecObject.batteryCriticalStatus & BCS_FLAG_CRITICAL_POWER_STATE) != 0;
     }
 
-    bool isImmediateServiceRequired() const
+    BVP_GETTER(bool, isImmediateServiceRequired, BatteryCriticalStatusStruct)
     {
-        return (m_btSpecObject.batteryCriticalStatus & BCS_FLAG_IMMEDIATE_SERVICE_REQUIRED) != 0;
+        return (btSpecObject.batteryCriticalStatus & BCS_FLAG_IMMEDIATE_SERVICE_REQUIRED) != 0;
     }
 
 private:
@@ -48,10 +48,13 @@ private:
         return size == 1;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(BatteryCriticalStatusStruct)
     {
-        m_btSpecObject.batteryCriticalStatus = parser.parseUInt8();
-        return true;
+        bool result{true};
+
+        btSpecObject.batteryCriticalStatus = parser.parseUInt8();
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

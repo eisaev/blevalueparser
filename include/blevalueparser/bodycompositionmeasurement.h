@@ -15,91 +15,91 @@ class BodyCompositionMeasurement final : public BodyCompositionMeasurementBase
 private:
     BVP_CTORS(BodyCompositionMeasurementBase, BodyCompositionMeasurement, BodyCompositionMeasurementStruct)
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(BodyCompositionMeasurementStruct)
     {
-        // 3.2.1.1 Flags Field
-        m_btSpecObject.flags = parser.parseUInt16();
+        bool result{true};
 
-        configuration.measurementUnits = measurementUnits();
+        // 3.2.1.1 Flags Field
+        btSpecObject.flags = parser.parseUInt16();
 
         // 3.2.1.2 Body Fat Percentage Field
         // Unit is 1/10 of a percent
-        m_btSpecObject.bodyFatPercentage = parser.parseUInt16();
-        if (isMeasurementUnsuccessful())
+        btSpecObject.bodyFatPercentage = parser.parseUInt16();
+        if (isMeasurementUnsuccessful(btSpecObject))
         {
             return true;
         }
 
         // 3.2.1.3 Time Stamp Field
-        if (isTimeStampPresent())
+        if (isTimeStampPresent(btSpecObject))
         {
-            m_btSpecObject.timeStamp = DateTime(parser, configuration).getBtSpecObject();
+            result &= DateTime::parse(parser, btSpecObject.timeStamp);
         }
 
         // 3.2.1.4 User ID Field
-        if (isUserIDPresent())
+        if (isUserIDPresent(btSpecObject))
         {
-            m_btSpecObject.userID = UserIndex(parser, configuration).getBtSpecObject();
+            result &= UserIndex::parse(parser, btSpecObject.userID);
         }
 
         // 3.2.1.5 Basal Metabolism
         // Unit is kilojoules
-        if (isBasalMetabolismPresent())
+        if (isBasalMetabolismPresent(btSpecObject))
         {
-            m_btSpecObject.basalMetabolism = parser.parseUInt16();
+            btSpecObject.basalMetabolism = parser.parseUInt16();
         }
 
         // 3.2.1.6 Muscle Percentage
         // Unit is 1/10 of a percent
-        if (isMusclePercentagePresent())
+        if (isMusclePercentagePresent(btSpecObject))
         {
-            m_btSpecObject.musclePercentage = parser.parseUInt16();
+            btSpecObject.musclePercentage = parser.parseUInt16();
         }
 
         // 3.2.1.7 Muscle Mass
-        if (isMuscleMassPresent())
+        if (isMuscleMassPresent(btSpecObject))
         {
-            m_btSpecObject.muscleMass = parser.parseUInt16();
+            btSpecObject.muscleMass = parser.parseUInt16();
         }
 
         // 3.2.1.8 Fat Free Mass
-        if (isFatFreeMassPresent())
+        if (isFatFreeMassPresent(btSpecObject))
         {
-            m_btSpecObject.fatFreeMass = parser.parseUInt16();
+            btSpecObject.fatFreeMass = parser.parseUInt16();
         }
 
         // 3.2.1.9 Soft Lean Mass
-        if (isSoftLeanMassPresent())
+        if (isSoftLeanMassPresent(btSpecObject))
         {
-            m_btSpecObject.softLeanMass = parser.parseUInt16();
+            btSpecObject.softLeanMass = parser.parseUInt16();
         }
 
         // 3.2.1.10 Body Water Mass
-        if (isBodyWaterMassPresent())
+        if (isBodyWaterMassPresent(btSpecObject))
         {
-            m_btSpecObject.bodyWaterMass = parser.parseUInt16();
+            btSpecObject.bodyWaterMass = parser.parseUInt16();
         }
 
         // 3.2.1.11 Impedance
         // Unit is 1/10 of an Ohm
-        if (isImpedancePresent())
+        if (isImpedancePresent(btSpecObject))
         {
-            m_btSpecObject.impedance = parser.parseUInt16();
+            btSpecObject.impedance = parser.parseUInt16();
         }
 
         // 3.2.1.12 Weight
-        if (isWeightPresent())
+        if (isWeightPresent(btSpecObject))
         {
-            m_btSpecObject.weight = parser.parseUInt16();
+            btSpecObject.weight = parser.parseUInt16();
         }
 
         // 3.2.1.13 Height
-        if (isHeightPresent())
+        if (isHeightPresent(btSpecObject))
         {
-            m_btSpecObject.height = parser.parseUInt16();
+            btSpecObject.height = parser.parseUInt16();
         }
 
-        return true;
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override
@@ -114,12 +114,12 @@ private:
 
         if (isTimeStampPresent())
         {
-            oss << ", TimeStamp: " << DateTime(m_btSpecObject.timeStamp, configuration);
+            oss << ", TimeStamp: " << DateTime(m_btSpecObject.timeStamp, configuration());
         }
 
         if (isUserIDPresent())
         {
-            oss << ", UserID: " << UserIndex(m_btSpecObject.userID, configuration);
+            oss << ", UserID: " << UserIndex(m_btSpecObject.userID, configuration());
         }
 
         if (isBasalMetabolismPresent())
@@ -134,22 +134,22 @@ private:
 
         if (isMuscleMassPresent())
         {
-            oss << ", MuscleMass: " << muscleMass() << configuration.massUnits();
+            oss << ", MuscleMass: " << muscleMass() << configuration().massUnits();
         }
 
         if (isFatFreeMassPresent())
         {
-            oss << ", FatFreeMass: " << fatFreeMass() << configuration.massUnits();
+            oss << ", FatFreeMass: " << fatFreeMass() << configuration().massUnits();
         }
 
         if (isSoftLeanMassPresent())
         {
-            oss << ", SoftLeanMass: " << softLeanMass() << configuration.massUnits();
+            oss << ", SoftLeanMass: " << softLeanMass() << configuration().massUnits();
         }
 
         if (isBodyWaterMassPresent())
         {
-            oss << ", BodyWaterMass: " << bodyWaterMass() << configuration.massUnits();
+            oss << ", BodyWaterMass: " << bodyWaterMass() << configuration().massUnits();
         }
 
         if (isImpedancePresent())
@@ -159,12 +159,12 @@ private:
 
         if (isWeightPresent())
         {
-            oss << ", Weight: " << weight() << configuration.massUnits();
+            oss << ", Weight: " << weight() << configuration().massUnits();
         }
 
         if (isHeightPresent())
         {
-            oss << ", Height: " << height() << configuration.lenghtUnits();
+            oss << ", Height: " << height() << configuration().lenghtUnits();
         }
     }
 };

@@ -69,9 +69,9 @@ struct BodySensorLocationStruct
 class BodySensorLocation final : public BaseValueSpec<BodySensorLocationStruct>
 {
 public:
-    BodySensorLocationEnum location() const
+    BVP_GETTER(BodySensorLocationEnum, location, BodySensorLocationStruct)
     {
-        return m_btSpecObject.bodySensorLocation;
+        return btSpecObject.bodySensorLocation;
     }
 
 private:
@@ -82,11 +82,13 @@ private:
         return size == 1;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(BodySensorLocationStruct)
     {
-        m_btSpecObject.bodySensorLocation %= BodySensorLocationEnum(parser.parseUInt8());
+        bool result{true};
 
-        return true;
+        btSpecObject.bodySensorLocation %= BodySensorLocationEnum(parser.parseUInt8());
+
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override

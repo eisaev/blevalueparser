@@ -37,69 +37,69 @@ struct CurrentTimeStruct
 class CurrentTime final : public BaseValueSpec<CurrentTimeStruct>
 {
 public:
-    uint16_t year() const
+    BVP_GETTER(uint16_t, year, CurrentTimeStruct)
     {
-        return m_btSpecObject.exactTime256.dayDateTime.dateTime.year;
+        return btSpecObject.exactTime256.dayDateTime.dateTime.year;
     }
 
-    uint8_t month() const
+    BVP_GETTER(uint8_t, month, CurrentTimeStruct)
     {
-        return m_btSpecObject.exactTime256.dayDateTime.dateTime.month;
+        return btSpecObject.exactTime256.dayDateTime.dateTime.month;
     }
 
-    uint8_t day() const
+    BVP_GETTER(uint8_t, day, CurrentTimeStruct)
     {
-        return m_btSpecObject.exactTime256.dayDateTime.dateTime.day;
+        return btSpecObject.exactTime256.dayDateTime.dateTime.day;
     }
 
-    uint8_t hour() const
+    BVP_GETTER(uint8_t, hour, CurrentTimeStruct)
     {
-        return m_btSpecObject.exactTime256.dayDateTime.dateTime.hour;
+        return btSpecObject.exactTime256.dayDateTime.dateTime.hour;
     }
 
-    uint8_t minute() const
+    BVP_GETTER(uint8_t, minute, CurrentTimeStruct)
     {
-        return m_btSpecObject.exactTime256.dayDateTime.dateTime.minute;
+        return btSpecObject.exactTime256.dayDateTime.dateTime.minute;
     }
 
-    uint8_t seconds() const
+    BVP_GETTER(uint8_t, seconds, CurrentTimeStruct)
     {
-        return m_btSpecObject.exactTime256.dayDateTime.dateTime.seconds;
+        return btSpecObject.exactTime256.dayDateTime.dateTime.seconds;
     }
 
-    DayOfWeekEnum dayOfWeek() const
+    BVP_GETTER(DayOfWeekEnum, dayOfWeek, CurrentTimeStruct)
     {
-        return m_btSpecObject.exactTime256.dayDateTime.dayOfWeek.dayOfWeek;
+        return btSpecObject.exactTime256.dayDateTime.dayOfWeek.dayOfWeek;
     }
 
-    uint8_t fractionsOfSeconds() const
+    BVP_GETTER(uint8_t, fractionsOfSeconds, CurrentTimeStruct)
     {
-        return m_btSpecObject.exactTime256.fractions256;
+        return btSpecObject.exactTime256.fractions256;
     }
 
-    uint16_t milliseconds() const
+    BVP_GETTER(uint16_t, milliseconds, CurrentTimeStruct)
     {
-        return m_btSpecObject.exactTime256.fractions256 * 1000 / 256;
+        return btSpecObject.exactTime256.fractions256 * 1000 / 256;
     }
 
-    bool isManuallyAdjusted() const
+    BVP_GETTER(bool, isManuallyAdjusted, CurrentTimeStruct)
     {
-        return (m_btSpecObject.adjustReason & CTS_FLAG_MANUAL) != 0;
+        return (btSpecObject.adjustReason & CTS_FLAG_MANUAL) != 0;
     }
 
-    bool isExternalReference() const
+    BVP_GETTER(bool, isExternalReference, CurrentTimeStruct)
     {
-        return (m_btSpecObject.adjustReason & CTS_FLAG_EXTERNAL) != 0;
+        return (btSpecObject.adjustReason & CTS_FLAG_EXTERNAL) != 0;
     }
 
-    bool isTZChanged() const
+    BVP_GETTER(bool, isTZChanged, CurrentTimeStruct)
     {
-        return (m_btSpecObject.adjustReason & CTS_FLAG_TZ_CHANGED) != 0;
+        return (btSpecObject.adjustReason & CTS_FLAG_TZ_CHANGED) != 0;
     }
 
-    bool isDSTChanged() const
+    BVP_GETTER(bool, isDSTChanged, CurrentTimeStruct)
     {
-        return (m_btSpecObject.adjustReason & CTS_FLAG_DST_CHANGED) != 0;
+        return (btSpecObject.adjustReason & CTS_FLAG_DST_CHANGED) != 0;
     }
 
 private:
@@ -110,22 +110,24 @@ private:
         return size == 10;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(CurrentTimeStruct)
     {
-        m_btSpecObject.exactTime256 = ExactTime256(parser, configuration).getBtSpecObject();
+        bool result{true};
+
+        result &= ExactTime256::parse(parser, btSpecObject.exactTime256);
 
         // 3.1.2.1 Manual Time Update
         // 3.1.2.2 External Reference Time Update
         // 3.1.2.3 Change of Time Zone
         // 3.1.2.4 Change of DST Offset
-        m_btSpecObject.adjustReason = parser.parseUInt8();
+        btSpecObject.adjustReason = parser.parseUInt8();
 
-        return true;
+        return result;
     }
 
     virtual void toStringStream(std::ostringstream &oss) const override
     {
-        oss << ExactTime256(m_btSpecObject.exactTime256, configuration);
+        oss << ExactTime256(m_btSpecObject.exactTime256, configuration());
 
         std::ostringstream ossAdjustReasons;
         if (isManuallyAdjusted())

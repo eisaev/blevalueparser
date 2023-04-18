@@ -10,15 +10,15 @@ namespace bvp
 
 struct HexStringStruct
 {
-    std::string hexString;
+    std::string rawString;
 };
 
 class HexString final : public BaseValueSpec<HexStringStruct>
 {
 public:
-    std::string hexString() const
+    BVP_GETTER(std::string, rawString, HexStringStruct)
     {
-        return m_btSpecObject.hexString;
+        return btSpecObject.rawString;
     }
 
 private:
@@ -30,45 +30,48 @@ private:
         return true;
     }
 
-    virtual bool parse(Parser &parser) override
+    BVP_PARSE(HexStringStruct)
     {
-// Don't use stringstreams in parser! It's slooooOOO00OOOoooow!
-#if 0  // x1: ~187ns, x8: ~820ns, x64: ~5303ns, x512: ~41865ns
-        std::ostringstream oss;
-        oss << configuration.hexPrefix;
-        while (!parser.atEnd())
+        bool result{true};
+
+        btSpecObject.rawString = parser.parseString();
+
+        return result;
+    }
+
+    virtual void toStringStream(std::ostringstream &oss) const override
+    {
+// Stringstreams is too slooooOOO00OOOoooow!
+#if 0  // x1: ~239ns, x8: ~938ns, x64: ~5526ns, x512: ~40468ns
+        std::ostringstream ossTmp;
+        ossTmp << configuration().hexPrefix;
+        for (auto c : m_btSpecObject.rawString)
         {
-            oss << std::uppercase
-                << std::setfill('0')
-                << std::setw(2)
-                << std::hex
-                << static_cast<int>(parser.parseUInt8())
-                << configuration.hexSeparator;
+            ossTmp << std::uppercase
+                   << std::setfill('0')
+                   << std::setw(2)
+                   << std::hex
+                   << static_cast<int>(c)
+                   << configuration().hexSeparator;
         }
-        m_btSpecObject.hexString = oss.str();
-#else  // x1: ~40ns (x4.6), x8: ~157ns (x5.2), x64: ~743ns (x7.1), x512: ~4504ns (x9.3)
-        m_btSpecObject.hexString = configuration.hexPrefix;
+        std::string hexString = ossTmp.str();
+#else  // x1: ~98ns (x2.4), x8: ~274ns (x3.4), x64: ~1061ns (x5.2), x512: ~5455ns (x7.4)
+        std::string hexString = configuration().hexPrefix;
 
         constexpr std::array<char, 16> hexChars{
             '0', '1', '2', '3', '4', '5', '6', '7',
             '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
         };
-        while (!parser.atEnd())
+        for (auto c : m_btSpecObject.rawString)
         {
-            uint8_t byte = parser.parseUInt8();
-            m_btSpecObject.hexString.push_back(hexChars[(byte & 0xF0) >> 4]);
-            m_btSpecObject.hexString.push_back(hexChars[byte & 0x0F]);
-            m_btSpecObject.hexString.append(configuration.hexSeparator);
+            hexString.push_back(hexChars[(c & 0xF0) >> 4]);
+            hexString.push_back(hexChars[c & 0x0F]);
+            hexString.append(configuration().hexSeparator);
         }
 #endif
-        m_btSpecObject.hexString.pop_back();
+        hexString.pop_back();
 
-        return true;
-    }
-
-    virtual void toStringStream(std::ostringstream &oss) const override
-    {
-        oss << m_btSpecObject.hexString;
+        oss << hexString;
     }
 };
 
