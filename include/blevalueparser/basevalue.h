@@ -43,12 +43,6 @@ TReturn Name() const\
         return parse(parser, m_btSpecObject);\
     }\
     static bool parse(Parser &parser, TStruct &btSpecObject)
-#define BVP_PARSE_CONF(TStruct)\
-    virtual bool parse(Parser &parser) override\
-    {\
-        return parse(parser, m_btSpecObject, configuration);\
-    }\
-    static bool parse(Parser &parser, TStruct &btSpecObject, Configuration &configuration)
 
 
 namespace bvp
@@ -139,7 +133,7 @@ private:
     int16_t m_mantissa;
     int8_t m_exponent;
 
-    friend std::ostream& operator<<(std::ostream &os, const MedFloat16& rhs)
+    friend std::ostream &operator<<(std::ostream &os, const MedFloat16 &rhs)
     {
         os << rhs.toString();
         return os;
@@ -440,7 +434,7 @@ protected:
     virtual bool parse(Parser &parser) = 0;
     virtual void toStringStream(std::ostringstream &oss) const = 0;
 
-    friend std::ostream& operator<<(std::ostream &os, const BaseValue& rhs)
+    friend std::ostream &operator<<(std::ostream &os, const BaseValue &rhs)
     {
         os << rhs.toString();
         return os;

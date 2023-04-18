@@ -5,16 +5,21 @@
 
 using namespace bvp;
 
-
+#include <iostream>
 template <class T>
 static void Parser(benchmark::State& state)
 {
     std::string data = DataGenerator::make_data<T>(state);
     bvp::BLEValueParser bleValueParser;
+    auto result = bleValueParser.make_value<T>(data.c_str(), data.size());
+    if (!result->isValid())
+    {
+        state.SkipWithError("Invalid object");
+    }
 
     for (auto _ : state)
     {
-        auto result = bleValueParser.make_value<T>(data.c_str(), data.size());
+        result = bleValueParser.make_value<T>(data.c_str(), data.size());
     }
 }
 
