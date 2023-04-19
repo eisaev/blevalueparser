@@ -12,6 +12,10 @@ static void String(benchmark::State& state)
     std::string data = DataGenerator::make_data<T>(state);
     bvp::BLEValueParser bleValueParser;
     auto result = bleValueParser.make_value<T>(data.c_str(), data.size());
+    if (!result->isValid())
+    {
+        state.SkipWithError("Invalid object");
+    }
 
     for (auto _ : state)
     {

@@ -16,7 +16,7 @@ std::string DataGenerator::make_data<AlertCategoryIDBitMask>(const benchmark::St
     constexpr char flags[] = { C(0b00000011), C(0b11111111) };
     constexpr char data[] = { flags[1], flags[0] };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -26,7 +26,7 @@ std::string DataGenerator::make_data<AlertCategoryID>(const benchmark::State& st
 
     constexpr char data[] = { '\x00' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -39,7 +39,7 @@ std::string DataGenerator::make_data<AlertNotificationControlPoint>(const benchm
         '\x00'  // categoryID
     };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -49,7 +49,7 @@ std::string DataGenerator::make_data<BatteryCriticalStatus>(const benchmark::Sta
 
     constexpr char data[] = { C(0b00000011) };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -69,7 +69,7 @@ std::string DataGenerator::make_data<BatteryEnergyStatus>(const benchmark::State
         C(0b00001000), C(0b00000000)    // availableEnergyAtLastCharge
     };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -86,7 +86,7 @@ std::string DataGenerator::make_data<BatteryHealthInformation>(const benchmark::
         '\x7E'          // maxDesignedOperatingTemperature
     };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -104,7 +104,7 @@ std::string DataGenerator::make_data<BatteryHealthStatus>(const benchmark::State
         '\xFF', '\xFF'  // deepDischargeCount
     };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -129,7 +129,7 @@ std::string DataGenerator::make_data<BatteryInformation>(const benchmark::State&
         '\x01'                           // batteryAggregationGroup
     };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -151,7 +151,7 @@ std::string DataGenerator::make_data<BatteryLevelStatus>(const benchmark::State&
         additionalStatus                // additionalStatus
     };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -161,7 +161,7 @@ std::string DataGenerator::make_data<BatteryLevel>(const benchmark::State& state
 
     constexpr char data[] = { '\x64' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -178,7 +178,7 @@ std::string DataGenerator::make_data<BatteryTimeStatus>(const benchmark::State& 
         '\xFF', '\xFF', '\xFF'  // timeUntilRecharged
     };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -190,7 +190,7 @@ std::string DataGenerator::make_data<BodyCompositionFeature>(const benchmark::St
     constexpr char flags[] = { C(0b10101010), C(0b10101000), C(0b00000111), C(0b11111111) };
     constexpr char data[] = { flags[3], flags[2], flags[1], flags[0] };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -207,7 +207,7 @@ std::string DataGenerator::make_data<BodyCompositionMeasurementMIBFS>(const benc
         '\x56', '\x78'                                          // weight
     };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -233,7 +233,7 @@ std::string DataGenerator::make_data<BodyCompositionMeasurement>(const benchmark
         '\xAB', '\xCD'                                          // height
     };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -243,7 +243,7 @@ std::string DataGenerator::make_data<BodySensorLocation>(const benchmark::State&
 
     constexpr char data[] = { '\x01' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -253,7 +253,7 @@ std::string DataGenerator::make_data<CurrentTime>(const benchmark::State& state)
 
     constexpr char data[] = { '\xE6', '\x07', '\x0C', '\x1F', '\x17', '\x3B', '\x3B', '\x07', '\xFF', '\x01' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -263,7 +263,7 @@ std::string DataGenerator::make_data<DateTime>(const benchmark::State& state)
 
     constexpr char data[] = { '\xE7', '\x07', '\x01', '\x02', '\x14', '\x16', '\x07' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -273,7 +273,7 @@ std::string DataGenerator::make_data<DateUTC>(const benchmark::State& state)
 
     constexpr char data[] = { '\xD8', '\x4B', '\x00' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -283,7 +283,7 @@ std::string DataGenerator::make_data<DayDateTime>(const benchmark::State& state)
 
     constexpr char data[] = { '\xE7', '\x07', '\x01', '\x02', '\x14', '\x16', '\x07', '\x01' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -293,7 +293,7 @@ std::string DataGenerator::make_data<DayOfWeek>(const benchmark::State& state)
 
     constexpr char data[] = { '\x01' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -303,7 +303,7 @@ std::string DataGenerator::make_data<DSTOffset>(const benchmark::State& state)
 
     constexpr char data[] = { '\x04' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -313,7 +313,7 @@ std::string DataGenerator::make_data<EstimatedServiceDate>(const benchmark::Stat
 
     constexpr char data[] = { '\xD8', '\x4B', '\x00' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -323,7 +323,7 @@ std::string DataGenerator::make_data<ExactTime256>(const benchmark::State& state
 
     constexpr char data[] = { '\xE7', '\x07', '\x01', '\x05', '\x14', '\x16', '\x07', '\x04', '\x80' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -333,7 +333,7 @@ std::string DataGenerator::make_data<HeartRateControlPoint>(const benchmark::Sta
 
     constexpr char data[] = { '\x01' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -344,7 +344,7 @@ std::string DataGenerator::make_data<HeartRateMeasurement>(const benchmark::Stat
     constexpr char flags = C(0b00011001);
     constexpr char data[] = { flags, '\xAA', '\x01', '\xBB', '\x01', '\xA1', '\x01', '\xA2', '\x01', '\xA3', '\x01', '\xA4', '\x01', '\xA5', '\x01', '\xA6', '\x01', '\xA7', '\x01' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -367,7 +367,7 @@ std::string DataGenerator::make_data<LocalTimeInformation>(const benchmark::Stat
 
     constexpr char data[] = { '\xD0', '\x02' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -382,7 +382,7 @@ std::string DataGenerator::make_data<NewAlert>(const benchmark::State& state)
         'p', 'a', 'n', 'i', 'c', '!'    // textStringInformation
     };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -392,7 +392,7 @@ std::string DataGenerator::make_data<PnPID>(const benchmark::State& state)
 
     constexpr char data[] = { '\x02', '\x12', '\x00', '\x23', '\x01', '\xBC', '\xAA' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -402,7 +402,7 @@ std::string DataGenerator::make_data<ReferenceTimeInformation>(const benchmark::
 
     constexpr char data[] = { '\x01', '\xAA', '\x2A', '\x0F' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -414,7 +414,7 @@ std::string DataGenerator::make_data<SupportedNewAlertCategory>(const benchmark:
     constexpr char flags[] = { C(0b00000011), C(0b11111111) };
     constexpr char data[] = { flags[1], flags[0] };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -426,7 +426,7 @@ std::string DataGenerator::make_data<SupportedUnreadAlertCategory>(const benchma
     constexpr char flags[] = { C(0b00000011), C(0b11111111) };
     constexpr char data[] = { flags[1], flags[0] };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -449,7 +449,7 @@ std::string DataGenerator::make_data<TimeAccuracy>(const benchmark::State& state
 
     constexpr char data[] = { '\x2A' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -459,7 +459,7 @@ std::string DataGenerator::make_data<TimeSource>(const benchmark::State& state)
 
     constexpr char data[] = { '\x01' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -469,7 +469,7 @@ std::string DataGenerator::make_data<TimeZone>(const benchmark::State& state)
 
     constexpr char data[] = { '\x38' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -482,7 +482,7 @@ std::string DataGenerator::make_data<UnreadAlertStatus>(const benchmark::State& 
         '\x2A'  // unreadCount
     };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
 
 template<>
@@ -492,5 +492,5 @@ std::string DataGenerator::make_data<UserIndex>(const benchmark::State& state)
 
     constexpr char data[] = { '\x2A' };
 
-    return data;
+    return std::string(data, sizeof(data));
 }
