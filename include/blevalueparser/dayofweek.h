@@ -21,20 +21,27 @@ enum class DayOfWeekEnum
     Sunday      = 7
     // 8–255 - Reserved for Future Use
 };
-inline std::ostream &operator<<(std::ostream &os, const DayOfWeekEnum value)
+inline std::string enumToString(const DayOfWeekEnum value)
 {
+    std::string str;
+
     switch (value)
     {
-        case DayOfWeekEnum::Unknown:    os << "<Unknown>";  break;
-        case DayOfWeekEnum::Monday:     os << "Mon";        break;
-        case DayOfWeekEnum::Tuesday:    os << "Tue";        break;
-        case DayOfWeekEnum::Wednesday:  os << "Wed";        break;
-        case DayOfWeekEnum::Thursday:   os << "Thu";        break;
-        case DayOfWeekEnum::Friday:     os << "Fri";        break;
-        case DayOfWeekEnum::Saturday:   os << "Sat";        break;
-        case DayOfWeekEnum::Sunday:     os << "Sun";        break;
+        case DayOfWeekEnum::Unknown:    str = "<Unknown>";  break;
+        case DayOfWeekEnum::Monday:     str = "Mon";        break;
+        case DayOfWeekEnum::Tuesday:    str = "Tue";        break;
+        case DayOfWeekEnum::Wednesday:  str = "Wed";        break;
+        case DayOfWeekEnum::Thursday:   str = "Thu";        break;
+        case DayOfWeekEnum::Friday:     str = "Fri";        break;
+        case DayOfWeekEnum::Saturday:   str = "Sat";        break;
+        case DayOfWeekEnum::Sunday:     str = "Sun";        break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const DayOfWeekEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 inline DayOfWeekEnum &operator%=(DayOfWeekEnum &lhs, const DayOfWeekEnum &rhs)
@@ -76,11 +83,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, DayOfWeek, DayOfWeekStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 1;
-    }
-
     BVP_PARSE(DayOfWeekStruct)
     {
         bool result{true};
@@ -90,9 +92,14 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(DayOfWeekStruct)
     {
-        oss << m_btSpecObject.dayOfWeek;
+        return enumToString(btSpecObject.dayOfWeek);
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 1;
     }
 };
 

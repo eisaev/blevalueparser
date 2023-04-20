@@ -19,20 +19,27 @@ enum class BodySensorLocationEnum
     EarLobe     = 5,
     Foot        = 6
 };
-inline std::ostream &operator<<(std::ostream &os, const BodySensorLocationEnum value)
+inline std::string enumToString(const BodySensorLocationEnum value)
 {
+    std::string str;
+
     switch (value)
     {
-        case BodySensorLocationEnum::Unknown: os << "<Unknown>";    break;
-        case BodySensorLocationEnum::Other:   os << "Other";        break;
-        case BodySensorLocationEnum::Chest:   os << "Chest";        break;
-        case BodySensorLocationEnum::Wrist:   os << "Wrist";        break;
-        case BodySensorLocationEnum::Finger:  os << "Finger";       break;
-        case BodySensorLocationEnum::Hand:    os << "Hand";         break;
-        case BodySensorLocationEnum::EarLobe: os << "Ear Lobe";     break;
-        case BodySensorLocationEnum::Foot:    os << "Foot";         break;
+        case BodySensorLocationEnum::Unknown: str = "<Unknown>";    break;
+        case BodySensorLocationEnum::Other:   str = "Other";        break;
+        case BodySensorLocationEnum::Chest:   str = "Chest";        break;
+        case BodySensorLocationEnum::Wrist:   str = "Wrist";        break;
+        case BodySensorLocationEnum::Finger:  str = "Finger";       break;
+        case BodySensorLocationEnum::Hand:    str = "Hand";         break;
+        case BodySensorLocationEnum::EarLobe: str = "Ear Lobe";     break;
+        case BodySensorLocationEnum::Foot:    str = "Foot";         break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const BodySensorLocationEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 inline BodySensorLocationEnum &operator%=(BodySensorLocationEnum &lhs, const BodySensorLocationEnum &rhs)
@@ -77,11 +84,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, BodySensorLocation, BodySensorLocationStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 1;
-    }
-
     BVP_PARSE(BodySensorLocationStruct)
     {
         bool result{true};
@@ -91,9 +93,14 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(BodySensorLocationStruct)
     {
-        oss << m_btSpecObject.bodySensorLocation;
+        return enumToString(btSpecObject.bodySensorLocation);
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 1;
     }
 };
 

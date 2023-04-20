@@ -7,6 +7,9 @@
 namespace bvp
 {
 
+constexpr uint8_t UAS_GREATER = 255;
+constexpr uint8_t UAS_MAX = UAS_GREATER - 1;
+
 // GATT_Specification_Supplement_v8.pdf
 // 3.238 Unread Alert Status
 struct UnreadAlertStatusStruct
@@ -33,19 +36,11 @@ public:
 
     BVP_GETTER(bool, isUnreadCountGreater, UnreadAlertStatusStruct)
     {
-        return s_greater == btSpecObject.unreadCount;
+        return UAS_GREATER == btSpecObject.unreadCount;
     }
 
 private:
     BVP_CTORS(BaseValueSpec, UnreadAlertStatus, UnreadAlertStatusStruct)
-
-    static constexpr uint8_t s_greater = 255;
-    static constexpr uint8_t s_max = s_greater - 1;
-
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 2;
-    }
 
     BVP_PARSE(UnreadAlertStatusStruct)
     {
@@ -57,19 +52,33 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(UnreadAlertStatusStruct)
     {
-        oss <<   "Category: " << m_btSpecObject.categoryID.categoryID;
+        std::string str;
 
-        oss << ", UnreadCount: ";
-        if (isUnreadCountGreater())
+        str.append("Category: ");
+        str.append(enumToString(btSpecObject.categoryID.categoryID));
+
+        str.append(", UnreadCount: ");
+        if (isUnreadCountGreater(btSpecObject))
         {
-            oss << ">" << static_cast<int>(s_max);
+            fmt::format_to(std::back_inserter(str), ">{}", UAS_MAX);
         }
         else
         {
-            oss << static_cast<int>(m_btSpecObject.unreadCount);
+            fmt::format_to(
+                std::back_inserter(str),
+                "{}",
+                btSpecObject.unreadCount
+            );
         }
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 2;
     }
 };
 

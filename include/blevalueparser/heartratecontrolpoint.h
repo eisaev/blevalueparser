@@ -13,14 +13,21 @@ enum class HeartRateControlPointEnum : uint8_t
     Reserved            = 0,  // 0, 2–255 - Reserved for Future Use
     ResetEnergyExpended = 1
 };
-inline std::ostream &operator<<(std::ostream &os, const HeartRateControlPointEnum value)
+inline std::string enumToString(const HeartRateControlPointEnum value)
 {
+    std::string str;
+
     switch (value)
     {
-        case HeartRateControlPointEnum::Reserved:               os << "<Reserved>";             break;
-        case HeartRateControlPointEnum::ResetEnergyExpended:    os << "ResetEnergyExpended";    break;
+        case HeartRateControlPointEnum::Reserved:               str = "<Reserved>";             break;
+        case HeartRateControlPointEnum::ResetEnergyExpended:    str = "ResetEnergyExpended";    break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const HeartRateControlPointEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 inline HeartRateControlPointEnum &operator%=(HeartRateControlPointEnum &lhs, const HeartRateControlPointEnum &rhs)
@@ -59,11 +66,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, HeartRateControlPoint, HeartRateControlPointStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 1;
-    }
-
     BVP_PARSE(HeartRateControlPointStruct)
     {
         bool result{true};
@@ -73,9 +75,14 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(HeartRateControlPointStruct)
     {
-        oss << m_btSpecObject.heartRateControlPoint;
+        return enumToString(btSpecObject.heartRateControlPoint);
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 1;
     }
 };
 

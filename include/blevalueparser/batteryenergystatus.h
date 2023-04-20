@@ -96,11 +96,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, BatteryEnergyStatus, BatteryEnergyStatusStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size > 0 && size < 14;
-    }
-
     BVP_PARSE(BatteryEnergyStatusStruct)
     {
         bool result{true};
@@ -135,43 +130,61 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(BatteryEnergyStatusStruct)
     {
-        std::ostringstream ossInfo;
-        if (isExternalSourcePowerPresent())
-        {
-            ossInfo << "ExternalSourcePower: " << m_btSpecObject.externalSourcePower << "W, ";
-        }
-        if (isPresentVoltagePresent())
-        {
-            ossInfo << "PresentVoltage: " << m_btSpecObject.presentVoltage << "V, ";
-        }
-        if (isAvailableEnergyPresent())
-        {
-            ossInfo << "AvailableEnergy: " << m_btSpecObject.availableEnergy << "kWh, ";
-        }
-        if (isAvailableBatteryCapacityPresent())
-        {
-            ossInfo << "AvailableBatteryCapacity: " << m_btSpecObject.availableBatteryCapacity << "kWh, ";
-        }
-        if (isChargeRatePresent())
-        {
-            ossInfo << "ChargeRate: " << m_btSpecObject.chargeRate << "W, ";
-        }
-        if (isAvailableEnergyAtLastChargePresent())
-        {
-            ossInfo << "AvailableEnergyAtLastCharge: " << m_btSpecObject.availableEnergyAtLastCharge << "kWh, ";
-        }
-        std::string info = ossInfo.str();
+        std::string str;
 
-        if (info.empty())
+        if (isExternalSourcePowerPresent(btSpecObject))
         {
-            oss << "<NoData>";
+            str.append("ExternalSourcePower: ");
+            str.append(btSpecObject.externalSourcePower.toString());
+            str.append("W, ");
         }
-        else
+        if (isPresentVoltagePresent(btSpecObject))
         {
-            oss << info.substr(0, info.length() - 2);
+            str.append("PresentVoltage: ");
+            str.append(btSpecObject.presentVoltage.toString());
+            str.append("V, ");
         }
+        if (isAvailableEnergyPresent(btSpecObject))
+        {
+            str.append("AvailableEnergy: ");
+            str.append(btSpecObject.availableEnergy.toString());
+            str.append("kWh, ");
+        }
+        if (isAvailableBatteryCapacityPresent(btSpecObject))
+        {
+            str.append("AvailableBatteryCapacity: ");
+            str.append(btSpecObject.availableBatteryCapacity.toString());
+            str.append("kWh, ");
+        }
+        if (isChargeRatePresent(btSpecObject))
+        {
+            str.append("ChargeRate: ");
+            str.append(btSpecObject.chargeRate.toString());
+            str.append("W, ");
+        }
+        if (isAvailableEnergyAtLastChargePresent(btSpecObject))
+        {
+            str.append("AvailableEnergyAtLastCharge: ");
+            str.append(btSpecObject.availableEnergyAtLastCharge.toString());
+            str.append("kWh, ");
+        }
+
+        if (str.empty())
+        {
+            return "<NoData>";
+        }
+
+        str.pop_back();
+        str.pop_back();
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size > 0 && size < 14;
     }
 };
 

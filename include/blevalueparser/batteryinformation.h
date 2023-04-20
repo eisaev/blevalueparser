@@ -58,27 +58,34 @@ enum class BatteryChemistryEnum : uint8_t
     // 14–254 - Reserved for Future Use
     Other       = 255
 };
-inline std::ostream &operator<<(std::ostream &os, const BatteryChemistryEnum value)
+inline std::string enumToString(const BatteryChemistryEnum value)
 {
+    std::string str;
+
     switch (value)
     {
-        case BatteryChemistryEnum::Unknown:     os << "<Unknown>";  break;
-        case BatteryChemistryEnum::Alkaline:    os << "Alkaline";   break;
-        case BatteryChemistryEnum::LeadAcid:    os << "LeadAcid";   break;
-        case BatteryChemistryEnum::LiFeS2:      os << "LiFeS2";     break;
-        case BatteryChemistryEnum::LiMnO2:      os << "LiMnO2";     break;
-        case BatteryChemistryEnum::LiIon:       os << "LiIon";      break;
-        case BatteryChemistryEnum::LiPo:        os << "LiPo";       break;
-        case BatteryChemistryEnum::NiOx:        os << "NiOx";       break;
-        case BatteryChemistryEnum::NiCd:        os << "NiCd";       break;
-        case BatteryChemistryEnum::NiMH:        os << "NiMH";       break;
-        case BatteryChemistryEnum::AgZn:        os << "AgZn";       break;
-        case BatteryChemistryEnum::ZnChloride:  os << "ZnChloride"; break;
-        case BatteryChemistryEnum::ZnAir:       os << "ZnAir";      break;
-        case BatteryChemistryEnum::ZnCarbon:    os << "ZnCarbon";   break;
-        case BatteryChemistryEnum::Other:       os << "<Other>";    break;
+        case BatteryChemistryEnum::Unknown:     str = "<Unknown>";  break;
+        case BatteryChemistryEnum::Alkaline:    str = "Alkaline";   break;
+        case BatteryChemistryEnum::LeadAcid:    str = "LeadAcid";   break;
+        case BatteryChemistryEnum::LiFeS2:      str = "LiFeS2";     break;
+        case BatteryChemistryEnum::LiMnO2:      str = "LiMnO2";     break;
+        case BatteryChemistryEnum::LiIon:       str = "LiIon";      break;
+        case BatteryChemistryEnum::LiPo:        str = "LiPo";       break;
+        case BatteryChemistryEnum::NiOx:        str = "NiOx";       break;
+        case BatteryChemistryEnum::NiCd:        str = "NiCd";       break;
+        case BatteryChemistryEnum::NiMH:        str = "NiMH";       break;
+        case BatteryChemistryEnum::AgZn:        str = "AgZn";       break;
+        case BatteryChemistryEnum::ZnChloride:  str = "ZnChloride"; break;
+        case BatteryChemistryEnum::ZnAir:       str = "ZnAir";      break;
+        case BatteryChemistryEnum::ZnCarbon:    str = "ZnCarbon";   break;
+        case BatteryChemistryEnum::Other:       str = "<Other>";    break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const BatteryChemistryEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 inline BatteryChemistryEnum &operator%=(BatteryChemistryEnum &lhs, const BatteryChemistryEnum &rhs)
@@ -221,11 +228,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, BatteryInformation, BatteryInformationStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size > 2 && size < 20;
-    }
-
     BVP_PARSE(BatteryInformationStruct)
     {
         bool result{true};
@@ -269,62 +271,82 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(BatteryInformationStruct)
     {
-        oss <<   "BatteryReplaceable: " << (isBatteryReplaceable() ? "Yes" : "No");
-        oss << ", BatteryRechargeable: " << (isBatteryRechargeable() ? "Yes" : "No");
+        std::string str;
 
-        std::ostringstream ossInfo;
-        if (isBatteryManufactureDatePresent())
+        str.append("BatteryReplaceable: ");
+        str.append(isBatteryReplaceable(btSpecObject) ? "Yes" : "No");
+
+        str.append(", BatteryRechargeable: ");
+        str.append(isBatteryRechargeable(btSpecObject) ? "Yes" : "No");
+
+        if (isBatteryManufactureDatePresent(btSpecObject))
         {
-            ossInfo << ", BatteryManufactureDate: " << DateUTC(m_btSpecObject.batteryManufactureDate, configuration());
+            str.append(", BatteryManufactureDate: ");
+            str.append(DateUTC::toStringInternal(btSpecObject.batteryManufactureDate));
         }
-        if (isBatteryExpirationDatePresent())
+        if (isBatteryExpirationDatePresent(btSpecObject))
         {
-            ossInfo << ", BatteryExpirationDate: " << DateUTC(m_btSpecObject.batteryExpirationDate, configuration());
+            str.append(", BatteryExpirationDate: ");
+            str.append(DateUTC::toStringInternal(btSpecObject.batteryExpirationDate));
         }
-        if (isBatteryDesignedCapacityPresent())
+        if (isBatteryDesignedCapacityPresent(btSpecObject))
         {
-            ossInfo << ", BatteryDesignedCapacity: " << m_btSpecObject.batteryDesignedCapacity << "kWh";
+            str.append(", BatteryDesignedCapacity: ");
+            str.append(btSpecObject.batteryDesignedCapacity.toString());
+            str.append("kWh");
         }
-        if (isBatteryLowEnergyPresent())
+        if (isBatteryLowEnergyPresent(btSpecObject))
         {
-            ossInfo << ", BatteryLowEnergy: " << m_btSpecObject.batteryLowEnergy << "kWh";
+            str.append(", BatteryLowEnergy: ");
+            str.append(btSpecObject.batteryLowEnergy.toString());
+            str.append("kWh");
         }
-        if (isBatteryCriticalEnergyPresent())
+        if (isBatteryCriticalEnergyPresent(btSpecObject))
         {
-            ossInfo << ", BatteryCriticalEnergy: " << m_btSpecObject.batteryCriticalEnergy << "kWh";
+            str.append(", BatteryCriticalEnergy: ");
+            str.append(btSpecObject.batteryCriticalEnergy.toString());
+            str.append("kWh");
         }
-        if (isBatteryChemistryPresent())
+        if (isBatteryChemistryPresent(btSpecObject))
         {
-            ossInfo << ", BatteryChemistry: " << m_btSpecObject.batteryChemistry;
+            str.append(", BatteryChemistry: ");
+            str.append(enumToString(btSpecObject.batteryChemistry));
         }
-        if (isNominalVoltagePresent())
+        if (isNominalVoltagePresent(btSpecObject))
         {
-            ossInfo << ", NominalVoltage: " << m_btSpecObject.nominalVoltage << "V";
+            str.append(", NominalVoltage: ");
+            str.append(btSpecObject.nominalVoltage.toString());
+            str.append("V");
         }
-        if (isBatteryAggregationGroupPresent())
+        if (isBatteryAggregationGroupPresent(btSpecObject))
         {
-            ossInfo << ", BatteryAggregationGroup: ";
-            if (0 == m_btSpecObject.batteryAggregationGroup)
+            str.append(", BatteryAggregationGroup: ");
+            if (0 == btSpecObject.batteryAggregationGroup)
             {
-                ossInfo << "<NotInGroup>";
+                str.append("<NotInGroup>");
             }
-            else if (255 == m_btSpecObject.batteryAggregationGroup)
+            else if (255 == btSpecObject.batteryAggregationGroup)
             {
-                ossInfo << "<Reserved>";
+                str.append("<Reserved>");
             }
             else
             {
-                ossInfo << static_cast<int>(m_btSpecObject.batteryAggregationGroup);
+                fmt::format_to(
+                    std::back_inserter(str),
+                    "{}",
+                    btSpecObject.batteryAggregationGroup
+                );
             }
         }
-        std::string info = ossInfo.str();
 
-        if (!info.empty())
-        {
-            oss << info;
-        }
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size > 2 && size < 20;
     }
 };
 

@@ -83,11 +83,6 @@ protected:
         BaseValueSpec{btSpecObject, configuration}
     {}
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 2;
-    }
-
     BVP_PARSE(SupportedAlertCategoryBaseStruct)
     {
         bool result{true};
@@ -97,9 +92,19 @@ protected:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(SupportedAlertCategoryBaseStruct)
     {
-        oss << "SupportedCategories: " << AlertCategoryIDBitMask(m_btSpecObject.categoryIDBitMask, configuration());
+        std::string str;
+
+        str.append("SupportedCategories: ");
+        str.append(AlertCategoryIDBitMask::toStringInternal(btSpecObject.categoryIDBitMask));
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 2;
     }
 };
 

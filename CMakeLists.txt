@@ -10,6 +10,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 include(GNUInstallDirs)
 
+find_package(fmt REQUIRED)
+
 set(LIBRARY_SOURCES
     include/blevalueparser/bvp.h
     # common
@@ -65,6 +67,9 @@ target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_14)
 target_include_directories(${PROJECT_NAME} INTERFACE
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+target_link_libraries(${PROJECT_NAME} INTERFACE
+    fmt::fmt
 )
 
 # https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html

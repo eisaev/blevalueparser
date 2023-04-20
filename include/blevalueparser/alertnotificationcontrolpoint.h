@@ -19,19 +19,26 @@ enum class AlertNotificationControlPointCommandIDEnum : uint8_t
     NotifyUnreadCategoryStatusImmediately   = 5,
     Reserved                                = 6  // 6–255 - Reserved for Future Use
 };
-inline std::ostream &operator<<(std::ostream &os, const AlertNotificationControlPointCommandIDEnum value)
+inline std::string enumToString(const AlertNotificationControlPointCommandIDEnum value)
 {
+    std::string str;
+
     switch (value)
     {
-        case AlertNotificationControlPointCommandIDEnum::EnableNewIncomingAlertNotification:        os << "EnableNewIncomingAlertNotification";         break;
-        case AlertNotificationControlPointCommandIDEnum::EnableUnreadCategoryStatusNotification:    os << "EnableUnreadCategoryStatusNotification";     break;
-        case AlertNotificationControlPointCommandIDEnum::DisableNewIncomingAlertNotification:       os << "DisableNewIncomingAlertNotification";        break;
-        case AlertNotificationControlPointCommandIDEnum::DisableUnreadCategoryStatusNotification:   os << "DisableUnreadCategoryStatusNotification";    break;
-        case AlertNotificationControlPointCommandIDEnum::NotifyNewIncomingAlertImmediately:         os << "NotifyNewIncomingAlertImmediately";          break;
-        case AlertNotificationControlPointCommandIDEnum::NotifyUnreadCategoryStatusImmediately:     os << "NotifyUnreadCategoryStatusImmediately";      break;
-        case AlertNotificationControlPointCommandIDEnum::Reserved:                                  os << "<Reserved>";                                 break;
+        case AlertNotificationControlPointCommandIDEnum::EnableNewIncomingAlertNotification:        str = "EnableNewIncomingAlertNotification";         break;
+        case AlertNotificationControlPointCommandIDEnum::EnableUnreadCategoryStatusNotification:    str = "EnableUnreadCategoryStatusNotification";     break;
+        case AlertNotificationControlPointCommandIDEnum::DisableNewIncomingAlertNotification:       str = "DisableNewIncomingAlertNotification";        break;
+        case AlertNotificationControlPointCommandIDEnum::DisableUnreadCategoryStatusNotification:   str = "DisableUnreadCategoryStatusNotification";    break;
+        case AlertNotificationControlPointCommandIDEnum::NotifyNewIncomingAlertImmediately:         str = "NotifyNewIncomingAlertImmediately";          break;
+        case AlertNotificationControlPointCommandIDEnum::NotifyUnreadCategoryStatusImmediately:     str = "NotifyUnreadCategoryStatusImmediately";      break;
+        case AlertNotificationControlPointCommandIDEnum::Reserved:                                  str = "<Reserved>";                                 break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const AlertNotificationControlPointCommandIDEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 inline AlertNotificationControlPointCommandIDEnum &operator%=(AlertNotificationControlPointCommandIDEnum &lhs, const AlertNotificationControlPointCommandIDEnum &rhs)
@@ -81,11 +88,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, AlertNotificationControlPoint, AlertNotificationControlPointStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 2;
-    }
-
     BVP_PARSE(AlertNotificationControlPointStruct)
     {
         bool result{true};
@@ -96,10 +98,22 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(AlertNotificationControlPointStruct)
     {
-        oss <<   "Command: " << m_btSpecObject.commandID;
-        oss << ", Category: " << m_btSpecObject.categoryID.categoryID;
+        std::string str;
+
+        str.append("Command: ");
+        str.append(enumToString(btSpecObject.commandID));
+
+        str.append(", Category: ");
+        str.append(enumToString(btSpecObject.categoryID.categoryID));
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 2;
     }
 };
 

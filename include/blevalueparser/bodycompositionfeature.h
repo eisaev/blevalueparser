@@ -194,11 +194,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, BodyCompositionFeature, BodyCompositionFeatureStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 4;
-    }
-
     BVP_PARSE(BodyCompositionFeatureStruct)
     {
         bool result{true};
@@ -208,33 +203,83 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING_CONF(BodyCompositionFeatureStruct)
     {
-        oss << "Features: {"
-           << (isTimeStampSupported() ?         " TimeStamp": "")
-           << (isMultipleUsersSupported() ?     " MultipleUsers": "")
-           << (isBasalMetabolismSupported() ?   " BasalMetabolism": "")
-           << (isMusclePercentageSupported() ?  " MusclePercentage": "")
-           << (isMuscleMassSupported() ?        " MuscleMass": "")
-           << (isFatFreeMassSupported() ?       " FatFreeMass": "")
-           << (isSoftLeanMassSupported() ?      " SoftLeanMass": "")
-           << (isBodyWaterMassSupported() ?     " BodyWaterMass": "")
-           << (isImpedanceSupported() ?         " Impedance": "")
-           << (isWeightSupported() ?            " Weight": "")
-           << (isHeightSupported() ?            " Height": "")
-           << " }";
+        std::string str;
 
-        if (isWeightSupported())
+        str.append("Features: {");
+        if (isTimeStampSupported(btSpecObject))
         {
-            oss << ", WeightResolution: " << weightResolution() / 1000.0
-                << configuration().massUnits();
+            str.append(" TimeStamp");
+        }
+        if (isMultipleUsersSupported(btSpecObject))
+        {
+            str.append(" MultipleUsers");
+        }
+        if (isBasalMetabolismSupported(btSpecObject))
+        {
+            str.append(" BasalMetabolism");
+        }
+        if (isMusclePercentageSupported(btSpecObject))
+        {
+            str.append(" MusclePercentage");
+        }
+        if (isMuscleMassSupported(btSpecObject))
+        {
+            str.append(" MuscleMass");
+        }
+        if (isFatFreeMassSupported(btSpecObject))
+        {
+            str.append(" FatFreeMass");
+        }
+        if (isSoftLeanMassSupported(btSpecObject))
+        {
+            str.append(" SoftLeanMass");
+        }
+        if (isBodyWaterMassSupported(btSpecObject))
+        {
+            str.append(" BodyWaterMass");
+        }
+        if (isImpedanceSupported(btSpecObject))
+        {
+            str.append(" Impedance");
+        }
+        if (isWeightSupported(btSpecObject))
+        {
+            str.append(" Weight");
+        }
+        if (isHeightSupported(btSpecObject))
+        {
+            str.append(" Height");
+        }
+        str.append(" }");
+
+        if (isWeightSupported(btSpecObject))
+        {
+            fmt::format_to(
+                std::back_inserter(str),
+                ", WeightResolution: {}{}",
+                weightResolution(btSpecObject, configuration) / 1000.0,
+                configuration.massUnits()
+            );
         }
 
-        if (isHeightSupported())
+        if (isHeightSupported(btSpecObject))
         {
-            oss << ", HeightResolution: " << heightResolution() / 1000.0
-                << configuration().lenghtUnits();
+            fmt::format_to(
+                std::back_inserter(str),
+                ", HeightResolution: {}{}",
+                heightResolution(btSpecObject, configuration) / 1000.0,
+                configuration.lenghtUnits()
+            );
         }
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 4;
     }
 };
 

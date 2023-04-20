@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iomanip>
-
 #include "basevalue.h"
 #include "batterylevel.h"
 
@@ -43,11 +41,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, BatteryCriticalStatus, BatteryCriticalStatusStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 1;
-    }
-
     BVP_PARSE(BatteryCriticalStatusStruct)
     {
         bool result{true};
@@ -57,18 +50,27 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(BatteryCriticalStatusStruct)
     {
-        oss << "{";
-        if (isCriticalPowerState())
+        std::string str;
+
+        str.append("{");
+        if (isCriticalPowerState(btSpecObject))
         {
-            oss << " CriticalPowerState";
+            str.append(" CriticalPowerState");
         }
-        if (isImmediateServiceRequired())
+        if (isImmediateServiceRequired(btSpecObject))
         {
-            oss << " ImmediateServiceRequired";
+            str.append(" ImmediateServiceRequired");
         }
-        oss << " }";
+        str.append(" }");
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 1;
     }
 };
 

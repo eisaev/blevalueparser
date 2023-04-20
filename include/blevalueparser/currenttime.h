@@ -105,11 +105,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, CurrentTime, CurrentTimeStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 10;
-    }
-
     BVP_PARSE(CurrentTimeStruct)
     {
         bool result{true};
@@ -125,33 +120,43 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(CurrentTimeStruct)
     {
-        oss << ExactTime256(m_btSpecObject.exactTime256, configuration());
+        std::string str;
 
-        std::ostringstream ossAdjustReasons;
-        if (isManuallyAdjusted())
+        str.append(ExactTime256::toStringInternal(btSpecObject.exactTime256));
+
+        std::string adjustReason;
+        if (isManuallyAdjusted(btSpecObject))
         {
-            ossAdjustReasons << " ManuallyAdjusted";
+            adjustReason.append(" ManuallyAdjusted");
         }
-        if (isExternalReference())
+        if (isExternalReference(btSpecObject))
         {
-            ossAdjustReasons << " ExternalReference";
+            adjustReason.append(" ExternalReference");
         }
-        if (isTZChanged())
+        if (isTZChanged(btSpecObject))
         {
-            ossAdjustReasons << " TZChanged";
+            adjustReason.append(" TZChanged");
         }
-        if (isDSTChanged())
+        if (isDSTChanged(btSpecObject))
         {
-            ossAdjustReasons << " DSTChanged";
+            adjustReason.append(" DSTChanged");
         }
-        const std::string adjustReason = ossAdjustReasons.str();
 
         if (!adjustReason.empty())
         {
-            oss << " (adjust reason: {" << adjustReason << " })";
+            str.append(" (adjust reason: {");
+            str.append(adjustReason);
+            str.append(" })");
         }
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 10;
     }
 };
 

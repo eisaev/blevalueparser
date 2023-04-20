@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iomanip>
-
 #include "basevalue.h"
 
 
@@ -63,11 +61,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, DateTime, DateTimeStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 7;
-    }
-
     BVP_PARSE(DateTimeStruct)
     {
         bool result{true};
@@ -82,14 +75,22 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(DateTimeStruct)
     {
-        oss <<        std::setfill('0') << std::setw(2) << static_cast<int>(day());
-        oss << "." << std::setfill('0') << std::setw(2) << static_cast<int>(month());
-        oss << "." << std::setfill('0') << std::setw(4) << static_cast<int>(year());
-        oss << " " << std::setfill('0') << std::setw(2) << static_cast<int>(hour());
-        oss << ":" << std::setfill('0') << std::setw(2) << static_cast<int>(minute());
-        oss << ":" << std::setfill('0') << std::setw(2) << static_cast<int>(seconds());
+        return fmt::format(
+            "{:02}.{:02}.{:04} {:02}:{:02}:{:02}",
+            day(btSpecObject),
+            month(btSpecObject),
+            year(btSpecObject),
+            hour(btSpecObject),
+            minute(btSpecObject),
+            seconds(btSpecObject)
+        );
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 7;
     }
 };
 

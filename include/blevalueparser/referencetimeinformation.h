@@ -8,6 +8,11 @@
 namespace bvp
 {
 
+constexpr uint8_t RTI_GREATER = 255;
+constexpr uint8_t RTI_MAX = RTI_GREATER - 1;
+constexpr uint8_t RTI_HOURS_PER_DAY = 24;
+constexpr uint8_t RTI_MAX_HOURS = RTI_HOURS_PER_DAY - 1;
+
 // GATT_Specification_Supplement_v8.pdf
 // 3.178 Reference Time Information
 struct ReferenceTimeInformationStruct
@@ -56,7 +61,7 @@ public:
 
     BVP_GETTER(bool, isSinceUpdateGreater, ReferenceTimeInformationStruct)
     {
-        return s_greater == (daysSinceUpdate(btSpecObject) & hoursSinceUpdate(btSpecObject));
+        return RTI_GREATER == (daysSinceUpdate(btSpecObject) & hoursSinceUpdate(btSpecObject));
     }
 
     BVP_GETTER(uint32_t, timeSinceUpdateH, ReferenceTimeInformationStruct)
@@ -66,21 +71,11 @@ public:
             return UINT32_MAX;
         }
 
-        return btSpecObject.daysSinceUpdate * s_hoursPerDay + btSpecObject.hoursSinceUpdate;
+        return btSpecObject.daysSinceUpdate * RTI_HOURS_PER_DAY + btSpecObject.hoursSinceUpdate;
     }
 
 private:
     BVP_CTORS(BaseValueSpec, ReferenceTimeInformation, ReferenceTimeInformationStruct)
-
-    static constexpr uint8_t s_greater = 255;
-    static constexpr uint8_t s_max = s_greater - 1;
-    static constexpr uint8_t s_hoursPerDay = 24;
-    static constexpr uint8_t s_maxHours = s_hoursPerDay - 1;
-
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 4;
-    }
 
     BVP_PARSE(ReferenceTimeInformationStruct)
     {
@@ -92,16 +87,16 @@ private:
         result &= TimeAccuracy::parse(parser, btSpecObject.timeAccuracy);
         btSpecObject.daysSinceUpdate = parser.parseUInt8();
         btSpecObject.hoursSinceUpdate = parser.parseUInt8();
-        if (s_greater != btSpecObject.hoursSinceUpdate &&
-            s_maxHours < btSpecObject.hoursSinceUpdate)
+        if (RTI_GREATER != btSpecObject.hoursSinceUpdate &&
+            RTI_MAX_HOURS < btSpecObject.hoursSinceUpdate)
         {
             return false;
         }
 
-        if ((s_greater == btSpecObject.daysSinceUpdate &&
-             s_greater != btSpecObject.hoursSinceUpdate) ||
-            (s_greater == btSpecObject.hoursSinceUpdate &&
-             s_greater != btSpecObject.daysSinceUpdate))
+        if ((RTI_GREATER == btSpecObject.daysSinceUpdate &&
+             RTI_GREATER != btSpecObject.hoursSinceUpdate) ||
+            (RTI_GREATER == btSpecObject.hoursSinceUpdate &&
+             RTI_GREATER != btSpecObject.daysSinceUpdate))
         {
             return false;
         }
@@ -109,23 +104,44 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(ReferenceTimeInformationStruct)
     {
-        oss <<   "Src: "   << TimeSource(m_btSpecObject.timeSource, configuration());
-        oss << ", Drift: " << TimeAccuracy(m_btSpecObject.timeAccuracy, configuration());
+        std::string str;
 
-        oss << ", Updated: ";
-        if (isSinceUpdateGreater())
+        str.append("Src: ");
+        str.append(TimeSource::toStringInternal(btSpecObject.timeSource));
+
+        str.append(", Drift: ");
+        str.append(TimeAccuracy::toStringInternal(btSpecObject.timeAccuracy));
+
+        str.append(", Updated: ");
+        if (isSinceUpdateGreater(btSpecObject))
         {
-            oss << ">" << static_cast<int>(s_max) << "days ago";
-            return;
+            // TODO: it should be possible to format this at compile time because RTI_MAX is constexpr
+            fmt::format_to(std::back_inserter(str), ">{} days ago", RTI_MAX);
+            return str;
         }
 
-        if (m_btSpecObject.daysSinceUpdate)
+        if (btSpecObject.daysSinceUpdate)
         {
-            oss << static_cast<int>(m_btSpecObject.daysSinceUpdate) << "days ";
+            fmt::format_to(
+                std::back_inserter(str),
+                "{} days ",
+                btSpecObject.daysSinceUpdate
+            );
         }
-        oss << static_cast<int>(m_btSpecObject.hoursSinceUpdate) << "hours ago";
+        fmt::format_to(
+            std::back_inserter(str),
+            "{} hours ago",
+            btSpecObject.hoursSinceUpdate
+        );
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 4;
     }
 };
 

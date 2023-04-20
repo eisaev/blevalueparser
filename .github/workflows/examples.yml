@@ -24,6 +24,8 @@ jobs:
             ARCH: clang_64
             CLANG_TIDY: ''
         include:
+          - QT_VERSION: 5.15.2
+            QT_ARCH: '-DCMAKE_OSX_ARCHITECTURES=x86_64'  # Workaround for Qt 5.15.2 on Apple Silicon
           - QT_VERSION: 6.2.4
             QT_MODULES: qtconnectivity
 
@@ -61,7 +63,7 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -G Ninja -B ${{env.BUILD_DIR}}/gui -DBUILD_BENCHMARKS=OFF -DBUILD_TESTS=OFF -DBUILD_TUI_EXAMPLE=OFF -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} ${{matrix.RUNNER.CLANG_TIDY}}
+      run: cmake -G Ninja -B ${{env.BUILD_DIR}}/gui -DBUILD_BENCHMARKS=OFF -DBUILD_TESTS=OFF -DBUILD_TUI_EXAMPLE=OFF -DCMAKE_BUILD_TYPE=${{matrix.BUILD_TYPE}} ${{matrix.RUNNER.CLANG_TIDY}} ${{matrix.QT_ARCH}}
 
     - name: Build
       # Build your program with the given configuration

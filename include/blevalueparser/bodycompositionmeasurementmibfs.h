@@ -65,24 +65,49 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING_CONF(BodyCompositionMeasurementStruct)
     {
-        oss << (isUnloaded() ? "Unloaded" : isStabilized() ? "Stabilized" : "Unstable");
+        std::string str;
 
-        if (isTimeStampPresent())
+        if (isUnloaded(btSpecObject))
         {
-            oss << ", TimeStamp: " << DateTime(m_btSpecObject.timeStamp, configuration());
+            str.append("Unloaded");
+        }
+        else if (isStabilized(btSpecObject))
+        {
+            str.append("Stabilized");
+        }
+        else
+        {
+            str.append("Unstable");
         }
 
-        if (isImpedancePresent())
+        if (isTimeStampPresent(btSpecObject))
         {
-            oss << ", Impedance: " << impedance() << "Ω";
+            str.append(", TimeStamp: ");
+            str.append(DateTime::toStringInternal(btSpecObject.timeStamp));
         }
 
-        if (isWeightPresent())
+        if (isImpedancePresent(btSpecObject))
         {
-            oss << ", Weight: " << weight() << configuration().massUnits();
+            fmt::format_to(
+                std::back_inserter(str),
+                ", Impedance: {:g}Ω",
+                impedance(btSpecObject)
+            );
         }
+
+        if (isWeightPresent(btSpecObject))
+        {
+            fmt::format_to(
+                std::back_inserter(str),
+                ", Weight: {:g}{}",
+                weight(btSpecObject, configuration),
+                configuration.massUnits()
+            );
+        }
+
+        return str;
     }
 };
 

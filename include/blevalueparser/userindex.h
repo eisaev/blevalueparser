@@ -27,11 +27,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, UserIndex, UserIndexStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 1;
-    }
-
     BVP_PARSE(UserIndexStruct)
     {
         bool result{true};
@@ -41,15 +36,19 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(UserIndexStruct)
     {
-        if (0xFF == m_btSpecObject.userIndex)
+        if (0xFF == btSpecObject.userIndex)
         {
-            oss << "<Unknown User>";
-            return;
+            return "<Unknown User>";
         }
 
-        oss << static_cast<int>(m_btSpecObject.userIndex);
+        return fmt::format("{}", btSpecObject.userIndex);
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 1;
     }
 };
 

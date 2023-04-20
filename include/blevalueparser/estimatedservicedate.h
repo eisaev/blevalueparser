@@ -46,11 +46,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, EstimatedServiceDate, EstimatedServiceDateStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 3;
-    }
-
     BVP_PARSE(EstimatedServiceDateStruct)
     {
         bool result{true};
@@ -60,9 +55,14 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(EstimatedServiceDateStruct)
     {
-        oss << DateUTC(m_btSpecObject.estimatedServiceDate, configuration());
+        return DateUTC::toStringInternal(btSpecObject.estimatedServiceDate);
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 3;
     }
 };
 

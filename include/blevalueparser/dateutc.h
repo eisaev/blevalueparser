@@ -1,9 +1,12 @@
 #pragma once
 
-#include <iomanip>
-
 #include "basevalue.h"
 
+
+namespace
+{
+static constexpr uint32_t secondsPerDay = 24 * 60 * 60;
+}
 
 namespace bvp
 {
@@ -56,13 +59,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, DateUTC, DateUTCStruct)
 
-    static constexpr uint32_t secondsPerDay = 24 * 60 * 60;
-
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 3;
-    }
-
     BVP_PARSE(DateUTCStruct)
     {
         bool result{true};
@@ -72,12 +68,20 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(DateUTCStruct)
     {
-        oss <<        std::setfill('0') << std::setw(2) << static_cast<int>(day());
-        oss << "." << std::setfill('0') << std::setw(2) << static_cast<int>(month());
-        oss << "." << std::setfill('0') << std::setw(4) << static_cast<int>(year());
-        oss << " (" << date() << " seconds since 1 Jan 1970)";
+        return fmt::format(
+            "{:02}.{:02}.{:04} ({} seconds since 1 Jan 1970)",
+            day(btSpecObject),
+            month(btSpecObject),
+            year(btSpecObject),
+            date(btSpecObject)
+        );
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 3;
     }
 };
 

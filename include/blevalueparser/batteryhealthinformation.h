@@ -6,6 +6,11 @@
 namespace bvp
 {
 
+constexpr int8_t BHI_GREATER = 127;  // 0x7F
+constexpr int8_t BHI_LESS = -128;  // 0x80
+constexpr int8_t BHI_MAX = BHI_GREATER - 1;
+constexpr int8_t BHI_MIN = BHI_LESS + 1;
+
 // GATT_Specification_Supplement_v8.pdf
 // 3.24.1 Flags field
 constexpr uint8_t BHI_FLAG_CYCLE_COUNT_DESIGNED_LIFETIME_PRESENT                = 1 << 0;
@@ -57,36 +62,26 @@ public:
 
     BVP_GETTER(bool, isMinDesignedOperatingTemperatureGreater, BatteryHealthInformationStruct)
     {
-        return s_greater == btSpecObject.minDesignedOperatingTemperature;
+        return BHI_GREATER == btSpecObject.minDesignedOperatingTemperature;
     }
 
     BVP_GETTER(bool, isMinDesignedOperatingTemperatureLess, BatteryHealthInformationStruct)
     {
-        return s_less == btSpecObject.minDesignedOperatingTemperature;
+        return BHI_LESS == btSpecObject.minDesignedOperatingTemperature;
     }
 
     BVP_GETTER(bool, isMaxDesignedOperatingTemperatureGreater, BatteryHealthInformationStruct)
     {
-        return s_greater == btSpecObject.maxDesignedOperatingTemperature;
+        return BHI_GREATER == btSpecObject.maxDesignedOperatingTemperature;
     }
 
     BVP_GETTER(bool, isMaxDesignedOperatingTemperatureLess, BatteryHealthInformationStruct)
     {
-        return s_less == btSpecObject.maxDesignedOperatingTemperature;
+        return BHI_LESS == btSpecObject.maxDesignedOperatingTemperature;
     }
 
 private:
     BVP_CTORS(BaseValueSpec, BatteryHealthInformation, BatteryHealthInformationStruct)
-
-    static constexpr int8_t s_greater = 127;  // 0x7F
-    static constexpr int8_t s_less = -128;  // 0x80
-    static constexpr int8_t s_max = s_greater - 1;
-    static constexpr int8_t s_min = s_less + 1;
-
-    virtual bool checkSize(size_t size) override
-    {
-        return size > 0 && size < 6;
-    }
 
     BVP_PARSE(BatteryHealthInformationStruct)
     {
@@ -111,52 +106,75 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(BatteryHealthInformationStruct)
     {
-        std::ostringstream ossInfo;
-        if (isCycleCountDesignedLifetimePresent())
-        {
-            ossInfo << "CycleCountDesignedLifetime: " << m_btSpecObject.cycleCountDesignedLifetime << ", ";
-        }
-        if (isMinAndMaxDesignedOperatingTemperaturePresent())
-        {
-            ossInfo << "MinDesignedOperatingTemperature: ";
-            if (isMinDesignedOperatingTemperatureGreater())
-            {
-                ossInfo << ">" << static_cast<int>(s_max) << "°C, ";
-            }
-            else if (isMinDesignedOperatingTemperatureLess())
-            {
-                ossInfo << "<" << static_cast<int>(s_min) << "°C, ";
-            }
-            else
-            {
-                ossInfo << static_cast<int>(m_btSpecObject.minDesignedOperatingTemperature) << "°C, ";
-            }
-            ossInfo << "MaxDesignedOperatingTemperature: ";
-            if (isMaxDesignedOperatingTemperatureGreater())
-            {
-                ossInfo << ">" << static_cast<int>(s_max) << "°C, ";
-            }
-            else if (isMaxDesignedOperatingTemperatureLess())
-            {
-                ossInfo << "<" << static_cast<int>(s_min) << "°C, ";
-            }
-            else
-            {
-                ossInfo << static_cast<int>(m_btSpecObject.maxDesignedOperatingTemperature) << "°C, ";
-            }
-        }
-        std::string info = ossInfo.str();
+        std::string str;
 
-        if (info.empty())
+        if (isCycleCountDesignedLifetimePresent(btSpecObject))
         {
-            oss << "<NoData>";
+            fmt::format_to(
+                std::back_inserter(str),
+                "CycleCountDesignedLifetime: {}, ",
+                btSpecObject.cycleCountDesignedLifetime
+            );
         }
-        else
+        if (isMinAndMaxDesignedOperatingTemperaturePresent(btSpecObject))
         {
-            oss << info.substr(0, info.length() - 2);
+            str.append("MinDesignedOperatingTemperature: ");
+            if (isMinDesignedOperatingTemperatureGreater(btSpecObject))
+            {
+                // TODO: it should be possible to format this at compile time because BHI_MAX is constexpr
+                fmt::format_to(std::back_inserter(str), ">{}°C, ", BHI_MAX);
+            }
+            else if (isMinDesignedOperatingTemperatureLess(btSpecObject))
+            {
+                // TODO: it should be possible to format this at compile time because BHI_MIN is constexpr
+                fmt::format_to(std::back_inserter(str), "<{}°C, ", BHI_MIN);
+            }
+            else
+            {
+                fmt::format_to(
+                    std::back_inserter(str),
+                    "{}°C, ",
+                    btSpecObject.minDesignedOperatingTemperature
+                );
+            }
+
+            str.append("MaxDesignedOperatingTemperature: ");
+            if (isMaxDesignedOperatingTemperatureGreater(btSpecObject))
+            {
+                // TODO: it should be possible to format this at compile time because BHI_MAX is constexpr
+                fmt::format_to(std::back_inserter(str), ">{}°C, ", BHI_MAX);
+            }
+            else if (isMaxDesignedOperatingTemperatureLess(btSpecObject))
+            {
+                // TODO: it should be possible to format this at compile time because BHI_MIN is constexpr
+                fmt::format_to(std::back_inserter(str), "<{}°C, ", BHI_MIN);
+            }
+            else
+            {
+                fmt::format_to(
+                    std::back_inserter(str),
+                    "{}°C, ",
+                    btSpecObject.maxDesignedOperatingTemperature
+                );
+            }
         }
+
+        if (str.empty())
+        {
+            return "<NoData>";
+        }
+
+        str.pop_back();
+        str.pop_back();
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size > 0 && size < 6;
     }
 };
 

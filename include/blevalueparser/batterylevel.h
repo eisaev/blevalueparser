@@ -29,11 +29,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, BatteryLevel, BatteryLevelStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 1;
-    }
-
     BVP_PARSE(BatteryLevelStruct)
     {
         bool result{true};
@@ -47,9 +42,14 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(BatteryLevelStruct)
     {
-        oss << static_cast<int>(m_btSpecObject.batteryLevel) << "%";
+        return fmt::format("{}%", btSpecObject.batteryLevel);
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 1;
     }
 };
 

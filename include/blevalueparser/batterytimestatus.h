@@ -6,6 +6,13 @@
 namespace bvp
 {
 
+namespace
+{
+constexpr uint32_t BTS_UNKNOWN = 0xFFFFFF;
+constexpr uint32_t BTS_GREATER = 0xFFFFFE;
+constexpr uint32_t BTS_MAX = BTS_GREATER - 1;
+}
+
 // GATT_Specification_Supplement_v8.pdf
 // 3.29.1 Flags field
 constexpr uint8_t BTS_FLAG_TIME_UNTIL_DISCHARGED_ON_STANDBY_PRESENT = 1 << 0;
@@ -57,45 +64,36 @@ public:
 
     BVP_GETTER(bool, isTimeUntilDischargedUnknown, BatteryTimeStatusStruct)
     {
-        return s_unknown == btSpecObject.timeUntilDischarged;
+        return BTS_UNKNOWN == btSpecObject.timeUntilDischarged;
     }
 
     BVP_GETTER(bool, isTimeUntilDischargedOnStandbyUnknown, BatteryTimeStatusStruct)
     {
-        return s_unknown == btSpecObject.timeUntilDischargedOnStandby;
+        return BTS_UNKNOWN == btSpecObject.timeUntilDischargedOnStandby;
     }
 
     BVP_GETTER(bool, isTimeUntilRechargedUnknown, BatteryTimeStatusStruct)
     {
-        return s_unknown == btSpecObject.timeUntilRecharged;
+        return BTS_UNKNOWN == btSpecObject.timeUntilRecharged;
     }
 
     BVP_GETTER(bool, isTimeUntilDischargedGreater, BatteryTimeStatusStruct)
     {
-        return s_greater == btSpecObject.timeUntilDischarged;
+        return BTS_GREATER == btSpecObject.timeUntilDischarged;
     }
 
     BVP_GETTER(bool, isTimeUntilDischargedOnStandbyGreater, BatteryTimeStatusStruct)
     {
-        return s_greater == btSpecObject.timeUntilDischargedOnStandby;
+        return BTS_GREATER == btSpecObject.timeUntilDischargedOnStandby;
     }
 
     BVP_GETTER(bool, isTimeUntilRechargedGreater, BatteryTimeStatusStruct)
     {
-        return s_greater == btSpecObject.timeUntilRecharged;
+        return BTS_GREATER == btSpecObject.timeUntilRecharged;
     }
 
 private:
     BVP_CTORS(BaseValueSpec, BatteryTimeStatus, BatteryTimeStatusStruct)
-
-    static constexpr uint32_t s_unknown = 0xFFFFFF;
-    static constexpr uint32_t s_greater = 0xFFFFFE;
-    static constexpr uint32_t s_max = s_greater - 1;
-
-    virtual bool checkSize(size_t size) override
-    {
-        return size > 3 && size < 11;
-    }
 
     BVP_PARSE(BatteryTimeStatusStruct)
     {
@@ -116,54 +114,79 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(BatteryTimeStatusStruct)
     {
-        oss << "TimeUntilDischarged: ";
-        if (isTimeUntilDischargedUnknown())
+        std::string str;
+
+        str.append("TimeUntilDischarged: ");
+        if (isTimeUntilDischargedUnknown(btSpecObject))
         {
-            oss << "<Unknown>";
+            str.append("<Unknown>");
         }
-        else if (isTimeUntilDischargedGreater())
+        else if (isTimeUntilDischargedGreater(btSpecObject))
         {
-            oss << ">" << s_max << " minutes";
+            // TODO: it should be possible to format this at compile time because BTS_MAX is constexpr
+            fmt::format_to(std::back_inserter(str), ">{} minutes", BTS_MAX);
         }
         else
         {
-            oss << m_btSpecObject.timeUntilDischarged << " minutes";
+            fmt::format_to(
+                std::back_inserter(str),
+                "{} minutes",
+                btSpecObject.timeUntilDischarged
+            );
         }
 
-        if (isTimeUntilDischargedOnStandbyPresent())
+        if (isTimeUntilDischargedOnStandbyPresent(btSpecObject))
         {
-            oss << ", TimeUntilDischargedOnStandby: ";
-            if (isTimeUntilDischargedOnStandbyUnknown())
+            str.append(", TimeUntilDischargedOnStandby: ");
+            if (isTimeUntilDischargedOnStandbyUnknown(btSpecObject))
             {
-                oss << "<Unknown>";
+                str.append("<Unknown>");
             }
-            else if (isTimeUntilDischargedOnStandbyGreater())
+            else if (isTimeUntilDischargedOnStandbyGreater(btSpecObject))
             {
-                oss << ">" << s_max << " minutes";
+                // TODO: it should be possible to format this at compile time because BTS_MAX is constexpr
+                fmt::format_to(std::back_inserter(str), ">{} minutes", BTS_MAX);
             }
             else
             {
-                oss << m_btSpecObject.timeUntilDischargedOnStandby << " minutes";
+                fmt::format_to(
+                    std::back_inserter(str),
+                    "{} minutes",
+                    btSpecObject.timeUntilDischargedOnStandby
+                );
             }
         }
-        if (isTimeUntilRechargedPresent())
+
+        if (isTimeUntilRechargedPresent(btSpecObject))
         {
-            oss << ", TimeUntilRecharged: ";
-            if (isTimeUntilRechargedUnknown())
+            str.append(", TimeUntilRecharged: ");
+            if (isTimeUntilRechargedUnknown(btSpecObject))
             {
-                oss << "<Unknown>";
+                str.append("<Unknown>");
             }
-            else if (isTimeUntilRechargedGreater())
+            else if (isTimeUntilRechargedGreater(btSpecObject))
             {
-                oss << ">" << s_max << " minutes";
+                // TODO: it should be possible to format this at compile time because BTS_MAX is constexpr
+                fmt::format_to(std::back_inserter(str), ">{} minutes", BTS_MAX);
             }
             else
             {
-                oss << m_btSpecObject.timeUntilRecharged << " minutes";
+                fmt::format_to(
+                    std::back_inserter(str),
+                    "{} minutes",
+                    btSpecObject.timeUntilRecharged
+                );
             }
         }
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size > 3 && size < 11;
     }
 };
 

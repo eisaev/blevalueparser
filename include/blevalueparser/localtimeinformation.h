@@ -35,11 +35,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, LocalTimeInformation, LocalTimeInformationStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 2;
-    }
-
     BVP_PARSE(LocalTimeInformationStruct)
     {
         bool result{true};
@@ -50,10 +45,22 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(LocalTimeInformationStruct)
     {
-        oss <<   "TZ: "  << TimeZone(m_btSpecObject.timeZone, configuration());
-        oss << ", DST: " << DSTOffset(m_btSpecObject.dstOffset, configuration());
+        std::string str;
+
+        str.append("TZ: ");
+        str.append(TimeZone::toStringInternal(btSpecObject.timeZone));
+
+        str.append(", DST: ");
+        str.append(DSTOffset::toStringInternal(btSpecObject.dstOffset));
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 2;
     }
 };
 
