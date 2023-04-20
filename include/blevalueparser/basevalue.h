@@ -4,6 +4,8 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <fmt/format.h>
+
 
 #define BVP_GETTER(TReturn, Name, TStruct)\
     TReturn Name() const\
@@ -43,6 +45,19 @@ TReturn Name() const\
         return parse(parser, m_btSpecObject);\
     }\
     static bool parse(Parser &parser, TStruct &btSpecObject)
+
+#define BVP_TO_STRING(TStruct)\
+    virtual std::string toStringInternal() const override\
+    {\
+        return toStringInternal(m_btSpecObject);\
+    }\
+    static std::string toStringInternal(const TStruct &btSpecObject)
+#define BVP_TO_STRING_CONF(TStruct)\
+    virtual std::string toStringInternal() const override\
+    {\
+        return toStringInternal(m_btSpecObject, configuration());\
+    }\
+    static std::string toStringInternal(const TStruct &btSpecObject, const Configuration &configuration)
 
 
 namespace bvp
@@ -117,9 +132,7 @@ public:
             }
         }
 
-        std::ostringstream oss;
-        oss << toFloat();
-        return oss.str();
+        return fmt::format("{:g}", toFloat());
     }
 
 private:
@@ -211,11 +224,13 @@ public:
             return "<Invalid>";
         }
 
-        std::ostringstream oss;
-        oss << configuration().stringPrefix;
-        toStringStream(oss);
-        oss << configuration().stringSuffix;
-        return oss.str();
+        std::string str;
+
+        str.append(configuration().stringPrefix);
+        str.append(toStringInternal());
+        str.append(configuration().stringSuffix);
+
+        return str;
     }
 
     virtual Configuration configuration() const
@@ -430,9 +445,9 @@ protected:
         create(parser);
     }
 
-    virtual bool checkSize(size_t size) = 0;
     virtual bool parse(Parser &parser) = 0;
-    virtual void toStringStream(std::ostringstream &oss) const = 0;
+    virtual std::string toStringInternal() const = 0;
+    virtual bool checkSize(size_t size) = 0;
 
     friend std::ostream &operator<<(std::ostream &os, const BaseValue &rhs)
     {

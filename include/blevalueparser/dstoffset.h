@@ -17,17 +17,24 @@ enum class DSTOffsetEnum
     DoubleDaylightTime2h        = 8,
     Unknown                     = 255
 };
-inline std::ostream &operator<<(std::ostream &os, const DSTOffsetEnum value)
+inline std::string enumToString(const DSTOffsetEnum value)
 {
+    std::string str;
+
     switch (value)
     {
-        case DSTOffsetEnum::StandardTime:               os << "Standard Time";                      break;
-        case DSTOffsetEnum::HalfAnHourDaylightTime0_5h: os << "Half an Hour Daylight Time (+0.5h)"; break;
-        case DSTOffsetEnum::DaylightTime1h:             os << "Daylight Time (+1h)";                break;
-        case DSTOffsetEnum::DoubleDaylightTime2h:       os << "Double Daylight Time (+2h)";         break;
-        case DSTOffsetEnum::Unknown:                    os << "<Unknown>";                          break;
+        case DSTOffsetEnum::StandardTime:               str = "Standard Time";                      break;
+        case DSTOffsetEnum::HalfAnHourDaylightTime0_5h: str = "Half an Hour Daylight Time (+0.5h)"; break;
+        case DSTOffsetEnum::DaylightTime1h:             str = "Daylight Time (+1h)";                break;
+        case DSTOffsetEnum::DoubleDaylightTime2h:       str = "Double Daylight Time (+2h)";         break;
+        case DSTOffsetEnum::Unknown:                    str = "<Unknown>";                          break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const DSTOffsetEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 inline DSTOffsetEnum &operator%=(DSTOffsetEnum &lhs, const DSTOffsetEnum &rhs)
@@ -67,11 +74,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, DSTOffset, DSTOffsetStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 1;
-    }
-
     BVP_PARSE(DSTOffsetStruct)
     {
         bool result{true};
@@ -81,9 +83,14 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(DSTOffsetStruct)
     {
-        oss << m_btSpecObject.dstOffset;
+        return enumToString(btSpecObject.dstOffset);
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 1;
     }
 };
 

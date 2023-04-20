@@ -40,11 +40,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, NewAlert, NewAlertStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size > 1 && size < 21;
-    }
-
     BVP_PARSE(NewAlertStruct)
     {
         bool result{true};
@@ -56,11 +51,29 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(NewAlertStruct)
     {
-        oss <<   "Category: " << m_btSpecObject.categoryID.categoryID;
-        oss << ", NumberOfNewAlert: " << static_cast<int>(m_btSpecObject.numberOfNewAlert);
-        oss << ", RecentAlertBrief: '" << m_btSpecObject.textStringInformation << "'";
+        std::string str;
+
+        str.append("Category: ");
+        str.append(enumToString(btSpecObject.categoryID.categoryID));
+
+        fmt::format_to(
+            std::back_inserter(str),
+            ", NumberOfNewAlert: {}",
+            btSpecObject.numberOfNewAlert
+        );
+
+        str.append(", RecentAlertBrief: '");
+        str.append(btSpecObject.textStringInformation);
+        str.append("'");
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size > 1 && size < 21;
     }
 };
 

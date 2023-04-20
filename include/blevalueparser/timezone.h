@@ -118,9 +118,18 @@ enum class TimeZoneEnum
     Plus55 = 55,
     Plus56 = 56
 };
+inline std::string enumToString(const TimeZoneEnum value)
+{
+    if (TimeZoneEnum::Unknown == value)
+    {
+        return "<Unknown>";
+    }
+
+    return fmt::format("{}", static_cast<int>(value));
+}
 inline std::ostream &operator<<(std::ostream &os, const TimeZoneEnum value)
 {
-    TimeZoneEnum::Unknown == value ? os << "<Unknown>" : os << static_cast<int>(value);
+    os << enumToString(value);
     return os;
 }
 inline TimeZoneEnum &operator%=(TimeZoneEnum &lhs, const TimeZoneEnum &rhs)
@@ -260,11 +269,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, TimeZone, TimeZoneStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 1;
-    }
-
     BVP_PARSE(TimeZoneStruct)
     {
         bool result{true};
@@ -274,9 +278,14 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(TimeZoneStruct)
     {
-        oss << m_btSpecObject.timeZone;
+        return enumToString(btSpecObject.timeZone);
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 1;
     }
 };
 

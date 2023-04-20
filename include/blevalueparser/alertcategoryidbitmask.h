@@ -91,11 +91,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, AlertCategoryIDBitMask, AlertCategoryIDBitMaskStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 2;
-    }
-
     BVP_PARSE(AlertCategoryIDBitMaskStruct)
     {
         bool result{true};
@@ -105,50 +100,69 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(AlertCategoryIDBitMaskStruct)
     {
-        oss << "{";
-        if (hasSimpleAlert())
+        std::string str;
+
+        str.append("{");
+        if (hasSimpleAlert(btSpecObject))
         {
-            oss << " " << AlertCategoryIDEnum::SimpleAlert;
+            str.append(" ");
+            str.append(enumToString(AlertCategoryIDEnum::SimpleAlert));
         }
-        if (hasEmail())
+        if (hasEmail(btSpecObject))
         {
-            oss << " " << AlertCategoryIDEnum::Email;
+            str.append(" ");
+            str.append(enumToString(AlertCategoryIDEnum::Email));
         }
-        if (hasNews())
+        if (hasNews(btSpecObject))
         {
-            oss << " " << AlertCategoryIDEnum::News;
+            str.append(" ");
+            str.append(enumToString(AlertCategoryIDEnum::News));
         }
-        if (hasCall())
+        if (hasCall(btSpecObject))
         {
-            oss << " " << AlertCategoryIDEnum::Call;
+            str.append(" ");
+            str.append(enumToString(AlertCategoryIDEnum::Call));
         }
-        if (hasMissedCall())
+        if (hasMissedCall(btSpecObject))
         {
-            oss << " " << AlertCategoryIDEnum::MissedCall;
+            str.append(" ");
+            str.append(enumToString(AlertCategoryIDEnum::MissedCall));
         }
-        if (hasSMSMMS())
+        if (hasSMSMMS(btSpecObject))
         {
-            oss << " " << AlertCategoryIDEnum::SMSMMS;
+            str.append(" ");
+            str.append(enumToString(AlertCategoryIDEnum::SMSMMS));
         }
-        if (hasVoiceMail())
+        if (hasVoiceMail(btSpecObject))
         {
-            oss << " " << AlertCategoryIDEnum::VoiceMail;
+            str.append(" ");
+            str.append(enumToString(AlertCategoryIDEnum::VoiceMail));
         }
-        if (hasSchedule())
+        if (hasSchedule(btSpecObject))
         {
-            oss << " " << AlertCategoryIDEnum::Schedule;
+            str.append(" ");
+            str.append(enumToString(AlertCategoryIDEnum::Schedule));
         }
-        if (hasHighPrioritizedAlert())
+        if (hasHighPrioritizedAlert(btSpecObject))
         {
-            oss << " " << AlertCategoryIDEnum::HighPrioritizedAlert;
+            str.append(" ");
+            str.append(enumToString(AlertCategoryIDEnum::HighPrioritizedAlert));
         }
-        if (hasInstantMessage())
+        if (hasInstantMessage(btSpecObject))
         {
-            oss << " " << AlertCategoryIDEnum::InstantMessage;
+            str.append(" ");
+            str.append(enumToString(AlertCategoryIDEnum::InstantMessage));
         }
-        oss << " }";
+        str.append(" }");
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 2;
     }
 };
 

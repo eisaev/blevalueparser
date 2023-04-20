@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iomanip>
-
 #include "basevalue.h"
 
 
@@ -16,15 +14,22 @@ enum class VendorIdSourceEnum
     Bluetooth   = 1,
     USB         = 2
 };
-inline std::ostream &operator<<(std::ostream &os, const VendorIdSourceEnum value)
+inline std::string enumToString(const VendorIdSourceEnum value)
 {
+    std::string str;
+
     switch (value)
     {
-        case VendorIdSourceEnum::Unknown:   os << "<Unknown>";  break;
-        case VendorIdSourceEnum::Bluetooth: os << "Bluetooth";  break;
-        case VendorIdSourceEnum::USB:       os << "USB";        break;
+        case VendorIdSourceEnum::Unknown:   str = "<Unknown>";  break;
+        case VendorIdSourceEnum::Bluetooth: str = "Bluetooth";  break;
+        case VendorIdSourceEnum::USB:       str = "USB";        break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const VendorIdSourceEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 inline VendorIdSourceEnum &operator%=(VendorIdSourceEnum &lhs, const VendorIdSourceEnum &rhs)
@@ -99,11 +104,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, PnPID, PnPIDStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 7;
-    }
-
     BVP_PARSE(PnPIDStruct)
     {
         bool result{true};
@@ -123,17 +123,42 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(PnPIDStruct)
     {
-        oss <<   "(" << m_btSpecObject.vendorIdSource.vendorIdSource << ")";
-        auto originalFlags = oss.flags();
-        oss <<  " VID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_btSpecObject.vendorId;
-        oss << ", PID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_btSpecObject.productId;
-        oss.flags(originalFlags);
-        oss << ", Version: "
-            <<        static_cast<int>(majorVersion())
-            << "." << static_cast<int>(minorVersion())
-            << "." << static_cast<int>(subMinorVersion());
+        std::string str;
+
+        str.append("(");
+        str.append(enumToString(btSpecObject.vendorIdSource.vendorIdSource));
+        str.append(")");
+
+        fmt::format_to(
+            std::back_inserter(str),
+            // TODO: try to replace by local implementation (see HexString)
+            " VID: 0x{:04X}",
+            btSpecObject.vendorId
+        );
+
+        fmt::format_to(
+            std::back_inserter(str),
+            // TODO: try to replace by local implementation (see HexString)
+            ", PID: 0x{:04X}",
+            btSpecObject.productId
+        );
+
+        fmt::format_to(
+            std::back_inserter(str),
+            ", Version: {}.{}.{}",
+            majorVersion(btSpecObject),
+            minorVersion(btSpecObject),
+            subMinorVersion(btSpecObject)
+        );
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 7;
     }
 };
 

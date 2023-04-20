@@ -102,70 +102,121 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING_CONF(BodyCompositionMeasurementStruct)
     {
-        if (isMeasurementUnsuccessful())
+        std::string str;
+
+        if (isMeasurementUnsuccessful(btSpecObject))
         {
-            oss << "<MeasurementUnsuccessful>";
-            return;
+            return "<MeasurementUnsuccessful>";
         }
 
-        oss << "BodyFatPercentage: " << bodyFatPercentage() << "%";
+        fmt::format_to(
+            std::back_inserter(str),
+            "BodyFatPercentage: {:g}%",
+            bodyFatPercentage(btSpecObject)
+        );
 
-        if (isTimeStampPresent())
+        if (isTimeStampPresent(btSpecObject))
         {
-            oss << ", TimeStamp: " << DateTime(m_btSpecObject.timeStamp, configuration());
+            str.append(", TimeStamp: ");
+            str.append(DateTime::toStringInternal(btSpecObject.timeStamp));
         }
 
-        if (isUserIDPresent())
+        if (isUserIDPresent(btSpecObject))
         {
-            oss << ", UserID: " << UserIndex(m_btSpecObject.userID, configuration());
+            str.append(", UserID: ");
+            str.append(UserIndex::toStringInternal(btSpecObject.userID));
         }
 
-        if (isBasalMetabolismPresent())
+        if (isBasalMetabolismPresent(btSpecObject))
         {
-            oss << ", BasalMetabolism: " << basalMetabolism() << "kJ";
+            fmt::format_to(
+                std::back_inserter(str),
+                ", BasalMetabolism: {}kJ",
+                basalMetabolism(btSpecObject)
+            );
         }
 
-        if (isMusclePercentagePresent())
+        if (isMusclePercentagePresent(btSpecObject))
         {
-            oss << ", MusclePercentage: " << musclePercentage() << "%";
+            fmt::format_to(
+                std::back_inserter(str),
+                ", MusclePercentage: {:g}%",
+                musclePercentage(btSpecObject)
+            );
         }
 
-        if (isMuscleMassPresent())
+        if (isMuscleMassPresent(btSpecObject))
         {
-            oss << ", MuscleMass: " << muscleMass() << configuration().massUnits();
+            fmt::format_to(
+                std::back_inserter(str),
+                ", MuscleMass: {:g}{}",
+                muscleMass(btSpecObject, configuration),
+                configuration.massUnits()
+            );
         }
 
-        if (isFatFreeMassPresent())
+        if (isFatFreeMassPresent(btSpecObject))
         {
-            oss << ", FatFreeMass: " << fatFreeMass() << configuration().massUnits();
+            fmt::format_to(
+                std::back_inserter(str),
+                ", FatFreeMass: {:g}{}",
+                fatFreeMass(btSpecObject, configuration),
+                configuration.massUnits()
+            );
         }
 
-        if (isSoftLeanMassPresent())
+        if (isSoftLeanMassPresent(btSpecObject))
         {
-            oss << ", SoftLeanMass: " << softLeanMass() << configuration().massUnits();
+            fmt::format_to(
+                std::back_inserter(str),
+                ", SoftLeanMass: {:g}{}",
+                softLeanMass(btSpecObject, configuration),
+                configuration.massUnits()
+            );
         }
 
-        if (isBodyWaterMassPresent())
+        if (isBodyWaterMassPresent(btSpecObject))
         {
-            oss << ", BodyWaterMass: " << bodyWaterMass() << configuration().massUnits();
+            fmt::format_to(
+                std::back_inserter(str),
+                ", BodyWaterMass: {:g}{}",
+                bodyWaterMass(btSpecObject, configuration),
+                configuration.massUnits()
+            );
         }
 
-        if (isImpedancePresent())
+        if (isImpedancePresent(btSpecObject))
         {
-            oss << ", Impedance: " << impedance() << "Ω";
+            fmt::format_to(
+                std::back_inserter(str),
+                ", Impedance: {:g}Ω",
+                impedance(btSpecObject)
+            );
         }
 
-        if (isWeightPresent())
+        if (isWeightPresent(btSpecObject))
         {
-            oss << ", Weight: " << weight() << configuration().massUnits();
+            fmt::format_to(
+                std::back_inserter(str),
+                ", Weight: {:g}{}",
+                weight(btSpecObject, configuration),
+                configuration.massUnits()
+            );
         }
 
-        if (isHeightPresent())
+        if (isHeightPresent(btSpecObject))
         {
-            oss << ", Height: " << height() << configuration().lenghtUnits();
+            fmt::format_to(
+                std::back_inserter(str),
+                ", Height: {:g}{}",
+                height(btSpecObject, configuration),
+                configuration.lenghtUnits()
+            );
         }
+
+        return str;
     }
 };
 

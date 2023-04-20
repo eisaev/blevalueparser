@@ -22,12 +22,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, TextString, TextStringStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        (void)size;
-        return true;
-    }
-
     BVP_PARSE(TextStringStruct)
     {
         bool result{true};
@@ -37,9 +31,15 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(TextStringStruct)
     {
-        oss << m_btSpecObject.textString;
+        return btSpecObject.textString;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        (void)size;
+        return true;
     }
 };
 

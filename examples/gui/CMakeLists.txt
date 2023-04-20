@@ -1,17 +1,24 @@
 cmake_minimum_required(VERSION 3.19)
 
-# vvv This part must be before project() vvv
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Bluetooth Core Quick QuickControls2 LinguistTools)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Bluetooth Core Quick QuickControls2 LinguistTools)
-
-if(APPLE AND (${QT_VERSION_MAJOR} LESS 6))
-    set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "Workaround for Qt 5.15.2 on Apple Silicon" FORCE)
-endif()
-# ^^^ This part must be before project() ^^^
-
 project(bvpqt VERSION 0.1 DESCRIPTION "BLE Value Parser Library GUI Demo Application" LANGUAGES CXX)
 set(COMPANY_NAME eisaev)
 set(COMPANY_TLD dev)
+
+option(QT5_ARCH_ERROR "Fail for Qt 5.15.2 on Apple Silicon without forced architecture value" ON)
+
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Bluetooth Core Quick QuickControls2 LinguistTools)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Bluetooth Core Quick QuickControls2 LinguistTools)
+
+if(QT5_ARCH_ERROR AND APPLE AND (${QT_VERSION_MAJOR} LESS 6))
+    if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm64" AND NOT ("${CMAKE_OSX_ARCHITECTURES}" STREQUAL "x86_64"))
+        message(
+            FATAL_ERROR
+            "Prebuilt version of Qt 5.15.2 on Apple Silicon has x86_64 architecture. "
+            "Probably you will have to manually set CMAKE_OSX_ARCHITECTURE to 'x86_64' "
+            "to avoid linker errors."
+        )
+    endif()
+endif()
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)

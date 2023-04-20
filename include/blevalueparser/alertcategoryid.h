@@ -23,24 +23,31 @@ enum class AlertCategoryIDEnum : uint8_t
     Reserved                = 10,  // 10–250 - Reserved for Future Use
     DefinedByService        = 251  // 251–255 - Defined by Service Specification
 };
-inline std::ostream &operator<<(std::ostream &os, const AlertCategoryIDEnum value)
+inline std::string enumToString(const AlertCategoryIDEnum value)
 {
+    std::string str;
+
     switch (value)
     {
-        case AlertCategoryIDEnum::SimpleAlert:          os << "SimpleAlert";            break;
-        case AlertCategoryIDEnum::Email:                os << "Email";                  break;
-        case AlertCategoryIDEnum::News:                 os << "News";                   break;
-        case AlertCategoryIDEnum::Call:                 os << "Call";                   break;
-        case AlertCategoryIDEnum::MissedCall:           os << "MissedCall";             break;
-        case AlertCategoryIDEnum::SMSMMS:               os << "SMS/MMS";                break;
-        case AlertCategoryIDEnum::VoiceMail:            os << "VoiceMail";              break;
-        case AlertCategoryIDEnum::Schedule:             os << "Schedule";               break;
-        case AlertCategoryIDEnum::HighPrioritizedAlert: os << "HighPrioritizedAlert";   break;
-        case AlertCategoryIDEnum::InstantMessage:       os << "InstantMessage";         break;
-        case AlertCategoryIDEnum::Reserved:             os << "<Reserved>";             break;
-        case AlertCategoryIDEnum::DefinedByService:     os << "<DefinedByService>";     break;
+        case AlertCategoryIDEnum::SimpleAlert:          str = "SimpleAlert";            break;
+        case AlertCategoryIDEnum::Email:                str = "Email";                  break;
+        case AlertCategoryIDEnum::News:                 str = "News";                   break;
+        case AlertCategoryIDEnum::Call:                 str = "Call";                   break;
+        case AlertCategoryIDEnum::MissedCall:           str = "MissedCall";             break;
+        case AlertCategoryIDEnum::SMSMMS:               str = "SMS/MMS";                break;
+        case AlertCategoryIDEnum::VoiceMail:            str = "VoiceMail";              break;
+        case AlertCategoryIDEnum::Schedule:             str = "Schedule";               break;
+        case AlertCategoryIDEnum::HighPrioritizedAlert: str = "HighPrioritizedAlert";   break;
+        case AlertCategoryIDEnum::InstantMessage:       str = "InstantMessage";         break;
+        case AlertCategoryIDEnum::Reserved:             str = "<Reserved>";             break;
+        case AlertCategoryIDEnum::DefinedByService:     str = "<DefinedByService>";     break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const AlertCategoryIDEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 inline AlertCategoryIDEnum &operator%=(AlertCategoryIDEnum &lhs, const AlertCategoryIDEnum &rhs)
@@ -97,11 +104,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, AlertCategoryID, AlertCategoryIDStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 1;
-    }
-
     BVP_PARSE(AlertCategoryIDStruct)
     {
         bool result{true};
@@ -111,9 +113,14 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(AlertCategoryIDStruct)
     {
-        oss << m_btSpecObject.categoryID;
+        return enumToString(btSpecObject.categoryID);
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 1;
     }
 };
 

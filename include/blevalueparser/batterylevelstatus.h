@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iomanip>
-
 #include "basevalue.h"
 #include "batterylevel.h"
 
@@ -52,16 +50,23 @@ enum class ExternalPowerSourceConnectedEnum
     Unknown     = 2,
     Reserved    = 3
 };
-inline std::ostream &operator<<(std::ostream &os, const ExternalPowerSourceConnectedEnum value)
+inline std::string enumToString(const ExternalPowerSourceConnectedEnum value)
 {
+    std::string str;
+
     switch (value)
     {
-        case ExternalPowerSourceConnectedEnum::No:          os << "No";         break;
-        case ExternalPowerSourceConnectedEnum::Yes:         os << "Yes";        break;
-        case ExternalPowerSourceConnectedEnum::Unknown:     os << "<Unknown>";  break;
-        case ExternalPowerSourceConnectedEnum::Reserved:    os << "<Reserved>"; break;
+        case ExternalPowerSourceConnectedEnum::No:          str = "No";         break;
+        case ExternalPowerSourceConnectedEnum::Yes:         str = "Yes";        break;
+        case ExternalPowerSourceConnectedEnum::Unknown:     str = "<Unknown>";  break;
+        case ExternalPowerSourceConnectedEnum::Reserved:    str = "<Reserved>"; break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const ExternalPowerSourceConnectedEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 
@@ -72,16 +77,23 @@ enum class BatteryChargeStateEnum
     DischargingActive   = 2,
     DischargingInactive = 3
 };
-inline std::ostream &operator<<(std::ostream &os, const BatteryChargeStateEnum value)
+inline std::string enumToString(const BatteryChargeStateEnum value)
 {
+    std::string str;
+
     switch (value)
     {
-        case BatteryChargeStateEnum::Unknown:               os << "<Unknown>";              break;
-        case BatteryChargeStateEnum::Charging:              os << "Charging";               break;
-        case BatteryChargeStateEnum::DischargingActive:     os << "DischargingActive";      break;
-        case BatteryChargeStateEnum::DischargingInactive:   os << "DischargingInactive";    break;
+        case BatteryChargeStateEnum::Unknown:               str = "<Unknown>";              break;
+        case BatteryChargeStateEnum::Charging:              str = "Charging";               break;
+        case BatteryChargeStateEnum::DischargingActive:     str = "DischargingActive";      break;
+        case BatteryChargeStateEnum::DischargingInactive:   str = "DischargingInactive";    break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const BatteryChargeStateEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 
@@ -92,15 +104,22 @@ enum class BatteryChargeLevelEnum
     Low         = 2,
     Critical    = 3
 };
-inline std::ostream &operator<<(std::ostream &os, const BatteryChargeLevelEnum value)
+inline std::string enumToString(BatteryChargeLevelEnum value)
 {
+    std::string str;
+
     switch (value) {
-        case BatteryChargeLevelEnum::Unknown:   os << "<Unknown>";  break;
-        case BatteryChargeLevelEnum::Good:      os << "Good";       break;
-        case BatteryChargeLevelEnum::Low:       os << "Low";        break;
-        case BatteryChargeLevelEnum::Critical:  os << "Critical";   break;
+        case BatteryChargeLevelEnum::Unknown:   str = "<Unknown>";  break;
+        case BatteryChargeLevelEnum::Good:      str = "Good";       break;
+        case BatteryChargeLevelEnum::Low:       str = "Low";        break;
+        case BatteryChargeLevelEnum::Critical:  str = "Critical";   break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const BatteryChargeLevelEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 
@@ -115,19 +134,26 @@ enum class ChargingTypeEnum
     Reserved2               = 6,
     Reserved3               = 7
 };
-inline std::ostream &operator<<(std::ostream &os, const ChargingTypeEnum value)
+inline std::string enumToString(const ChargingTypeEnum value)
 {
+    std::string str;
+
     switch (value) {
-        case ChargingTypeEnum::UnknownOrNotCharging:    os << "UnknownOrNotCharging";   break;
-        case ChargingTypeEnum::ConstantCurrent:         os << "ConstantCurrent";        break;
-        case ChargingTypeEnum::ConstantVoltage:         os << "ConstantVoltage";        break;
-        case ChargingTypeEnum::Trickle:                 os << "Trickle";                break;
-        case ChargingTypeEnum::Float:                   os << "Float";                  break;
-        case ChargingTypeEnum::Reserved1:               os << "<Reserved1>";            break;
-        case ChargingTypeEnum::Reserved2:               os << "<Reserved2>";            break;
-        case ChargingTypeEnum::Reserved3:               os << "<Reserved3>";            break;
+        case ChargingTypeEnum::UnknownOrNotCharging:    str = "UnknownOrNotCharging";   break;
+        case ChargingTypeEnum::ConstantCurrent:         str = "ConstantCurrent";        break;
+        case ChargingTypeEnum::ConstantVoltage:         str = "ConstantVoltage";        break;
+        case ChargingTypeEnum::Trickle:                 str = "Trickle";                break;
+        case ChargingTypeEnum::Float:                   str = "Float";                  break;
+        case ChargingTypeEnum::Reserved1:               str = "<Reserved1>";            break;
+        case ChargingTypeEnum::Reserved2:               str = "<Reserved2>";            break;
+        case ChargingTypeEnum::Reserved3:               str = "<Reserved3>";            break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const ChargingTypeEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 
@@ -151,15 +177,22 @@ enum class ServiceRequiredEnum
     Unknown     = 2,
     Reserved    = 3
 };
-inline std::ostream &operator<<(std::ostream &os, const ServiceRequiredEnum value)
+inline std::string enumToString(const ServiceRequiredEnum value)
 {
+    std::string str;
+
     switch (value) {
-        case ServiceRequiredEnum::False:    os << "False";      break;
-        case ServiceRequiredEnum::True:     os << "True";       break;
-        case ServiceRequiredEnum::Unknown:  os << "<Unknown>";  break;
-        case ServiceRequiredEnum::Reserved: os << "<Reserved>"; break;
+        case ServiceRequiredEnum::False:    str = "False";      break;
+        case ServiceRequiredEnum::True:     str = "True";       break;
+        case ServiceRequiredEnum::Unknown:  str = "<Unknown>";  break;
+        case ServiceRequiredEnum::Reserved: str = "<Reserved>"; break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const ServiceRequiredEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 
@@ -302,11 +335,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, BatteryLevelStatus, BatteryLevelStatusStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size > 2 && size < 8;
-    }
-
     BVP_PARSE(BatteryLevelStatusStruct)
     {
         bool result{true};
@@ -332,57 +360,80 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(BatteryLevelStatusStruct)
     {
-        oss <<   "WiredExternalPowerSourceConnected: " << wiredExternalPowerSourceConnected();
-        oss << ", WirelessExternalPowerSourceConnected: " << wirelessExternalPowerSourceConnected();
-        oss << ", BatteryChargeState: " << batteryChargeState();
-        oss << ", BatteryChargeLevel: " << batteryChargeLevel();
-        oss << ", ChargingType: " << chargingType();
+        std::string str;
 
-        if (hasChargingFault())
+        str.append("WiredExternalPowerSourceConnected: ");
+        str.append(enumToString(wiredExternalPowerSourceConnected(btSpecObject)));
+
+        str.append(", WirelessExternalPowerSourceConnected: ");
+        str.append(enumToString(wirelessExternalPowerSourceConnected(btSpecObject)));
+
+        str.append(", BatteryChargeState: ");
+        str.append(enumToString(batteryChargeState(btSpecObject)));
+
+        str.append(", BatteryChargeLevel: ");
+        str.append(enumToString(batteryChargeLevel(btSpecObject)));
+
+        str.append(", ChargingType: ");
+        str.append(enumToString(chargingType(btSpecObject)));
+
+        if (hasChargingFault(btSpecObject))
         {
-            oss << ", ChargingFaultReason: {";
-            if (isChargingFaultReasonBattery())
+            str.append(", ChargingFaultReason: {");
+            if (isChargingFaultReasonBattery(btSpecObject))
             {
-                oss << " Battery";
+                str.append(" Battery");
             }
-            if (isChargingFaultReasonExternalPowerSource())
+            if (isChargingFaultReasonExternalPowerSource(btSpecObject))
             {
-                oss << " ExternalPowerSource";
+                str.append(" ExternalPowerSource");
             }
-            if (isChargingFaultReasonOther())
+            if (isChargingFaultReasonOther(btSpecObject))
             {
-                oss << " Other";
+                str.append(" Other");
             }
-            oss << " }";
+            str.append(" }");
         }
 
-        if (isIdentifierPresent())
+        if (isIdentifierPresent(btSpecObject))
         {
-            auto originalFlags = oss.flags();
-            oss << ", ID: 0x" << std::uppercase << std::setfill('0') << std::setw(4) << std::hex << m_btSpecObject.identifier;
-            oss.flags(originalFlags);
+            fmt::format_to(
+                std::back_inserter(str),
+                // TODO: try to replace by local implementation (see HexString)
+                ", ID: 0x{:04X}",
+                btSpecObject.identifier
+            );
         }
 
-        if (isBatteryLevelPresent())
+        if (isBatteryLevelPresent(btSpecObject))
         {
-            oss << ", BatteryLevel: " << BatteryLevel(m_btSpecObject.batteryLevel, configuration());
+            str.append(", BatteryLevel: ");
+            str.append(BatteryLevel::toStringInternal(btSpecObject.batteryLevel));
         }
 
-        if (isAdditionalStatusPresent())
+        if (isAdditionalStatusPresent(btSpecObject))
         {
-            oss << ", ServiceRequired: " << serviceRequired();
-            if (hasBatteryFault())
+            str.append(", ServiceRequired: ");
+            str.append(enumToString(serviceRequired(btSpecObject)));
+            if (hasBatteryFault(btSpecObject))
             {
-                oss << ", BatteryFailed";
+                str.append(", BatteryFailed");
             }
         }
 
-        if (isBatteryPresent())
+        if (isBatteryPresent(btSpecObject))
         {
-            oss << ", BatteryPresent";
+            str.append(", BatteryPresent");
         }
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size > 2 && size < 8;
     }
 };
 

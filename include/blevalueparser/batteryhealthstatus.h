@@ -6,6 +6,11 @@
 namespace bvp
 {
 
+constexpr int8_t BHS_GREATER = 127;  // 0x7F
+constexpr int8_t BHS_LESS = -128;  // 0x80
+constexpr int8_t BHS_MAX = BHS_GREATER - 1;
+constexpr int8_t BHS_MIN = BHS_LESS + 1;
+
 // GATT_Specification_Supplement_v8.pdf
 // 3.25.1 Flags field
 constexpr uint8_t BHS_FLAG_BATTERY_HEALTH_SUMMARY_PRESENT   = 1 << 0;
@@ -73,26 +78,16 @@ public:
 
     BVP_GETTER(bool, isCurrentTemperatureGreater, BatteryHealthStatusStruct)
     {
-        return s_greater == btSpecObject.currentTemperature;
+        return BHS_GREATER == btSpecObject.currentTemperature;
     }
 
     BVP_GETTER(bool, isCurrentTemperatureLess, BatteryHealthStatusStruct)
     {
-        return s_less == btSpecObject.currentTemperature;
+        return BHS_LESS == btSpecObject.currentTemperature;
     }
 
 private:
     BVP_CTORS(BaseValueSpec, BatteryHealthStatus, BatteryHealthStatusStruct)
-
-    static constexpr int8_t s_greater = 127;  // 0x7F
-    static constexpr int8_t s_less = -128;  // 0x80
-    static constexpr int8_t s_max = s_greater - 1;
-    static constexpr int8_t s_min = s_less + 1;
-
-    virtual bool checkSize(size_t size) override
-    {
-        return size > 0 && size < 8;
-    }
 
     BVP_PARSE(BatteryHealthStatusStruct)
     {
@@ -124,47 +119,71 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(BatteryHealthStatusStruct)
     {
-        std::ostringstream ossInfo;
-        if (isBatteryHealthSummaryPresent())
+        std::string str;
+
+        if (isBatteryHealthSummaryPresent(btSpecObject))
         {
-            ossInfo << "BatteryHealthSummary: " << static_cast<int>(m_btSpecObject.batteryHealthSummary) << "%, ";
+            fmt::format_to(
+                std::back_inserter(str),
+                "BatteryHealthSummary: {}%, ",
+                btSpecObject.batteryHealthSummary
+            );
         }
-        if (isCycleCountPresent())
+        if (isCycleCountPresent(btSpecObject))
         {
-            ossInfo << "CycleCount: " << m_btSpecObject.cycleCount << ", ";
+            fmt::format_to(
+                std::back_inserter(str),
+                "CycleCount: {}, ",
+                btSpecObject.cycleCount
+            );
         }
-        if (isCurrentTemperaturePresent())
+        if (isCurrentTemperaturePresent(btSpecObject))
         {
-            ossInfo << "CurrentTemperature: ";
-            if (isCurrentTemperatureGreater())
+            str.append("CurrentTemperature: ");
+            if (isCurrentTemperatureGreater(btSpecObject))
             {
-                ossInfo << ">" << static_cast<int>(s_max) << "°C, ";
+                // TODO: it should be possible to format this at compile time because BHS_MAX is constexpr
+                fmt::format_to(std::back_inserter(str), ">{}°C, ", BHS_MAX);
             }
-            else if (isCurrentTemperatureLess())
+            else if (isCurrentTemperatureLess(btSpecObject))
             {
-                ossInfo << "<" << static_cast<int>(s_min) << "°C, ";
+                // TODO: it should be possible to format this at compile time because BHS_MIN is constexpr
+                fmt::format_to(std::back_inserter(str), "<{}°C, ", BHS_MIN);
             }
             else
             {
-                ossInfo << static_cast<int>(m_btSpecObject.currentTemperature) << "°C, ";
+                fmt::format_to(
+                    std::back_inserter(str),
+                    "{}°C, ",
+                    btSpecObject.currentTemperature
+                );
             }
         }
-        if (isDeepDischargeCountPresent())
+        if (isDeepDischargeCountPresent(btSpecObject))
         {
-            ossInfo << "DeepDischargeCount: " << m_btSpecObject.deepDischargeCount << ", ";
+            fmt::format_to(
+                std::back_inserter(str),
+                "DeepDischargeCount: {}, ",
+                btSpecObject.deepDischargeCount
+            );
         }
-        std::string info = ossInfo.str();
 
-        if (info.empty())
+        if (str.empty())
         {
-            oss << "<NoData>";
+            return "<NoData>";
         }
-        else
-        {
-            oss << info.substr(0, info.length() - 2);
-        }
+
+        str.pop_back();
+        str.pop_back();
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size > 0 && size < 8;
     }
 };
 

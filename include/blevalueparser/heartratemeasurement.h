@@ -87,12 +87,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, HeartRateMeasurement, HeartRateMeasurementStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        // Minimal packet must contain flags(uint8_t)+heartRate(uint8_t)
-        return size > 1 && size < 21;
-    }
-
     BVP_PARSE(HeartRateMeasurementStruct)
     {
         bool result{true};
@@ -139,36 +133,58 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(HeartRateMeasurementStruct)
     {
-        if (isContactSupported())
+        std::string str;
+
+        if (isContactSupported(btSpecObject))
         {
-            if (isContacted())
+            if (isContacted(btSpecObject))
             {
-                oss << "(connected) ";
+                str.append("(connected) ");
             }
             else
             {
-                oss << "(disconnected) ";
+                str.append("(disconnected) ");
             }
         }
 
-        oss << "HR: " << m_btSpecObject.heartRate << "bpm";
+        fmt::format_to(
+            std::back_inserter(str),
+            "HR: {}bpm",
+            btSpecObject.heartRate
+        );
 
-        if (hasEnergyExpended())
+        if (hasEnergyExpended(btSpecObject))
         {
-            oss << ", EE: " << m_btSpecObject.energyExpended << "kJ";
+            fmt::format_to(
+                std::back_inserter(str),
+                ", EE: {}kJ",
+                btSpecObject.energyExpended
+            );
         }
 
-        if (!m_btSpecObject.rrIntervals.empty())
+        if (!btSpecObject.rrIntervals.empty())
         {
-            oss << ", RR: { ";
-            for (auto rrInterval : rrIntervals())
+            str.append(", RR: { ");
+            for (auto rrInterval : rrIntervals(btSpecObject))
             {
-                oss << rrInterval << "ms; ";
+                fmt::format_to(
+                    std::back_inserter(str),
+                    "{}ms; ",
+                    rrInterval
+                );
             }
-            oss << "}";
+            str.append("}");
         }
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        // Minimal packet must contain flags(uint8_t)+heartRate(uint8_t)
+        return size > 1 && size < 21;
     }
 };
 

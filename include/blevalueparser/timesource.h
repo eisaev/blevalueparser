@@ -19,19 +19,26 @@ enum class TimeSourceEnum : uint8_t
     AtomicClock         = 5,
     CellularNetwork     = 6,
 };
-inline std::ostream &operator<<(std::ostream &os, const TimeSourceEnum value)
+inline std::string enumToString(const TimeSourceEnum value)
 {
+    std::string str;
+
     switch (value)
     {
-        case TimeSourceEnum::Unknown:               os << "<Unknown>";              break;
-        case TimeSourceEnum::NetworkTimeProtocol:   os << "NetworkTimeProtocol";    break;
-        case TimeSourceEnum::GPS:                   os << "GPS";                    break;
-        case TimeSourceEnum::RadioTimeSignal:       os << "RadioTimeSignal";        break;
-        case TimeSourceEnum::Manual:                os << "Manual";                 break;
-        case TimeSourceEnum::AtomicClock:           os << "AtomicClock";            break;
-        case TimeSourceEnum::CellularNetwork:       os << "CellularNetwork";        break;
+        case TimeSourceEnum::Unknown:               str = "<Unknown>";              break;
+        case TimeSourceEnum::NetworkTimeProtocol:   str = "NetworkTimeProtocol";    break;
+        case TimeSourceEnum::GPS:                   str = "GPS";                    break;
+        case TimeSourceEnum::RadioTimeSignal:       str = "RadioTimeSignal";        break;
+        case TimeSourceEnum::Manual:                str = "Manual";                 break;
+        case TimeSourceEnum::AtomicClock:           str = "AtomicClock";            break;
+        case TimeSourceEnum::CellularNetwork:       str = "CellularNetwork";        break;
     }
 
+    return str;
+}
+inline std::ostream &operator<<(std::ostream &os, const TimeSourceEnum value)
+{
+    os << enumToString(value);
     return os;
 }
 inline TimeSourceEnum &operator%=(TimeSourceEnum &lhs, const TimeSourceEnum &rhs)
@@ -72,11 +79,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, TimeSource, TimeSourceStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 1;
-    }
-
     BVP_PARSE(TimeSourceStruct)
     {
         bool result{true};
@@ -86,9 +88,14 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(TimeSourceStruct)
     {
-        oss << m_btSpecObject.timeSource;
+        return enumToString(btSpecObject.timeSource);
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 1;
     }
 };
 

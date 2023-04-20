@@ -69,11 +69,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, ExactTime256, ExactTime256Struct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 9;
-    }
-
     BVP_PARSE(ExactTime256Struct)
     {
         bool result{true};
@@ -84,10 +79,18 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(ExactTime256Struct)
     {
-        oss <<        DayDateTime(m_btSpecObject.dayDateTime, configuration());
-        oss << "." << std::setfill('0') << std::setw(3) << static_cast<int>(milliseconds());
+        return fmt::format(
+            "{}.{:03}",
+            DayDateTime::toStringInternal(btSpecObject.dayDateTime),
+            milliseconds(btSpecObject)
+        );
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 9;
     }
 };
 

@@ -30,7 +30,7 @@ TEST_F(ReferenceTimeInformationTest, Unknown_0ms_0d_0h)
     EXPECT_EQ(0, btSpecObj.daysSinceUpdate);
     EXPECT_EQ(0, btSpecObj.hoursSinceUpdate);
 
-    EXPECT_EQ("Src: <Unknown>, Drift: 0ms, Updated: 0hours ago", result->toString());
+    EXPECT_EQ("Src: <Unknown>, Drift: 0ms, Updated: 0 hours ago", result->toString());
 }
 
 TEST_F(ReferenceTimeInformationTest, GPS_5250ms_0d_23h)
@@ -52,7 +52,7 @@ TEST_F(ReferenceTimeInformationTest, GPS_5250ms_0d_23h)
     EXPECT_EQ(0, btSpecObj.daysSinceUpdate);
     EXPECT_EQ(23, btSpecObj.hoursSinceUpdate);
 
-    EXPECT_EQ("Src: GPS, Drift: 5250ms, Updated: 23hours ago", result->toString());
+    EXPECT_EQ("Src: GPS, Drift: 5250ms, Updated: 23 hours ago", result->toString());
 }
 
 TEST_F(ReferenceTimeInformationTest, Manual_31625ms_254d_0h)
@@ -74,7 +74,7 @@ TEST_F(ReferenceTimeInformationTest, Manual_31625ms_254d_0h)
     EXPECT_EQ(254, btSpecObj.daysSinceUpdate);
     EXPECT_EQ(0, btSpecObj.hoursSinceUpdate);
 
-    EXPECT_EQ("Src: Manual, Drift: 31625ms, Updated: 254days 0hours ago", result->toString());
+    EXPECT_EQ("Src: Manual, Drift: 31625ms, Updated: 254 days 0 hours ago", result->toString());
 }
 
 TEST_F(ReferenceTimeInformationTest, CellularNetwork_Greater_254d_23h)
@@ -96,7 +96,7 @@ TEST_F(ReferenceTimeInformationTest, CellularNetwork_Greater_254d_23h)
     EXPECT_EQ(254, btSpecObj.daysSinceUpdate);
     EXPECT_EQ(23, btSpecObj.hoursSinceUpdate);
 
-    EXPECT_EQ("Src: CellularNetwork, Drift: >31625ms, Updated: 254days 23hours ago", result->toString());
+    EXPECT_EQ("Src: CellularNetwork, Drift: >31625ms, Updated: 254 days 23 hours ago", result->toString());
 }
 
 TEST_F(ReferenceTimeInformationTest, Reserved_Unknown_Greater)
@@ -120,7 +120,7 @@ TEST_F(ReferenceTimeInformationTest, Reserved_Unknown_Greater)
     EXPECT_EQ(255, btSpecObj.daysSinceUpdate);
     EXPECT_EQ(255, btSpecObj.hoursSinceUpdate);
 
-    EXPECT_EQ("Src: <Unknown>, Drift: <Unknown>, Updated: >254days ago", result->toString());
+    EXPECT_EQ("Src: <Unknown>, Drift: <Unknown>, Updated: >254 days ago", result->toString());
 }
 
 TEST_F(ReferenceTimeInformationTest, InvalidHoursSinceUpdate)
@@ -187,7 +187,7 @@ TEST_F(ReferenceTimeInformationTest, ToString)
     EXPECT_NE(nullptr, result);
     EXPECT_TRUE(result->isValid());
 
-    EXPECT_EQ("Src: NetworkTimeProtocol, Drift: 21250ms, Updated: 42days 15hours ago", result->toString());
+    EXPECT_EQ("Src: NetworkTimeProtocol, Drift: 21250ms, Updated: 42 days 15 hours ago", result->toString());
 }
 
 }  // namespace bvp

@@ -60,11 +60,6 @@ public:
 private:
     BVP_CTORS(BaseValueSpec, DayDateTime, DayDateTimeStruct)
 
-    virtual bool checkSize(size_t size) override
-    {
-        return size == 8;
-    }
-
     BVP_PARSE(DayDateTimeStruct)
     {
         bool result{true};
@@ -75,10 +70,20 @@ private:
         return result;
     }
 
-    virtual void toStringStream(std::ostringstream &oss) const override
+    BVP_TO_STRING(DayDateTimeStruct)
     {
-        oss <<        DayOfWeek(m_btSpecObject.dayOfWeek, configuration());
-        oss << " " << DateTime(m_btSpecObject.dateTime, configuration());
+        std::string str;
+
+        str.append(DayOfWeek::toStringInternal(btSpecObject.dayOfWeek));
+        str.append(" ");
+        str.append(DateTime::toStringInternal(btSpecObject.dateTime));
+
+        return str;
+    }
+
+    virtual bool checkSize(size_t size) override
+    {
+        return size == 8;
     }
 };
 
