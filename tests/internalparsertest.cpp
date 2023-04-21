@@ -248,7 +248,8 @@ TEST(InternalParserTest, Int_OutOfData)
     EXPECT_TRUE(parser.outOfData());
 }
 
-struct MedFloat16Test : public testing::TestWithParam<std::tuple<int8_t, int16_t, float, std::string>>
+
+struct MedFloat16Test
 {
     std::array<char, 2> getData(int16_t mantissa, int8_t exponent) const
     {
@@ -265,7 +266,13 @@ struct MedFloat16Test : public testing::TestWithParam<std::tuple<int8_t, int16_t
         };
     };
 };
-TEST_P(MedFloat16Test, Convert)
+
+struct MedFloat16NormalTest
+    : public MedFloat16Test,
+      //                                   <exponent, mantissa, expectedFloat, expectedString>
+      public testing::TestWithParam<std::tuple<int8_t, int16_t, float, std::string>>
+{};
+TEST_P(MedFloat16NormalTest, Convert)
 {
     const int8_t exponent = std::get<0>(GetParam());
     const int16_t mantissa = std::get<1>(GetParam());
@@ -274,15 +281,15 @@ TEST_P(MedFloat16Test, Convert)
 
     const auto data = getData(mantissa, exponent);
     BaseValue::Parser parser{data.data(), data.size()};
-    float abs_error = std::pow(10, exponent);
+    float absError = std::pow(10, exponent);
     MedFloat16 value = parser.parseMedFloat16();
 
-    EXPECT_NEAR(expectedFloat, value.toFloat(), abs_error);
+    EXPECT_NEAR(expectedFloat, value.toFloat(), absError);
     EXPECT_EQ(expectedString, value.toString());
 }
 INSTANTIATE_TEST_SUITE_P(
     InternalParserTest,
-    MedFloat16Test,
+    MedFloat16NormalTest,
     // tuples of (exponent, mantissa, expectedFloat, expectedString)
     ::testing::Values(
         std::make_tuple( 7, -2048, -20480000000.0, "-2.048e+10"),
@@ -305,14 +312,76 @@ INSTANTIATE_TEST_SUITE_P(
 
         std::make_tuple( 7, 2047, 20470000000.0, "2.047e+10"),
         std::make_tuple(-1, 2047, 204.7, "204.7"),
-        std::make_tuple(-8, 2047, 0.00002047, "2.047e-05"),
+        std::make_tuple(-8, 2047, 0.00002047, "2.047e-05")
+    )
+);
 
-           // Special values
-        std::make_tuple( 0, 2047, 2047.0, "<NaN>"),
-        std::make_tuple( 0, 2046, 2046.0, "<+Inf>"),
-        std::make_tuple( 0, -2046, -2046.0, "<-Inf>"),
-        std::make_tuple( 0, -2047, -2047.0, "<Reserved>"),
-        std::make_tuple( 0, -2048, -2048.0, "<Nres>")
+struct MedFloat16InfinityTest
+    : public MedFloat16Test,
+      //                                   <exponent, mantissa, expectedFloat, expectedString, checkFunction>
+      public testing::TestWithParam<std::tuple<int8_t, int16_t, float, std::string, std::function<bool(const MedFloat16 &)>>>
+{};
+TEST_P(MedFloat16InfinityTest, Convert)
+{
+    const int8_t exponent = std::get<0>(GetParam());
+    const int16_t mantissa = std::get<1>(GetParam());
+    const float expectedFloat = std::get<2>(GetParam());
+    const std::string expectedString = std::get<3>(GetParam());
+    const auto checkFunction = std::get<4>(GetParam());
+
+    const auto data = getData(mantissa, exponent);
+    BaseValue::Parser parser{data.data(), data.size()};
+    MedFloat16 value = parser.parseMedFloat16();
+
+    EXPECT_EQ(expectedFloat, value.toFloat());
+    EXPECT_EQ(expectedString, value.toString());
+    EXPECT_TRUE(checkFunction(value));
+}
+INSTANTIATE_TEST_SUITE_P(
+    InternalParserTest,
+    MedFloat16InfinityTest,
+    // tuples of (exponent, mantissa, expectedFloat, expectedString, checkFunction)
+    ::testing::Values(
+        std::make_tuple(
+            0, 2046, std::numeric_limits<float>::infinity(), "<+Inf>",
+            [](const MedFloat16 &value){ return value.isPlusInfinity(); }
+        ),
+        std::make_tuple(
+            0, -2046, -std::numeric_limits<float>::infinity(), "<-Inf>",
+            [](const MedFloat16 &value){ return value.isMinusInfinity(); }
+        )
+    )
+);
+
+struct MedFloat16NaNTest
+    : public MedFloat16Test,
+      //                                   <exponent, mantissa, expectedString, checkFunction>
+      public testing::TestWithParam<std::tuple<int8_t, int16_t, std::string, std::function<bool(const MedFloat16 &)>>>
+{};
+TEST_P(MedFloat16NaNTest, Convert)
+{
+    const int8_t exponent = std::get<0>(GetParam());
+    const int16_t mantissa = std::get<1>(GetParam());
+    const std::string expectedString = std::get<2>(GetParam());
+    const auto checkFunction = std::get<3>(GetParam());
+
+    const auto data = getData(mantissa, exponent);
+    BaseValue::Parser parser{data.data(), data.size()};
+    MedFloat16 value = parser.parseMedFloat16();
+
+    float f = value.toFloat();
+    EXPECT_NE(f, f);
+    EXPECT_EQ(expectedString, value.toString());
+    EXPECT_TRUE(checkFunction(value));
+}
+INSTANTIATE_TEST_SUITE_P(
+    InternalParserTest,
+    MedFloat16NaNTest,
+    // tuples of (exponent, mantissa, expectedString, checkFunction)
+    ::testing::Values(
+        std::make_tuple(0, 2047, "<NaN>", [](const MedFloat16 &value){ return value.isNaN(); }),
+        std::make_tuple(0, -2047, "<Reserved>", [](const MedFloat16 &value){ return value.isReserved(); }),
+        std::make_tuple(0, -2048, "<Nres>", [](const MedFloat16 &value){ return value.isNres(); })
     )
 );
 

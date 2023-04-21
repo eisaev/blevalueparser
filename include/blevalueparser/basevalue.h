@@ -63,13 +63,20 @@ TReturn Name() const\
 namespace bvp
 {
 
+// Table F.3—SFLOAT-Type special values
+constexpr uint16_t MF16_NAN             = 0x07FF;
+constexpr uint16_t MF16_NRES            = 0x0800;
+constexpr uint16_t MF16_PLUS_INFINITY   = 0x07FE;
+constexpr uint16_t MF16_MINUS_INFINITY  = 0x0802;
+constexpr uint16_t MF16_RESERVED        = 0x0801;
+
 // ISO/IEEE FDIS 11073-20601:2022(E)
 // F.7 Short floating point data structure—SFLOAT-Type
 class MedFloat16
 {
 public:
     MedFloat16() :
-        m_mantissa{0},
+        m_mantissa{MF16_NAN},
         m_exponent{0}
     {}
 
@@ -80,32 +87,47 @@ public:
 
     float toFloat() const
     {
+        if (isNaN() || isNres() || isReserved())
+        {
+            return std::numeric_limits<float>::quiet_NaN();
+        }
+
+        if (isMinusInfinity())
+        {
+            return -std::numeric_limits<float>::infinity();
+        }
+
+        if (isPlusInfinity())
+        {
+            return std::numeric_limits<float>::infinity();
+        }
+
         return float(m_mantissa * std::pow(10, m_exponent));
     }
 
     bool isNaN() const
     {
-        return NaN == (m_mantissa & 0b0000111111111111);
+        return 0 == m_exponent && (m_mantissa & 0b0000111111111111) == MF16_NAN;
     }
 
     bool isNres() const
     {
-        return Nres == (m_mantissa & 0b0000111111111111);
+        return 0 == m_exponent && (m_mantissa & 0b0000111111111111) == MF16_NRES;
     }
 
     bool isPlusInfinity() const
     {
-        return PlusInfinity == (m_mantissa & 0b0000111111111111);
+        return 0 == m_exponent && (m_mantissa & 0b0000111111111111) == MF16_PLUS_INFINITY;
     }
 
     bool isMinusInfinity() const
     {
-        return MinusInfinity == (m_mantissa & 0b0000111111111111);
+        return 0 == m_exponent && (m_mantissa & 0b0000111111111111) == MF16_MINUS_INFINITY;
     }
 
     bool isReserved() const
     {
-        return Reserved == (m_mantissa & 0b0000111111111111);
+        return 0 == m_exponent && (m_mantissa & 0b0000111111111111) == MF16_RESERVED;
     }
 
     int16_t mantissa() const
@@ -124,11 +146,11 @@ public:
         {
             switch (m_mantissa & 0b0000111111111111)
             {
-                case NaN:           return "<NaN>";
-                case Nres:          return "<Nres>";
-                case PlusInfinity:  return "<+Inf>";
-                case MinusInfinity: return "<-Inf>";
-                case Reserved:      return "<Reserved>";
+                case MF16_NAN:              return "<NaN>";
+                case MF16_NRES:             return "<Nres>";
+                case MF16_PLUS_INFINITY:    return "<+Inf>";
+                case MF16_MINUS_INFINITY:   return "<-Inf>";
+                case MF16_RESERVED:         return "<Reserved>";
             }
         }
 
@@ -136,13 +158,6 @@ public:
     }
 
 private:
-    // Table F.3—SFLOAT-Type special values
-    static constexpr uint16_t NaN           = 0x07FF;
-    static constexpr uint16_t Nres          = 0x0800;
-    static constexpr uint16_t PlusInfinity  = 0x07FE;
-    static constexpr uint16_t MinusInfinity = 0x0802;
-    static constexpr uint16_t Reserved      = 0x0801;
-
     int16_t m_mantissa;
     int8_t m_exponent;
 
@@ -268,7 +283,9 @@ protected:
     friend class InternalParserTest_Int64_Test;
     friend class InternalParserTest_Raw_OutOfData_Test;
     friend class InternalParserTest_Int_OutOfData_Test;
-    friend class MedFloat16Test_Convert_Test;
+    friend class MedFloat16NormalTest_Convert_Test;
+    friend class MedFloat16InfinityTest_Convert_Test;
+    friend class MedFloat16NaNTest_Convert_Test;
 
     class Parser
     {
