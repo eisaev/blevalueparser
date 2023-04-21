@@ -33,10 +33,10 @@ jobs:
       run: ./bvpbenchmark --benchmark_out_format=json --benchmark_out=benchmark-results.json
 
     - name: Download Previous Result
-      uses: actions/cache@v1
+      uses: actions/cache/restore@v3
       with:
         path: ./cache
-        key: ${{ runner.os }}-benchmark
+        key: ${{runner.os}}-benchmark
 
     - name: Store Result
       uses: benchmark-action/github-action-benchmark@v1
@@ -45,7 +45,7 @@ jobs:
         tool: 'googlecpp'
         output-file-path: ${{env.BUILD_DIR}}/benchmarks/benchmark-results.json
         external-data-json-path: ./cache/benchmark-results.json
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{secrets.GITHUB_TOKEN}}
         summary-always: true
         # Show alert with commit comment on detecting possible performance regression
         alert-threshold: '150%'
@@ -53,3 +53,9 @@ jobs:
         fail-on-alert: true
         alert-comment-cc-users: '@eisaev'
 
+    - name: Save Result to Cache
+      if: ${{github.ref == 'refs/heads/main'}}
+      uses: actions/cache/save@v3
+      with:
+        path: ./cache
+        key: ${{runner.os}}-benchmark
