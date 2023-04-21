@@ -38,6 +38,11 @@ jobs:
       working-directory: ${{env.BUILD_DIR}}/benchmarks
       run: ./bvpbenchmark --benchmark_out_format=json --benchmark_out=benchmark-results.json
 
+    # Workaround for GitHub Markdown (see https://github.com/benchmark-action/github-action-benchmark/issues/167)
+    - name: Names Workaround
+      working-directory: ${{env.BUILD_DIR}}/benchmarks
+      run: sed -i 's/</\\</g' benchmark-results.json
+
     - name: Download Previous Result
       id: cache-restore
       uses: actions/cache/restore@v3
