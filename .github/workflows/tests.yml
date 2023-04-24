@@ -34,10 +34,7 @@ jobs:
 
     - name: Install System Dependencies
       if: ${{matrix.RUNNER.OS == 'ubuntu-20.04'}}
-      run: sudo apt install -y xsltproc clang-tidy
-
-    - name: Install Ninja
-      uses: seanmiddleditch/gha-setup-ninja@v3
+      run: sudo apt install -y xsltproc clang-tidy ninja-build
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.

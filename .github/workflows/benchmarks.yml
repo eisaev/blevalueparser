@@ -15,7 +15,7 @@ permissions:
 jobs:
   benchmark:
     name: Benchmark Check
-    runs-on: [ubuntu-20.04, self-hosted]
+    runs-on: [ubuntu-20.04, self-hosted, benchmark]
 
     env:
       BUILD_DIR: ${{github.workspace}}/build
@@ -25,8 +25,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Install Ninja
-      uses: seanmiddleditch/gha-setup-ninja@v3
+    - name: Install System Dependencies
+      run: sudo apt install -y ninja-build
 
     - name: Configure CMake
       run: cmake -G Ninja -B ${{env.BUILD_DIR}} -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
