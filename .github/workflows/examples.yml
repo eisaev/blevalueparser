@@ -13,13 +13,15 @@ jobs:
         BUILD_TYPE: [Debug, MinSizeRel]
         QT_VERSION: [5.15.2, 6.2.4]
         RUNNER:
-          - RUNS_ON: [ubuntu-20.04, self-hosted]
+          - RUNS_ON: [ubuntu-20.04, self-hosted, qt]
             OS: ubuntu-20.04
             HOST: linux
+            ARCH: gcc_64
             CLANG_TIDY: '-DCMAKE_CXX_CLANG_TIDY="clang-tidy;--export-fixes=clang-tidy.fixes;--fix;--warnings-as-errors=*"'
-          - RUNS_ON: [macos-13, self-hosted]
+          - RUNS_ON: [macos-13, self-hosted, qt]
             OS: macos-13
             HOST: mac
+            ARCH: clang_64
             CLANG_TIDY: ''
         include:
           - QT_VERSION: 5.15.2
@@ -47,6 +49,7 @@ jobs:
         version: ${{matrix.QT_VERSION}}
         host: ${{matrix.RUNNER.HOST}}
         target: desktop
+        arch: ${{matrix.RUNNER.ARCH}}
         dir: ${{runner.temp}}
         modules: ${{matrix.QT_MODULES}}
         setup-python: false
