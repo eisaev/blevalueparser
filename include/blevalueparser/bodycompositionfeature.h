@@ -46,7 +46,7 @@ constexpr uint32_t BCS_FLAG_BCF_RESERVER14                  = 1 << 31;
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.33 Body Composition Feature
-struct BodyCompositionFeatureStruct
+BVP_STRUCT(BodyCompositionFeature)
 {
     uint32_t flags{0};
 };
@@ -54,65 +54,65 @@ struct BodyCompositionFeatureStruct
 // BCS_V1.0.0.pdf
 // Body Composition Service v1.0.0
 // 3.1 BodyCompositionFeature
-class BodyCompositionFeature final : public BaseValueSpec<BodyCompositionFeatureStruct>
+class BodyCompositionFeature final : public BaseValueSpec<BodyCompositionFeature>
 {
 public:
-    BVP_GETTER(bool, isTimeStampSupported, BodyCompositionFeatureStruct)
+    BVP_GETTER(bool, isTimeStampSupported, BodyCompositionFeature)
     {
         return (btSpecObject.flags & BCS_FLAG_BCF_TIME_STAMP_SUPPORTED) != 0;
     }
 
-    BVP_GETTER(bool, isMultipleUsersSupported, BodyCompositionFeatureStruct)
+    BVP_GETTER(bool, isMultipleUsersSupported, BodyCompositionFeature)
     {
         return (btSpecObject.flags & BCS_FLAG_BCF_MULTIPLE_USERS_SUPPORTED) != 0;
     }
 
-    BVP_GETTER(bool, isBasalMetabolismSupported, BodyCompositionFeatureStruct)
+    BVP_GETTER(bool, isBasalMetabolismSupported, BodyCompositionFeature)
     {
         return (btSpecObject.flags & BCS_FLAG_BCF_BASAL_METABOLISM_SUPPORTED) != 0;
     }
 
-    BVP_GETTER(bool, isMusclePercentageSupported, BodyCompositionFeatureStruct)
+    BVP_GETTER(bool, isMusclePercentageSupported, BodyCompositionFeature)
     {
         return (btSpecObject.flags & BCS_FLAG_BCF_MUSCLE_PERCENTAGE_SUPPORTED) != 0;
     }
 
-    BVP_GETTER(bool, isMuscleMassSupported, BodyCompositionFeatureStruct)
+    BVP_GETTER(bool, isMuscleMassSupported, BodyCompositionFeature)
     {
         return (btSpecObject.flags & BCS_FLAG_BCF_MUSCLE_MASS_SUPPORTED) != 0;
     }
 
-    BVP_GETTER(bool, isFatFreeMassSupported, BodyCompositionFeatureStruct)
+    BVP_GETTER(bool, isFatFreeMassSupported, BodyCompositionFeature)
     {
         return (btSpecObject.flags & BCS_FLAG_BCF_FAT_FREE_MASS_SUPPORTED) != 0;
     }
 
-    BVP_GETTER(bool, isSoftLeanMassSupported, BodyCompositionFeatureStruct)
+    BVP_GETTER(bool, isSoftLeanMassSupported, BodyCompositionFeature)
     {
         return (btSpecObject.flags & BCS_FLAG_BCF_SOFT_LEAN_MASS_SUPPORTED) != 0;
     }
 
-    BVP_GETTER(bool, isBodyWaterMassSupported, BodyCompositionFeatureStruct)
+    BVP_GETTER(bool, isBodyWaterMassSupported, BodyCompositionFeature)
     {
         return (btSpecObject.flags & BCS_FLAG_BCF_BODY_WATER_MASS_SUPPORTED) != 0;
     }
 
-    BVP_GETTER(bool, isImpedanceSupported, BodyCompositionFeatureStruct)
+    BVP_GETTER(bool, isImpedanceSupported, BodyCompositionFeature)
     {
         return (btSpecObject.flags & BCS_FLAG_BCF_IMPEDANCE_SUPPORTED) != 0;
     }
 
-    BVP_GETTER(bool, isWeightSupported, BodyCompositionFeatureStruct)
+    BVP_GETTER(bool, isWeightSupported, BodyCompositionFeature)
     {
         return (btSpecObject.flags & BCS_FLAG_BCF_WEIGHT_SUPPORTED) != 0;
     }
 
-    BVP_GETTER(bool, isHeightSupported, BodyCompositionFeatureStruct)
+    BVP_GETTER(bool, isHeightSupported, BodyCompositionFeature)
     {
         return (btSpecObject.flags & BCS_FLAG_BCF_HEIGHT_SUPPORTED) != 0;
     }
 
-    BVP_GETTER_CONF(uint16_t, weightResolution, BodyCompositionFeatureStruct)
+    BVP_GETTER_CONF(uint16_t, weightResolution, BodyCompositionFeature)
     {
         uint32_t resolution =
             (btSpecObject.flags & BCS_FLAG_BCF_WEIGHT_RESOLUTION0) +
@@ -156,7 +156,7 @@ public:
         return 0;
     }
 
-    BVP_GETTER_CONF(uint16_t, heightResolution, BodyCompositionFeatureStruct)
+    BVP_GETTER_CONF(uint16_t, heightResolution, BodyCompositionFeature)
     {
         uint32_t resolution =
             (btSpecObject.flags & BCS_FLAG_BCF_HEIGHT_RESOLUTION0) +
@@ -192,9 +192,9 @@ public:
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, BodyCompositionFeature, BodyCompositionFeatureStruct)
+    BVP_CTORS(BaseValueSpec, BodyCompositionFeature)
 
-    BVP_PARSE(BodyCompositionFeatureStruct)
+    BVP_PARSE(BodyCompositionFeature)
     {
         bool result{true};
 
@@ -203,7 +203,7 @@ private:
         return result;
     }
 
-    BVP_TO_STRING_CONF(BodyCompositionFeatureStruct)
+    BVP_TO_STRING(BodyCompositionFeature)
     {
         std::string str;
 

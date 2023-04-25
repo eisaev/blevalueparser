@@ -84,27 +84,27 @@ inline AlertCategoryIDEnum &operator%=(AlertCategoryIDEnum &lhs, const AlertCate
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.6 Alert Category ID
-struct AlertCategoryIDStruct
+BVP_STRUCT(AlertCategoryID)
 {
     AlertCategoryIDEnum categoryID{AlertCategoryIDEnum::SimpleAlert};
 };
 
-class AlertCategoryID final : public BaseValueSpec<AlertCategoryIDStruct>
+class AlertCategoryID final : public BaseValueSpec<AlertCategoryID>
 {
 public:
     friend class NewAlert;
     friend class UnreadAlertStatus;
     friend class AlertNotificationControlPoint;
 
-    BVP_GETTER(AlertCategoryIDEnum, categoryID, AlertCategoryIDStruct)
+    BVP_GETTER(AlertCategoryIDEnum, categoryID, AlertCategoryID)
     {
         return btSpecObject.categoryID;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, AlertCategoryID, AlertCategoryIDStruct)
+    BVP_CTORS(BaseValueSpec, AlertCategoryID)
 
-    BVP_PARSE(AlertCategoryIDStruct)
+    BVP_PARSE(AlertCategoryID)
     {
         bool result{true};
 
@@ -113,8 +113,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(AlertCategoryIDStruct)
+    BVP_TO_STRING(AlertCategoryID)
     {
+        (void)configuration;
         return enumToString(btSpecObject.categoryID);
     }
 

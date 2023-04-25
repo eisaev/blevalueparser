@@ -61,25 +61,25 @@ inline TimeSourceEnum &operator%=(TimeSourceEnum &lhs, const TimeSourceEnum &rhs
     return lhs;
 }
 
-struct TimeSourceStruct
+BVP_STRUCT(TimeSource)
 {
     TimeSourceEnum timeSource{TimeSourceEnum::Unknown};
 };
 
-class TimeSource final : public BaseValueSpec<TimeSourceStruct>
+class TimeSource final : public BaseValueSpec<TimeSource>
 {
 public:
     friend class ReferenceTimeInformation;
 
-    BVP_GETTER(TimeSourceEnum, timeSource, TimeSourceStruct)
+    BVP_GETTER(TimeSourceEnum, timeSource, TimeSource)
     {
         return btSpecObject.timeSource;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, TimeSource, TimeSourceStruct)
+    BVP_CTORS(BaseValueSpec, TimeSource)
 
-    BVP_PARSE(TimeSourceStruct)
+    BVP_PARSE(TimeSource)
     {
         bool result{true};
 
@@ -88,8 +88,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(TimeSourceStruct)
+    BVP_TO_STRING(TimeSource)
     {
+        (void)configuration;
         return enumToString(btSpecObject.timeSource);
     }
 

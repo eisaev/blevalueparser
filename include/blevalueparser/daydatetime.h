@@ -11,56 +11,56 @@ namespace bvp
 // GATT_Specification_Supplement_v8.pdf
 // 3.72 Day Date Time
 
-struct DayDateTimeStruct
+BVP_STRUCT(DayDateTime)
 {
-    DateTimeStruct dateTime;
-    DayOfWeekStruct dayOfWeek;
+    Struct<DateTime> dateTime;
+    Struct<DayOfWeek> dayOfWeek;
 };
 
-class DayDateTime final : public BaseValueSpec<DayDateTimeStruct>
+class DayDateTime final : public BaseValueSpec<DayDateTime>
 {
 public:
     friend class ExactTime256;
 
-    BVP_GETTER(uint16_t, year, DayDateTimeStruct)
+    BVP_GETTER(uint16_t, year, DayDateTime)
     {
         return btSpecObject.dateTime.year;
     }
 
-    BVP_GETTER(uint8_t, month, DayDateTimeStruct)
+    BVP_GETTER(uint8_t, month, DayDateTime)
     {
         return btSpecObject.dateTime.month;
     }
 
-    BVP_GETTER(uint8_t, day, DayDateTimeStruct)
+    BVP_GETTER(uint8_t, day, DayDateTime)
     {
         return btSpecObject.dateTime.day;
     }
 
-    BVP_GETTER(uint8_t, hour, DayDateTimeStruct)
+    BVP_GETTER(uint8_t, hour, DayDateTime)
     {
         return btSpecObject.dateTime.hour;
     }
 
-    BVP_GETTER(uint8_t, minute, DayDateTimeStruct)
+    BVP_GETTER(uint8_t, minute, DayDateTime)
     {
         return btSpecObject.dateTime.minute;
     }
 
-    BVP_GETTER(uint8_t, seconds, DayDateTimeStruct)
+    BVP_GETTER(uint8_t, seconds, DayDateTime)
     {
         return btSpecObject.dateTime.seconds;
     }
 
-    BVP_GETTER(DayOfWeekEnum, dayOfWeek, DayDateTimeStruct)
+    BVP_GETTER(DayOfWeekEnum, dayOfWeek, DayDateTime)
     {
         return btSpecObject.dayOfWeek.dayOfWeek;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, DayDateTime, DayDateTimeStruct)
+    BVP_CTORS(BaseValueSpec, DayDateTime)
 
-    BVP_PARSE(DayDateTimeStruct)
+    BVP_PARSE(DayDateTime)
     {
         bool result{true};
 
@@ -70,13 +70,13 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(DayDateTimeStruct)
+    BVP_TO_STRING(DayDateTime)
     {
         std::string str;
 
-        str.append(DayOfWeek::toStringInternal(btSpecObject.dayOfWeek));
+        str.append(DayOfWeek::toStringInternal(btSpecObject.dayOfWeek, configuration));
         str.append(" ");
-        str.append(DateTime::toStringInternal(btSpecObject.dateTime));
+        str.append(DateTime::toStringInternal(btSpecObject.dateTime, configuration));
 
         return str;
     }

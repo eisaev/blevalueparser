@@ -24,7 +24,7 @@ constexpr uint8_t BHI_FLAG_RESERVED6                                            
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.24 Battery Health Information
-struct BatteryHealthInformationStruct
+BVP_STRUCT(BatteryHealthInformation)
 {
     uint8_t flags{0};
     uint16_t cycleCountDesignedLifetime{0};
@@ -32,58 +32,58 @@ struct BatteryHealthInformationStruct
     int8_t maxDesignedOperatingTemperature{0};  // org.bluetooth.unit.thermodynamic_temperature.degree_celsius
 };
 
-class BatteryHealthInformation final : public BaseValueSpec<BatteryHealthInformationStruct>
+class BatteryHealthInformation final : public BaseValueSpec<BatteryHealthInformation>
 {
 public:
-    BVP_GETTER(bool, isCycleCountDesignedLifetimePresent, BatteryHealthInformationStruct)
+    BVP_GETTER(bool, isCycleCountDesignedLifetimePresent, BatteryHealthInformation)
     {
         return (btSpecObject.flags & BHI_FLAG_CYCLE_COUNT_DESIGNED_LIFETIME_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isMinAndMaxDesignedOperatingTemperaturePresent, BatteryHealthInformationStruct)
+    BVP_GETTER(bool, isMinAndMaxDesignedOperatingTemperaturePresent, BatteryHealthInformation)
     {
         return (btSpecObject.flags & BHI_FLAG_MIN_AND_MAX_DESIGNED_OPERATING_TEMPERATURE_PRESENT) != 0;
     }
 
-    BVP_GETTER(uint16_t, cycleCountDesignedLifetime, BatteryHealthInformationStruct)
+    BVP_GETTER(uint16_t, cycleCountDesignedLifetime, BatteryHealthInformation)
     {
         return btSpecObject.cycleCountDesignedLifetime;
     }
 
-    BVP_GETTER(int8_t, minDesignedOperatingTemperature, BatteryHealthInformationStruct)
+    BVP_GETTER(int8_t, minDesignedOperatingTemperature, BatteryHealthInformation)
     {
         return btSpecObject.minDesignedOperatingTemperature;
     }
 
-    BVP_GETTER(int8_t, maxDesignedOperatingTemperature, BatteryHealthInformationStruct)
+    BVP_GETTER(int8_t, maxDesignedOperatingTemperature, BatteryHealthInformation)
     {
         return btSpecObject.maxDesignedOperatingTemperature;
     }
 
-    BVP_GETTER(bool, isMinDesignedOperatingTemperatureGreater, BatteryHealthInformationStruct)
+    BVP_GETTER(bool, isMinDesignedOperatingTemperatureGreater, BatteryHealthInformation)
     {
         return BHI_GREATER == btSpecObject.minDesignedOperatingTemperature;
     }
 
-    BVP_GETTER(bool, isMinDesignedOperatingTemperatureLess, BatteryHealthInformationStruct)
+    BVP_GETTER(bool, isMinDesignedOperatingTemperatureLess, BatteryHealthInformation)
     {
         return BHI_LESS == btSpecObject.minDesignedOperatingTemperature;
     }
 
-    BVP_GETTER(bool, isMaxDesignedOperatingTemperatureGreater, BatteryHealthInformationStruct)
+    BVP_GETTER(bool, isMaxDesignedOperatingTemperatureGreater, BatteryHealthInformation)
     {
         return BHI_GREATER == btSpecObject.maxDesignedOperatingTemperature;
     }
 
-    BVP_GETTER(bool, isMaxDesignedOperatingTemperatureLess, BatteryHealthInformationStruct)
+    BVP_GETTER(bool, isMaxDesignedOperatingTemperatureLess, BatteryHealthInformation)
     {
         return BHI_LESS == btSpecObject.maxDesignedOperatingTemperature;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, BatteryHealthInformation, BatteryHealthInformationStruct)
+    BVP_CTORS(BaseValueSpec, BatteryHealthInformation)
 
-    BVP_PARSE(BatteryHealthInformationStruct)
+    BVP_PARSE(BatteryHealthInformation)
     {
         bool result{true};
 
@@ -106,8 +106,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(BatteryHealthInformationStruct)
+    BVP_TO_STRING(BatteryHealthInformation)
     {
+        (void)configuration;
         std::string str;
 
         if (isCycleCountDesignedLifetimePresent(btSpecObject))

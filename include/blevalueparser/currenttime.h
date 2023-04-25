@@ -24,9 +24,9 @@ constexpr uint8_t CTS_FLAG_RESERVED4   = 1 << 7;
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.62 Current Time
-struct CurrentTimeStruct
+BVP_STRUCT(CurrentTime)
 {
-    ExactTime256Struct exactTime256;
+    Struct<ExactTime256> exactTime256;
     // See CTS_FLAG_*
     uint8_t adjustReason{0};
 };
@@ -34,78 +34,78 @@ struct CurrentTimeStruct
 // CTS_SPEC_V1.1.0.pdf
 // Current Time Service v1.1.0
 // 3.1 Current Time
-class CurrentTime final : public BaseValueSpec<CurrentTimeStruct>
+class CurrentTime final : public BaseValueSpec<CurrentTime>
 {
 public:
-    BVP_GETTER(uint16_t, year, CurrentTimeStruct)
+    BVP_GETTER(uint16_t, year, CurrentTime)
     {
         return btSpecObject.exactTime256.dayDateTime.dateTime.year;
     }
 
-    BVP_GETTER(uint8_t, month, CurrentTimeStruct)
+    BVP_GETTER(uint8_t, month, CurrentTime)
     {
         return btSpecObject.exactTime256.dayDateTime.dateTime.month;
     }
 
-    BVP_GETTER(uint8_t, day, CurrentTimeStruct)
+    BVP_GETTER(uint8_t, day, CurrentTime)
     {
         return btSpecObject.exactTime256.dayDateTime.dateTime.day;
     }
 
-    BVP_GETTER(uint8_t, hour, CurrentTimeStruct)
+    BVP_GETTER(uint8_t, hour, CurrentTime)
     {
         return btSpecObject.exactTime256.dayDateTime.dateTime.hour;
     }
 
-    BVP_GETTER(uint8_t, minute, CurrentTimeStruct)
+    BVP_GETTER(uint8_t, minute, CurrentTime)
     {
         return btSpecObject.exactTime256.dayDateTime.dateTime.minute;
     }
 
-    BVP_GETTER(uint8_t, seconds, CurrentTimeStruct)
+    BVP_GETTER(uint8_t, seconds, CurrentTime)
     {
         return btSpecObject.exactTime256.dayDateTime.dateTime.seconds;
     }
 
-    BVP_GETTER(DayOfWeekEnum, dayOfWeek, CurrentTimeStruct)
+    BVP_GETTER(DayOfWeekEnum, dayOfWeek, CurrentTime)
     {
         return btSpecObject.exactTime256.dayDateTime.dayOfWeek.dayOfWeek;
     }
 
-    BVP_GETTER(uint8_t, fractionsOfSeconds, CurrentTimeStruct)
+    BVP_GETTER(uint8_t, fractionsOfSeconds, CurrentTime)
     {
         return btSpecObject.exactTime256.fractions256;
     }
 
-    BVP_GETTER(uint16_t, milliseconds, CurrentTimeStruct)
+    BVP_GETTER(uint16_t, milliseconds, CurrentTime)
     {
         return btSpecObject.exactTime256.fractions256 * 1000 / 256;
     }
 
-    BVP_GETTER(bool, isManuallyAdjusted, CurrentTimeStruct)
+    BVP_GETTER(bool, isManuallyAdjusted, CurrentTime)
     {
         return (btSpecObject.adjustReason & CTS_FLAG_MANUAL) != 0;
     }
 
-    BVP_GETTER(bool, isExternalReference, CurrentTimeStruct)
+    BVP_GETTER(bool, isExternalReference, CurrentTime)
     {
         return (btSpecObject.adjustReason & CTS_FLAG_EXTERNAL) != 0;
     }
 
-    BVP_GETTER(bool, isTZChanged, CurrentTimeStruct)
+    BVP_GETTER(bool, isTZChanged, CurrentTime)
     {
         return (btSpecObject.adjustReason & CTS_FLAG_TZ_CHANGED) != 0;
     }
 
-    BVP_GETTER(bool, isDSTChanged, CurrentTimeStruct)
+    BVP_GETTER(bool, isDSTChanged, CurrentTime)
     {
         return (btSpecObject.adjustReason & CTS_FLAG_DST_CHANGED) != 0;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, CurrentTime, CurrentTimeStruct)
+    BVP_CTORS(BaseValueSpec, CurrentTime)
 
-    BVP_PARSE(CurrentTimeStruct)
+    BVP_PARSE(CurrentTime)
     {
         bool result{true};
 
@@ -120,11 +120,11 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(CurrentTimeStruct)
+    BVP_TO_STRING(CurrentTime)
     {
         std::string str;
 
-        str.append(ExactTime256::toStringInternal(btSpecObject.exactTime256));
+        str.append(ExactTime256::toStringInternal(btSpecObject.exactTime256, configuration));
 
         std::string adjustReason;
         if (isManuallyAdjusted(btSpecObject))

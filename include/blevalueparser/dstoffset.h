@@ -55,26 +55,25 @@ inline DSTOffsetEnum &operator%=(DSTOffsetEnum &lhs, const DSTOffsetEnum &rhs)
     return lhs;
 }
 
-struct DSTOffsetStruct
+BVP_STRUCT(DSTOffset)
 {
     DSTOffsetEnum dstOffset{DSTOffsetEnum::Unknown};
 };
 
-
-class DSTOffset final : public BaseValueSpec<DSTOffsetStruct>
+class DSTOffset final : public BaseValueSpec<DSTOffset>
 {
 public:
     friend class LocalTimeInformation;
 
-    BVP_GETTER(DSTOffsetEnum, dstOffset, DSTOffsetStruct)
+    BVP_GETTER(DSTOffsetEnum, dstOffset, DSTOffset)
     {
         return btSpecObject.dstOffset;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, DSTOffset, DSTOffsetStruct)
+    BVP_CTORS(BaseValueSpec, DSTOffset)
 
-    BVP_PARSE(DSTOffsetStruct)
+    BVP_PARSE(DSTOffset)
     {
         bool result{true};
 
@@ -83,8 +82,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(DSTOffsetStruct)
+    BVP_TO_STRING(DSTOffset)
     {
+        (void)configuration;
         return enumToString(btSpecObject.dstOffset);
     }
 

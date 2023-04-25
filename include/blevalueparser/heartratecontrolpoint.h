@@ -47,7 +47,7 @@ inline HeartRateControlPointEnum &operator%=(HeartRateControlPointEnum &lhs, con
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.111 Heart Rate Control Point
-struct HeartRateControlPointStruct
+BVP_STRUCT(HeartRateControlPoint)
 {
     HeartRateControlPointEnum heartRateControlPoint{HeartRateControlPointEnum::Reserved};
 };
@@ -55,18 +55,18 @@ struct HeartRateControlPointStruct
 // HRS_SPEC_V10.pdf
 // Heart Rate Service v10r00
 // 3.3 Heart Rate Control Point
-class HeartRateControlPoint final : public BaseValueSpec<HeartRateControlPointStruct>
+class HeartRateControlPoint final : public BaseValueSpec<HeartRateControlPoint>
 {
 public:
-    BVP_GETTER(HeartRateControlPointEnum, controlPointType, HeartRateControlPointStruct)
+    BVP_GETTER(HeartRateControlPointEnum, controlPointType, HeartRateControlPoint)
     {
         return btSpecObject.heartRateControlPoint;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, HeartRateControlPoint, HeartRateControlPointStruct)
+    BVP_CTORS(BaseValueSpec, HeartRateControlPoint)
 
-    BVP_PARSE(HeartRateControlPointStruct)
+    BVP_PARSE(HeartRateControlPoint)
     {
         bool result{true};
 
@@ -75,8 +75,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(HeartRateControlPointStruct)
+    BVP_TO_STRING(HeartRateControlPoint)
     {
+        (void)configuration;
         return enumToString(btSpecObject.heartRateControlPoint);
     }
 

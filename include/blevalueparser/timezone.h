@@ -251,25 +251,25 @@ inline TimeZoneEnum &operator%=(TimeZoneEnum &lhs, const TimeZoneEnum &rhs)
     return lhs;
 }
 
-struct TimeZoneStruct
+BVP_STRUCT(TimeZone)
 {
     TimeZoneEnum timeZone{TimeZoneEnum::Unknown};
 };
 
-class TimeZone final : public BaseValueSpec<TimeZoneStruct>
+class TimeZone final : public BaseValueSpec<TimeZone>
 {
 public:
     friend class LocalTimeInformation;
 
-    BVP_GETTER(TimeZoneEnum, timeZone, TimeZoneStruct)
+    BVP_GETTER(TimeZoneEnum, timeZone, TimeZone)
     {
         return btSpecObject.timeZone;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, TimeZone, TimeZoneStruct)
+    BVP_CTORS(BaseValueSpec, TimeZone)
 
-    BVP_PARSE(TimeZoneStruct)
+    BVP_PARSE(TimeZone)
     {
         bool result{true};
 
@@ -278,8 +278,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(TimeZoneStruct)
+    BVP_TO_STRING(TimeZone)
     {
+        (void)configuration;
         return enumToString(btSpecObject.timeZone);
     }
 

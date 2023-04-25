@@ -14,42 +14,42 @@ namespace bvp
 // GATT_Specification_Supplement_v8.pdf
 // 3.71 Date UTC
 
-struct DateUTCStruct
+BVP_STRUCT(DateUTC)
 {
     uint32_t date{0};
 };
 
-class DateUTC final : public BaseValueSpec<DateUTCStruct>
+class DateUTC final : public BaseValueSpec<DateUTC>
 {
 public:
     friend class BatteryInformation;
     friend class EstimatedServiceDate;
 
-    BVP_GETTER(uint64_t, days, DateUTCStruct)
+    BVP_GETTER(uint64_t, days, DateUTC)
     {
         return btSpecObject.date;
     }
 
-    BVP_GETTER(time_t, date, DateUTCStruct)
+    BVP_GETTER(time_t, date, DateUTC)
     {
         return btSpecObject.date * secondsPerDay;
     }
 
-    BVP_GETTER(uint16_t, year, DateUTCStruct)
+    BVP_GETTER(uint16_t, year, DateUTC)
     {
         time_t dt = date(btSpecObject);
         tm *tm = localtime(&dt);
         return 1900 + tm->tm_year;
     }
 
-    BVP_GETTER(uint8_t, month, DateUTCStruct)
+    BVP_GETTER(uint8_t, month, DateUTC)
     {
         time_t dt = date(btSpecObject);
         tm *tm = localtime(&dt);
         return 1 + tm->tm_mon;
     }
 
-    BVP_GETTER(uint8_t, day, DateUTCStruct)
+    BVP_GETTER(uint8_t, day, DateUTC)
     {
         time_t dt = date(btSpecObject);
         tm *tm = localtime(&dt);
@@ -57,9 +57,9 @@ public:
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, DateUTC, DateUTCStruct)
+    BVP_CTORS(BaseValueSpec, DateUTC)
 
-    BVP_PARSE(DateUTCStruct)
+    BVP_PARSE(DateUTC)
     {
         bool result{true};
 
@@ -68,8 +68,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(DateUTCStruct)
+    BVP_TO_STRING(DateUTC)
     {
+        (void)configuration;
         return fmt::format(
             "{:02}.{:02}.{:04} ({} seconds since 1 Jan 1970)",
             day(btSpecObject),

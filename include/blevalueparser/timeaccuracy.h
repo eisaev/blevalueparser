@@ -14,29 +14,29 @@ constexpr uint32_t TMA_MAX = (TMA_LARGER - 1) * TMA_MULTIPLIER;
 // GATT_Specification_Supplement_v8.pdf
 // 3.220 Time Accuracy
 
-struct TimeAccuracyStruct
+BVP_STRUCT(TimeAccuracy)
 {
     uint8_t accuracy{0};
 };
 
-class TimeAccuracy final : public BaseValueSpec<TimeAccuracyStruct>
+class TimeAccuracy final : public BaseValueSpec<TimeAccuracy>
 {
 public:
     friend class ReferenceTimeInformation;
 
-    BVP_GETTER(bool, isLarger, TimeAccuracyStruct)
+    BVP_GETTER(bool, isLarger, TimeAccuracy)
     {
         // A value of 254 means drift is larger than 31.625s.
         return btSpecObject.accuracy == TMA_LARGER;
     }
 
-    BVP_GETTER(bool, isUnknown, TimeAccuracyStruct)
+    BVP_GETTER(bool, isUnknown, TimeAccuracy)
     {
         // A value of 255 means drift is unknown.
         return btSpecObject.accuracy == TMA_UNKNOWN;
     }
 
-    BVP_GETTER(uint16_t, accuracyMs, TimeAccuracyStruct)
+    BVP_GETTER(uint16_t, accuracyMs, TimeAccuracy)
     {
         if (btSpecObject.accuracy >= TMA_LARGER)
         {
@@ -49,9 +49,9 @@ public:
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, TimeAccuracy, TimeAccuracyStruct)
+    BVP_CTORS(BaseValueSpec, TimeAccuracy)
 
-    BVP_PARSE(TimeAccuracyStruct)
+    BVP_PARSE(TimeAccuracy)
     {
         bool result{true};
 
@@ -60,8 +60,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(TimeAccuracyStruct)
+    BVP_TO_STRING(TimeAccuracy)
     {
+        (void)configuration;
         if (isUnknown(btSpecObject))
         {
             return "<Unknown>";

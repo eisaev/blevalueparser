@@ -8,7 +8,7 @@ namespace bvp
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.70 Date Time
-struct DateTimeStruct
+BVP_STRUCT(DateTime)
 {
     uint16_t year{0};
     uint8_t month{0};
@@ -21,47 +21,47 @@ struct DateTimeStruct
 // CTS_SPEC_V1.1.0.pdf
 // Current Time Service v1.1.0
 // 3.1 Date Time
-class DateTime final : public BaseValueSpec<DateTimeStruct>
+class DateTime final : public BaseValueSpec<DateTime>
 {
 public:
     friend class DayDateTime;
     friend class BodyCompositionMeasurement;
     friend class BodyCompositionMeasurementMIBFS;
 
-    BVP_GETTER(uint16_t, year, DateTimeStruct)
+    BVP_GETTER(uint16_t, year, DateTime)
     {
         return btSpecObject.year;
     }
 
-    BVP_GETTER(uint8_t, month, DateTimeStruct)
+    BVP_GETTER(uint8_t, month, DateTime)
     {
         return btSpecObject.month;
     }
 
-    BVP_GETTER(uint8_t, day, DateTimeStruct)
+    BVP_GETTER(uint8_t, day, DateTime)
     {
         return btSpecObject.day;
     }
 
-    BVP_GETTER(uint8_t, hour, DateTimeStruct)
+    BVP_GETTER(uint8_t, hour, DateTime)
     {
         return btSpecObject.hour;
     }
 
-    BVP_GETTER(uint8_t, minute, DateTimeStruct)
+    BVP_GETTER(uint8_t, minute, DateTime)
     {
         return btSpecObject.minute;
     }
 
-    BVP_GETTER(uint8_t, seconds, DateTimeStruct)
+    BVP_GETTER(uint8_t, seconds, DateTime)
     {
         return btSpecObject.seconds;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, DateTime, DateTimeStruct)
+    BVP_CTORS(BaseValueSpec, DateTime)
 
-    BVP_PARSE(DateTimeStruct)
+    BVP_PARSE(DateTime)
     {
         bool result{true};
 
@@ -75,8 +75,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(DateTimeStruct)
+    BVP_TO_STRING(DateTime)
     {
+        (void)configuration;
         return fmt::format(
             "{:02}.{:02}.{:04} {:02}:{:02}:{:02}",
             day(btSpecObject),

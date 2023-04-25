@@ -15,10 +15,10 @@ constexpr uint8_t RTI_MAX_HOURS = RTI_HOURS_PER_DAY - 1;
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.178 Reference Time Information
-struct ReferenceTimeInformationStruct
+BVP_STRUCT(ReferenceTimeInformation)
 {
-    TimeSourceStruct timeSource;
-    TimeAccuracyStruct timeAccuracy;
+    Struct<TimeSource> timeSource;
+    Struct<TimeAccuracy> timeAccuracy;
     uint8_t daysSinceUpdate{0};
     uint8_t hoursSinceUpdate{0};
 };
@@ -26,45 +26,45 @@ struct ReferenceTimeInformationStruct
 // CTS_SPEC_V1.1.0.pdf
 // Current Time Service v1.1.0
 // 3.3 Reference Time Information
-class ReferenceTimeInformation final : public BaseValueSpec<ReferenceTimeInformationStruct>
+class ReferenceTimeInformation final : public BaseValueSpec<ReferenceTimeInformation>
 {
 public:
-    BVP_GETTER(TimeSourceEnum, timeSource, ReferenceTimeInformationStruct)
+    BVP_GETTER(TimeSourceEnum, timeSource, ReferenceTimeInformation)
     {
         return btSpecObject.timeSource.timeSource;
     }
 
-    BVP_GETTER(bool, isTimeAccuracyLarger, ReferenceTimeInformationStruct)
+    BVP_GETTER(bool, isTimeAccuracyLarger, ReferenceTimeInformation)
     {
         return TimeAccuracy::isLarger(btSpecObject.timeAccuracy);
     }
 
-    BVP_GETTER(bool, isTimeAccuracyUnknown, ReferenceTimeInformationStruct)
+    BVP_GETTER(bool, isTimeAccuracyUnknown, ReferenceTimeInformation)
     {
         return TimeAccuracy::isUnknown(btSpecObject.timeAccuracy);
     }
 
-    BVP_GETTER(uint16_t, timeAccuracyMs, ReferenceTimeInformationStruct)
+    BVP_GETTER(uint16_t, timeAccuracyMs, ReferenceTimeInformation)
     {
         return TimeAccuracy::accuracyMs(btSpecObject.timeAccuracy);
     }
 
-    BVP_GETTER(uint8_t, daysSinceUpdate, ReferenceTimeInformationStruct)
+    BVP_GETTER(uint8_t, daysSinceUpdate, ReferenceTimeInformation)
     {
         return btSpecObject.daysSinceUpdate;
     }
 
-    BVP_GETTER(uint8_t, hoursSinceUpdate, ReferenceTimeInformationStruct)
+    BVP_GETTER(uint8_t, hoursSinceUpdate, ReferenceTimeInformation)
     {
         return btSpecObject.hoursSinceUpdate;
     }
 
-    BVP_GETTER(bool, isSinceUpdateGreater, ReferenceTimeInformationStruct)
+    BVP_GETTER(bool, isSinceUpdateGreater, ReferenceTimeInformation)
     {
         return RTI_GREATER == (daysSinceUpdate(btSpecObject) & hoursSinceUpdate(btSpecObject));
     }
 
-    BVP_GETTER(uint32_t, timeSinceUpdateH, ReferenceTimeInformationStruct)
+    BVP_GETTER(uint32_t, timeSinceUpdateH, ReferenceTimeInformation)
     {
         if (isSinceUpdateGreater(btSpecObject))
         {
@@ -75,9 +75,9 @@ public:
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, ReferenceTimeInformation, ReferenceTimeInformationStruct)
+    BVP_CTORS(BaseValueSpec, ReferenceTimeInformation)
 
-    BVP_PARSE(ReferenceTimeInformationStruct)
+    BVP_PARSE(ReferenceTimeInformation)
     {
         bool result{true};
 
@@ -104,15 +104,15 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(ReferenceTimeInformationStruct)
+    BVP_TO_STRING(ReferenceTimeInformation)
     {
         std::string str;
 
         str.append("Src: ");
-        str.append(TimeSource::toStringInternal(btSpecObject.timeSource));
+        str.append(TimeSource::toStringInternal(btSpecObject.timeSource, configuration));
 
         str.append(", Drift: ");
-        str.append(TimeAccuracy::toStringInternal(btSpecObject.timeAccuracy));
+        str.append(TimeAccuracy::toStringInternal(btSpecObject.timeAccuracy, configuration));
 
         str.append(", Updated: ");
         if (isSinceUpdateGreater(btSpecObject))

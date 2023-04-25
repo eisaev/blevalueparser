@@ -12,37 +12,37 @@ constexpr uint8_t UAS_MAX = UAS_GREATER - 1;
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.238 Unread Alert Status
-struct UnreadAlertStatusStruct
+BVP_STRUCT(UnreadAlertStatus)
 {
-    AlertCategoryIDStruct categoryID;
+    Struct<AlertCategoryID> categoryID;
     uint8_t unreadCount{0};
 };
 
 // ANS_SPEC_V10.pdf
 // Alert Notification Service v10r00
 // 3.4 Unread Alert Status
-class UnreadAlertStatus final : public BaseValueSpec<UnreadAlertStatusStruct>
+class UnreadAlertStatus final : public BaseValueSpec<UnreadAlertStatus>
 {
 public:
-    BVP_GETTER(AlertCategoryIDEnum, categoryID, UnreadAlertStatusStruct)
+    BVP_GETTER(AlertCategoryIDEnum, categoryID, UnreadAlertStatus)
     {
         return btSpecObject.categoryID.categoryID;
     }
 
-    BVP_GETTER(uint8_t, unreadCount, UnreadAlertStatusStruct)
+    BVP_GETTER(uint8_t, unreadCount, UnreadAlertStatus)
     {
         return btSpecObject.unreadCount;
     }
 
-    BVP_GETTER(bool, isUnreadCountGreater, UnreadAlertStatusStruct)
+    BVP_GETTER(bool, isUnreadCountGreater, UnreadAlertStatus)
     {
         return UAS_GREATER == btSpecObject.unreadCount;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, UnreadAlertStatus, UnreadAlertStatusStruct)
+    BVP_CTORS(BaseValueSpec, UnreadAlertStatus)
 
-    BVP_PARSE(UnreadAlertStatusStruct)
+    BVP_PARSE(UnreadAlertStatus)
     {
         bool result{true};
 
@@ -52,8 +52,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(UnreadAlertStatusStruct)
+    BVP_TO_STRING(UnreadAlertStatus)
     {
+        (void)configuration;
         std::string str;
 
         str.append("Category: ");

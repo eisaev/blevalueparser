@@ -6,23 +6,23 @@
 namespace bvp
 {
 
-struct TextStringStruct
+BVP_STRUCT(TextString)
 {
     std::string textString;
 };
 
-class TextString final : public BaseValueSpec<TextStringStruct>
+class TextString final : public BaseValueSpec<TextString>
 {
 public:
-    BVP_GETTER(std::string, textString, TextStringStruct)
+    BVP_GETTER(std::string, textString, TextString)
     {
         return btSpecObject.textString;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, TextString, TextStringStruct)
+    BVP_CTORS(BaseValueSpec, TextString)
 
-    BVP_PARSE(TextStringStruct)
+    BVP_PARSE(TextString)
     {
         bool result{true};
 
@@ -31,8 +31,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(TextStringStruct)
+    BVP_TO_STRING(TextString)
     {
+        (void)configuration;
         return btSpecObject.textString;
     }
 

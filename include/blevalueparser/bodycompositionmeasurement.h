@@ -6,16 +6,18 @@
 namespace bvp
 {
 
+BVP_STRUCT_INHERITED(BodyCompositionMeasurement, BodyCompositionMeasurementBaseStruct) {};
+
 // BCS_V1.0.0.pdf
 // Body Composition Service v1.0.0
 // 3.2 BodyCompositionMeasurement
 // Standard
-class BodyCompositionMeasurement final : public BodyCompositionMeasurementBase
+class BodyCompositionMeasurement final : public BodyCompositionMeasurementBase<BodyCompositionMeasurement>
 {
 private:
-    BVP_CTORS(BodyCompositionMeasurementBase, BodyCompositionMeasurement, BodyCompositionMeasurementStruct)
+    BVP_CTORS(BodyCompositionMeasurementBase<BodyCompositionMeasurement>, BodyCompositionMeasurement)
 
-    BVP_PARSE(BodyCompositionMeasurementStruct)
+    BVP_PARSE(BodyCompositionMeasurement)
     {
         bool result{true};
 
@@ -102,7 +104,7 @@ private:
         return result;
     }
 
-    BVP_TO_STRING_CONF(BodyCompositionMeasurementStruct)
+    BVP_TO_STRING(BodyCompositionMeasurement)
     {
         std::string str;
 
@@ -120,13 +122,13 @@ private:
         if (isTimeStampPresent(btSpecObject))
         {
             str.append(", TimeStamp: ");
-            str.append(DateTime::toStringInternal(btSpecObject.timeStamp));
+            str.append(DateTime::toStringInternal(btSpecObject.timeStamp, configuration));
         }
 
         if (isUserIDPresent(btSpecObject))
         {
             str.append(", UserID: ");
-            str.append(UserIndex::toStringInternal(btSpecObject.userID));
+            str.append(UserIndex::toStringInternal(btSpecObject.userID, configuration));
         }
 
         if (isBasalMetabolismPresent(btSpecObject))

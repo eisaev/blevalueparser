@@ -118,12 +118,12 @@ inline BatteryChemistryEnum &operator%=(BatteryChemistryEnum &lhs, const Battery
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.26 Battery Information
-struct BatteryInformationStruct
+BVP_STRUCT(BatteryInformation)
 {
     uint16_t flags{0};
     uint8_t batteryFeatures{0};
-    DateUTCStruct batteryManufactureDate;
-    DateUTCStruct batteryExpirationDate;
+    Struct<DateUTC> batteryManufactureDate;
+    Struct<DateUTC> batteryExpirationDate;
     MedFloat16 batteryDesignedCapacity;  // org.bluetooth.unit.energy.kilowatt_hour
     MedFloat16 batteryLowEnergy;  // org.bluetooth.unit.energy.kilowatt_hour
     MedFloat16 batteryCriticalEnergy;  // org.bluetooth.unit.energy.kilowatt_hour
@@ -132,103 +132,103 @@ struct BatteryInformationStruct
     uint8_t batteryAggregationGroup{0};
 };
 
-class BatteryInformation final : public BaseValueSpec<BatteryInformationStruct>
+class BatteryInformation final : public BaseValueSpec<BatteryInformation>
 {
 public:
-    BVP_GETTER(bool, isBatteryManufactureDatePresent, BatteryInformationStruct)
+    BVP_GETTER(bool, isBatteryManufactureDatePresent, BatteryInformation)
     {
         return (btSpecObject.flags & BAI_FLAG_BATTERY_MANUFACTURE_DATE_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isBatteryExpirationDatePresent, BatteryInformationStruct)
+    BVP_GETTER(bool, isBatteryExpirationDatePresent, BatteryInformation)
     {
         return (btSpecObject.flags & BAI_FLAG_BATTERY_EXPIRATION_DATE_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isBatteryDesignedCapacityPresent, BatteryInformationStruct)
+    BVP_GETTER(bool, isBatteryDesignedCapacityPresent, BatteryInformation)
     {
         return (btSpecObject.flags & BAI_FLAG_BATTERY_DESIGNED_CAPACITY_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isBatteryLowEnergyPresent, BatteryInformationStruct)
+    BVP_GETTER(bool, isBatteryLowEnergyPresent, BatteryInformation)
     {
         return (btSpecObject.flags & BAI_FLAG_BATTERY_LOW_ENERGY_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isBatteryCriticalEnergyPresent, BatteryInformationStruct)
+    BVP_GETTER(bool, isBatteryCriticalEnergyPresent, BatteryInformation)
     {
         return (btSpecObject.flags & BAI_FLAG_BATTERY_CRITICAL_ENERGY_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isBatteryChemistryPresent, BatteryInformationStruct)
+    BVP_GETTER(bool, isBatteryChemistryPresent, BatteryInformation)
     {
         return (btSpecObject.flags & BAI_FLAG_BATTERY_CHEMISTRY_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isNominalVoltagePresent, BatteryInformationStruct)
+    BVP_GETTER(bool, isNominalVoltagePresent, BatteryInformation)
     {
         return (btSpecObject.flags & BAI_FLAG_NOMINAL_VOLTAGE_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isBatteryAggregationGroupPresent, BatteryInformationStruct)
+    BVP_GETTER(bool, isBatteryAggregationGroupPresent, BatteryInformation)
     {
         return (btSpecObject.flags & BAI_FLAG_BATTERY_AGGREGATION_GROUP_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isBatteryReplaceable, BatteryInformationStruct)
+    BVP_GETTER(bool, isBatteryReplaceable, BatteryInformation)
     {
         return (btSpecObject.batteryFeatures & BAI_FEATURE_BATTERY_REPLACEABLE) != 0;
     }
 
-    BVP_GETTER(bool, isBatteryRechargeable, BatteryInformationStruct)
+    BVP_GETTER(bool, isBatteryRechargeable, BatteryInformation)
     {
         return (btSpecObject.batteryFeatures & BAI_FEATURE_BATTERY_RECHARGEABLE) != 0;
     }
 
-    BVP_GETTER(DateUTCStruct, batteryManufactureDate, BatteryInformationStruct)
+    BVP_GETTER(Struct<DateUTC>, batteryManufactureDate, BatteryInformation)
     {
         return btSpecObject.batteryManufactureDate;
     }
 
-    BVP_GETTER(DateUTCStruct, batteryExpirationDate, BatteryInformationStruct)
+    BVP_GETTER(Struct<DateUTC>, batteryExpirationDate, BatteryInformation)
     {
         return btSpecObject.batteryExpirationDate;
     }
 
-    BVP_GETTER(MedFloat16, batteryDesignedCapacity, BatteryInformationStruct)
+    BVP_GETTER(MedFloat16, batteryDesignedCapacity, BatteryInformation)
     {
         return btSpecObject.batteryDesignedCapacity;
     }
 
-    BVP_GETTER(MedFloat16, batteryLowEnergy, BatteryInformationStruct)
+    BVP_GETTER(MedFloat16, batteryLowEnergy, BatteryInformation)
     {
         return btSpecObject.batteryLowEnergy;
     }
 
-    BVP_GETTER(MedFloat16, batteryCriticalEnergy, BatteryInformationStruct)
+    BVP_GETTER(MedFloat16, batteryCriticalEnergy, BatteryInformation)
     {
         return btSpecObject.batteryCriticalEnergy;
     }
 
-    BVP_GETTER(BatteryChemistryEnum, batteryChemistry, BatteryInformationStruct)
+    BVP_GETTER(BatteryChemistryEnum, batteryChemistry, BatteryInformation)
     {
         return btSpecObject.batteryChemistry;
     }
 
-    BVP_GETTER(MedFloat16, nominalVoltage, BatteryInformationStruct)
+    BVP_GETTER(MedFloat16, nominalVoltage, BatteryInformation)
     {
         return btSpecObject.nominalVoltage;
     }
 
-    BVP_GETTER(uint8_t, batteryAggregationGroup, BatteryInformationStruct)
+    BVP_GETTER(uint8_t, batteryAggregationGroup, BatteryInformation)
     {
         return btSpecObject.batteryAggregationGroup;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, BatteryInformation, BatteryInformationStruct)
+    BVP_CTORS(BaseValueSpec, BatteryInformation)
 
-    BVP_PARSE(BatteryInformationStruct)
+    BVP_PARSE(BatteryInformation)
     {
         bool result{true};
 
@@ -271,7 +271,7 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(BatteryInformationStruct)
+    BVP_TO_STRING(BatteryInformation)
     {
         std::string str;
 
@@ -284,12 +284,12 @@ private:
         if (isBatteryManufactureDatePresent(btSpecObject))
         {
             str.append(", BatteryManufactureDate: ");
-            str.append(DateUTC::toStringInternal(btSpecObject.batteryManufactureDate));
+            str.append(DateUTC::toStringInternal(btSpecObject.batteryManufactureDate, configuration));
         }
         if (isBatteryExpirationDatePresent(btSpecObject))
         {
             str.append(", BatteryExpirationDate: ");
-            str.append(DateUTC::toStringInternal(btSpecObject.batteryExpirationDate));
+            str.append(DateUTC::toStringInternal(btSpecObject.batteryExpirationDate, configuration));
         }
         if (isBatteryDesignedCapacityPresent(btSpecObject))
         {

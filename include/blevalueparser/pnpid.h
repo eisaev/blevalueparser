@@ -57,7 +57,7 @@ struct VendorIdSourceStruct
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.169 PnP ID
-struct PnPIDStruct
+BVP_STRUCT(PnPID)
 {
     VendorIdSourceStruct vendorIdSource;
     uint16_t vendorId{0};
@@ -68,43 +68,43 @@ struct PnPIDStruct
 // DIS_SPEC_V11r00.pdf
 // Device Information Service v11r00
 // 3.9 PnPID
-class PnPID final : public BaseValueSpec<PnPIDStruct>
+class PnPID final : public BaseValueSpec<PnPID>
 {
 public:
-    BVP_GETTER(VendorIdSourceEnum, vendorIdSource, PnPIDStruct)
+    BVP_GETTER(VendorIdSourceEnum, vendorIdSource, PnPID)
     {
         return btSpecObject.vendorIdSource.vendorIdSource;
     }
 
-    BVP_GETTER(uint16_t, vendorId, PnPIDStruct)
+    BVP_GETTER(uint16_t, vendorId, PnPID)
     {
         return btSpecObject.vendorId;
     }
 
-    BVP_GETTER(uint16_t, productId, PnPIDStruct)
+    BVP_GETTER(uint16_t, productId, PnPID)
     {
         return btSpecObject.productId;
     }
 
-    BVP_GETTER(uint8_t, majorVersion, PnPIDStruct)
+    BVP_GETTER(uint8_t, majorVersion, PnPID)
     {
         return btSpecObject.productVersion >> 8;
     }
 
-    BVP_GETTER(uint8_t, minorVersion, PnPIDStruct)
+    BVP_GETTER(uint8_t, minorVersion, PnPID)
     {
         return btSpecObject.productVersion >> 4 & 0b1111;
     }
 
-    BVP_GETTER(uint8_t, subMinorVersion, PnPIDStruct)
+    BVP_GETTER(uint8_t, subMinorVersion, PnPID)
     {
         return btSpecObject.productVersion & 0b1111;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, PnPID, PnPIDStruct)
+    BVP_CTORS(BaseValueSpec, PnPID)
 
-    BVP_PARSE(PnPIDStruct)
+    BVP_PARSE(PnPID)
     {
         bool result{true};
 
@@ -123,8 +123,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(PnPIDStruct)
+    BVP_TO_STRING(PnPID)
     {
+        (void)configuration;
         std::string str;
 
         str.append("(");

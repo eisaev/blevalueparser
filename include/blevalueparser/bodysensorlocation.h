@@ -65,7 +65,7 @@ inline BodySensorLocationEnum &operator%=(BodySensorLocationEnum &lhs, const Bod
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.35 Body Sensor Location
-struct BodySensorLocationStruct
+BVP_STRUCT(BodySensorLocation)
 {
     BodySensorLocationEnum bodySensorLocation{BodySensorLocationEnum::Unknown};
 };
@@ -73,18 +73,18 @@ struct BodySensorLocationStruct
 // HRS_SPEC_V10.pdf
 // Heart Rate Service v10r00
 // 3.2 BodySensorLocation
-class BodySensorLocation final : public BaseValueSpec<BodySensorLocationStruct>
+class BodySensorLocation final : public BaseValueSpec<BodySensorLocation>
 {
 public:
-    BVP_GETTER(BodySensorLocationEnum, location, BodySensorLocationStruct)
+    BVP_GETTER(BodySensorLocationEnum, location, BodySensorLocation)
     {
         return btSpecObject.bodySensorLocation;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, BodySensorLocation, BodySensorLocationStruct)
+    BVP_CTORS(BaseValueSpec, BodySensorLocation)
 
-    BVP_PARSE(BodySensorLocationStruct)
+    BVP_PARSE(BodySensorLocation)
     {
         bool result{true};
 
@@ -93,8 +93,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(BodySensorLocationStruct)
+    BVP_TO_STRING(BodySensorLocation)
     {
+        (void)configuration;
         return enumToString(btSpecObject.bodySensorLocation);
     }
 
