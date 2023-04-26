@@ -9,7 +9,7 @@ on:
 jobs:
   coverage:
     name: Code Coverage Check
-    runs-on: [ubuntu-20.04, self-hosted]
+    runs-on: [ubuntu-20.04, self-hosted, cov]
 
     env:
       COVERAGE_PATH: ${{github.workspace}}/build/coverage
