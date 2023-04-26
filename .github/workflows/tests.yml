@@ -12,11 +12,11 @@ jobs:
       matrix:
         BUILD_TYPE: [Debug, MinSizeRel]
         RUNNER:
-          - RUNS_ON: [ubuntu-20.04, self-hosted]
+          - RUNS_ON: [ubuntu-20.04, self-hosted, test]
             OS: ubuntu-20.04
             CLANG_TIDY: '-DCMAKE_CXX_CLANG_TIDY="clang-tidy;--export-fixes=clang-tidy.fixes;--fix;--warnings-as-errors=*"'
             TESTS_DIR: build/tests
-          - RUNS_ON: [macos-13, self-hosted]
+          - RUNS_ON: [macos-13, self-hosted, test]
             OS: macos-13
             CLANG_TIDY: ''
             TESTS_DIR: build/tests/bvptest.app/Contents/MacOS
