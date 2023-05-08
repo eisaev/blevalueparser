@@ -21,7 +21,7 @@ constexpr uint8_t HRS_FLAG_RESERVER3       = 1 << 7;
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.113 Heart Rate Measurement
-struct HeartRateMeasurementStruct
+BVP_STRUCT(HeartRateMeasurement)
 {
     uint8_t flags{0};
     uint16_t heartRate{0};  // org.bluetooth.unit.period.beats_per_minute
@@ -32,45 +32,45 @@ struct HeartRateMeasurementStruct
 // HRS_SPEC_V10.pdf
 // Heart Rate Service v10r00
 // 3.1 Heart Rate Measurement
-class HeartRateMeasurement final : public BaseValueSpec<HeartRateMeasurementStruct>
+class HeartRateMeasurement final : public BaseValueSpec<HeartRateMeasurement>
 {
 public:
-    BVP_GETTER(bool, isContactSupported, HeartRateMeasurementStruct)
+    BVP_GETTER(bool, isContactSupported, HeartRateMeasurement)
     {
         return (btSpecObject.flags & HRS_FLAG_CONTACT_SUPPORT) != 0;
     }
 
-    BVP_GETTER(bool, isContacted, HeartRateMeasurementStruct)
+    BVP_GETTER(bool, isContacted, HeartRateMeasurement)
     {
         return (btSpecObject.flags & HRS_FLAG_CONTACT_STATUS) != 0;
     }
 
-    BVP_GETTER(bool, isWideFormat, HeartRateMeasurementStruct)
+    BVP_GETTER(bool, isWideFormat, HeartRateMeasurement)
     {
         return (btSpecObject.flags & HRS_FLAG_VALUE_FORMAT) != 0;
     }
 
-    BVP_GETTER(uint16_t, heartRate, HeartRateMeasurementStruct)
+    BVP_GETTER(uint16_t, heartRate, HeartRateMeasurement)
     {
         return btSpecObject.heartRate;
     }
 
-    BVP_GETTER(bool, hasEnergyExpended, HeartRateMeasurementStruct)
+    BVP_GETTER(bool, hasEnergyExpended, HeartRateMeasurement)
     {
         return (btSpecObject.flags & HRS_FLAG_ENERGY_EXPENDED) != 0;
     }
 
-    BVP_GETTER(uint16_t, energyExpended, HeartRateMeasurementStruct)
+    BVP_GETTER(uint16_t, energyExpended, HeartRateMeasurement)
     {
         return btSpecObject.energyExpended;
     }
 
-    BVP_GETTER(bool, hasRRIntervals, HeartRateMeasurementStruct)
+    BVP_GETTER(bool, hasRRIntervals, HeartRateMeasurement)
     {
         return (btSpecObject.flags & HRS_FLAG_RR_INTERVALS) != 0;
     }
 
-    BVP_GETTER(std::vector<uint16_t>, rrIntervals, HeartRateMeasurementStruct)
+    BVP_GETTER(std::vector<uint16_t>, rrIntervals, HeartRateMeasurement)
     {
         std::vector<uint16_t> result;
         result.reserve(btSpecObject.rrIntervals.size());
@@ -85,9 +85,9 @@ public:
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, HeartRateMeasurement, HeartRateMeasurementStruct)
+    BVP_CTORS(BaseValueSpec, HeartRateMeasurement)
 
-    BVP_PARSE(HeartRateMeasurementStruct)
+    BVP_PARSE(HeartRateMeasurement)
     {
         bool result{true};
 
@@ -133,8 +133,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(HeartRateMeasurementStruct)
+    BVP_TO_STRING(HeartRateMeasurement)
     {
+        (void)configuration;
         std::string str;
 
         if (isContactSupported(btSpecObject))

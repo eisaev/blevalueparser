@@ -26,7 +26,7 @@ constexpr uint8_t BTS_FLAG_RESERVED6                                = 1 << 7;
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.29 Battery Time Status
-struct BatteryTimeStatusStruct
+BVP_STRUCT(BatteryTimeStatus)
 {
     uint8_t flags{0};
     uint32_t timeUntilDischarged{0};  // org.bluetooth.unit.time.minute
@@ -34,68 +34,68 @@ struct BatteryTimeStatusStruct
     uint32_t timeUntilRecharged{0};  // org.bluetooth.unit.time.minute
 };
 
-class BatteryTimeStatus final : public BaseValueSpec<BatteryTimeStatusStruct>
+class BatteryTimeStatus final : public BaseValueSpec<BatteryTimeStatus>
 {
 public:
-    BVP_GETTER(bool, isTimeUntilDischargedOnStandbyPresent, BatteryTimeStatusStruct)
+    BVP_GETTER(bool, isTimeUntilDischargedOnStandbyPresent, BatteryTimeStatus)
     {
         return (btSpecObject.flags & BTS_FLAG_TIME_UNTIL_DISCHARGED_ON_STANDBY_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isTimeUntilRechargedPresent, BatteryTimeStatusStruct)
+    BVP_GETTER(bool, isTimeUntilRechargedPresent, BatteryTimeStatus)
     {
         return (btSpecObject.flags & BTS_FLAG_TIME_UNTIL_RECHARGED_PRESENT) != 0;
     }
 
-    BVP_GETTER(uint32_t, timeUntilDischarged, BatteryTimeStatusStruct)
+    BVP_GETTER(uint32_t, timeUntilDischarged, BatteryTimeStatus)
     {
         return btSpecObject.timeUntilDischarged;
     }
 
-    BVP_GETTER(uint32_t, timeUntilDischargedOnStandby, BatteryTimeStatusStruct)
+    BVP_GETTER(uint32_t, timeUntilDischargedOnStandby, BatteryTimeStatus)
     {
         return btSpecObject.timeUntilDischargedOnStandby;
     }
 
-    BVP_GETTER(uint32_t, timeUntilRecharged, BatteryTimeStatusStruct)
+    BVP_GETTER(uint32_t, timeUntilRecharged, BatteryTimeStatus)
     {
         return btSpecObject.timeUntilRecharged;
     }
 
-    BVP_GETTER(bool, isTimeUntilDischargedUnknown, BatteryTimeStatusStruct)
+    BVP_GETTER(bool, isTimeUntilDischargedUnknown, BatteryTimeStatus)
     {
         return BTS_UNKNOWN == btSpecObject.timeUntilDischarged;
     }
 
-    BVP_GETTER(bool, isTimeUntilDischargedOnStandbyUnknown, BatteryTimeStatusStruct)
+    BVP_GETTER(bool, isTimeUntilDischargedOnStandbyUnknown, BatteryTimeStatus)
     {
         return BTS_UNKNOWN == btSpecObject.timeUntilDischargedOnStandby;
     }
 
-    BVP_GETTER(bool, isTimeUntilRechargedUnknown, BatteryTimeStatusStruct)
+    BVP_GETTER(bool, isTimeUntilRechargedUnknown, BatteryTimeStatus)
     {
         return BTS_UNKNOWN == btSpecObject.timeUntilRecharged;
     }
 
-    BVP_GETTER(bool, isTimeUntilDischargedGreater, BatteryTimeStatusStruct)
+    BVP_GETTER(bool, isTimeUntilDischargedGreater, BatteryTimeStatus)
     {
         return BTS_GREATER == btSpecObject.timeUntilDischarged;
     }
 
-    BVP_GETTER(bool, isTimeUntilDischargedOnStandbyGreater, BatteryTimeStatusStruct)
+    BVP_GETTER(bool, isTimeUntilDischargedOnStandbyGreater, BatteryTimeStatus)
     {
         return BTS_GREATER == btSpecObject.timeUntilDischargedOnStandby;
     }
 
-    BVP_GETTER(bool, isTimeUntilRechargedGreater, BatteryTimeStatusStruct)
+    BVP_GETTER(bool, isTimeUntilRechargedGreater, BatteryTimeStatus)
     {
         return BTS_GREATER == btSpecObject.timeUntilRecharged;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, BatteryTimeStatus, BatteryTimeStatusStruct)
+    BVP_CTORS(BaseValueSpec, BatteryTimeStatus)
 
-    BVP_PARSE(BatteryTimeStatusStruct)
+    BVP_PARSE(BatteryTimeStatus)
     {
         bool result{true};
 
@@ -114,8 +114,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(BatteryTimeStatusStruct)
+    BVP_TO_STRING(BatteryTimeStatus)
     {
+        (void)configuration;
         std::string str;
 
         str.append("TimeUntilDischarged: ");

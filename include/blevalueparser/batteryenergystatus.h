@@ -19,7 +19,7 @@ constexpr uint8_t BES_FLAG_RESERVED2                                = 1 << 7;
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.23 Battery Energy Status
-struct BatteryEnergyStatusStruct
+BVP_STRUCT(BatteryEnergyStatus)
 {
     uint8_t flags{0};
     MedFloat16 externalSourcePower;  // org.bluetooth.unit.power.watt
@@ -30,73 +30,73 @@ struct BatteryEnergyStatusStruct
     MedFloat16 availableEnergyAtLastCharge;  // org.bluetooth.unit.energy.kilowatt_hour
 };
 
-class BatteryEnergyStatus final : public BaseValueSpec<BatteryEnergyStatusStruct>
+class BatteryEnergyStatus final : public BaseValueSpec<BatteryEnergyStatus>
 {
 public:
-    BVP_GETTER(bool, isExternalSourcePowerPresent, BatteryEnergyStatusStruct)
+    BVP_GETTER(bool, isExternalSourcePowerPresent, BatteryEnergyStatus)
     {
         return (btSpecObject.flags & BES_FLAG_EXTERNAL_SOURCE_POWER_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isPresentVoltagePresent, BatteryEnergyStatusStruct)
+    BVP_GETTER(bool, isPresentVoltagePresent, BatteryEnergyStatus)
     {
         return (btSpecObject.flags & BES_FLAG_PRESENT_VOLTAGE_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isAvailableEnergyPresent, BatteryEnergyStatusStruct)
+    BVP_GETTER(bool, isAvailableEnergyPresent, BatteryEnergyStatus)
     {
         return (btSpecObject.flags & BES_FLAG_AVAILABLE_ENERGY_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isAvailableBatteryCapacityPresent, BatteryEnergyStatusStruct)
+    BVP_GETTER(bool, isAvailableBatteryCapacityPresent, BatteryEnergyStatus)
     {
         return (btSpecObject.flags & BES_FLAG_AVAILABLE_BATTERY_CAPACITY_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isChargeRatePresent, BatteryEnergyStatusStruct)
+    BVP_GETTER(bool, isChargeRatePresent, BatteryEnergyStatus)
     {
         return (btSpecObject.flags & BES_FLAG_CHARGE_RATE_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isAvailableEnergyAtLastChargePresent, BatteryEnergyStatusStruct)
+    BVP_GETTER(bool, isAvailableEnergyAtLastChargePresent, BatteryEnergyStatus)
     {
         return (btSpecObject.flags & BES_FLAG_AVAILABLE_ENERGY_AT_LAST_CHARGE_PRESENT) != 0;
     }
 
-    BVP_GETTER(MedFloat16, externalSourcePower, BatteryEnergyStatusStruct)
+    BVP_GETTER(MedFloat16, externalSourcePower, BatteryEnergyStatus)
     {
         return btSpecObject.externalSourcePower;
     }
 
-    BVP_GETTER(MedFloat16, presentVoltage, BatteryEnergyStatusStruct)
+    BVP_GETTER(MedFloat16, presentVoltage, BatteryEnergyStatus)
     {
         return btSpecObject.presentVoltage;
     }
 
-    BVP_GETTER(MedFloat16, availableEnergy, BatteryEnergyStatusStruct)
+    BVP_GETTER(MedFloat16, availableEnergy, BatteryEnergyStatus)
     {
         return btSpecObject.availableEnergy;
     }
 
-    BVP_GETTER(MedFloat16, availableBatteryCapacity, BatteryEnergyStatusStruct)
+    BVP_GETTER(MedFloat16, availableBatteryCapacity, BatteryEnergyStatus)
     {
         return btSpecObject.availableBatteryCapacity;
     }
 
-    BVP_GETTER(MedFloat16, chargeRate, BatteryEnergyStatusStruct)
+    BVP_GETTER(MedFloat16, chargeRate, BatteryEnergyStatus)
     {
         return btSpecObject.chargeRate;
     }
 
-    BVP_GETTER(MedFloat16, availableEnergyAtLastCharge, BatteryEnergyStatusStruct)
+    BVP_GETTER(MedFloat16, availableEnergyAtLastCharge, BatteryEnergyStatus)
     {
         return btSpecObject.availableEnergyAtLastCharge;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, BatteryEnergyStatus, BatteryEnergyStatusStruct)
+    BVP_CTORS(BaseValueSpec, BatteryEnergyStatus)
 
-    BVP_PARSE(BatteryEnergyStatusStruct)
+    BVP_PARSE(BatteryEnergyStatus)
     {
         bool result{true};
 
@@ -130,8 +130,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(BatteryEnergyStatusStruct)
+    BVP_TO_STRING(BatteryEnergyStatus)
     {
+        (void)configuration;
         std::string str;
 
         if (isExternalSourcePowerPresent(btSpecObject))

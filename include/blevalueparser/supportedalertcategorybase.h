@@ -13,7 +13,7 @@ namespace bvp
 // 3.209 Supported Unread Alert Category
 struct SupportedAlertCategoryBaseStruct
 {
-    AlertCategoryIDBitMaskStruct categoryIDBitMask;
+    Struct<AlertCategoryIDBitMask> categoryIDBitMask;
 };
 
 // ANS_SPEC_V10.pdf
@@ -21,69 +21,70 @@ struct SupportedAlertCategoryBaseStruct
 // 3.1 Supported New Alert Category
 // &&
 // 3.3 Supported Unread Alert Category
-class SupportedAlertCategoryBase : public BaseValueSpec<SupportedAlertCategoryBaseStruct>
+template<class T>
+class SupportedAlertCategoryBase : public BaseValueSpec<T>
 {
 public:
-    BVP_GETTER(bool, isSimpleAlertSupported, SupportedAlertCategoryBaseStruct)
+    BVP_GETTER(bool, isSimpleAlertSupported, T)
     {
         return AlertCategoryIDBitMask::hasSimpleAlert(btSpecObject.categoryIDBitMask);
     }
 
-    BVP_GETTER(bool, isEmailSupported, SupportedAlertCategoryBaseStruct)
+    BVP_GETTER(bool, isEmailSupported, T)
     {
         return AlertCategoryIDBitMask::hasEmail(btSpecObject.categoryIDBitMask);
     }
 
-    BVP_GETTER(bool, isNewsSupported, SupportedAlertCategoryBaseStruct)
+    BVP_GETTER(bool, isNewsSupported, T)
     {
         return AlertCategoryIDBitMask::hasNews(btSpecObject.categoryIDBitMask);
     }
 
-    BVP_GETTER(bool, isCallSupported, SupportedAlertCategoryBaseStruct)
+    BVP_GETTER(bool, isCallSupported, T)
     {
         return AlertCategoryIDBitMask::hasCall(btSpecObject.categoryIDBitMask);
     }
 
-    BVP_GETTER(bool, isMissedCallSupported, SupportedAlertCategoryBaseStruct)
+    BVP_GETTER(bool, isMissedCallSupported, T)
     {
         return AlertCategoryIDBitMask::hasMissedCall(btSpecObject.categoryIDBitMask);
     }
 
-    BVP_GETTER(bool, isSMSMMSSupported, SupportedAlertCategoryBaseStruct)
+    BVP_GETTER(bool, isSMSMMSSupported, T)
     {
         return AlertCategoryIDBitMask::hasSMSMMS(btSpecObject.categoryIDBitMask);
     }
 
-    BVP_GETTER(bool, isVoiceMailSupported, SupportedAlertCategoryBaseStruct)
+    BVP_GETTER(bool, isVoiceMailSupported, T)
     {
         return AlertCategoryIDBitMask::hasVoiceMail(btSpecObject.categoryIDBitMask);
     }
 
-    BVP_GETTER(bool, isScheduleSupported, SupportedAlertCategoryBaseStruct)
+    BVP_GETTER(bool, isScheduleSupported, T)
     {
         return AlertCategoryIDBitMask::hasSchedule(btSpecObject.categoryIDBitMask);
     }
 
-    BVP_GETTER(bool, isHighPrioritizedAlertSupported, SupportedAlertCategoryBaseStruct)
+    BVP_GETTER(bool, isHighPrioritizedAlertSupported, T)
     {
         return AlertCategoryIDBitMask::hasHighPrioritizedAlert(btSpecObject.categoryIDBitMask);
     }
 
-    BVP_GETTER(bool, isInstantMessageSupported, SupportedAlertCategoryBaseStruct)
+    BVP_GETTER(bool, isInstantMessageSupported, T)
     {
         return AlertCategoryIDBitMask::hasInstantMessage(btSpecObject.categoryIDBitMask);
     }
 
 protected:
     explicit SupportedAlertCategoryBase(const Configuration &configuration) :
-        BaseValueSpec{configuration}
+        BaseValueSpec<T>{configuration}
     {}
 
-    explicit SupportedAlertCategoryBase(const SupportedAlertCategoryBaseStruct &btSpecObject, const Configuration &configuration) :
-        BaseValueSpec{btSpecObject, configuration}
+    explicit SupportedAlertCategoryBase(const Struct<T> &btSpecObject, const Configuration &configuration) :
+        BaseValueSpec<T>{btSpecObject, configuration}
     {}
 
-    BVP_PARSE(SupportedAlertCategoryBaseStruct)
+    BVP_PARSE(T)
     {
         bool result{true};
 
@@ -92,12 +93,12 @@ protected:
         return result;
     }
 
-    BVP_TO_STRING(SupportedAlertCategoryBaseStruct)
+    BVP_TO_STRING(T)
     {
         std::string str;
 
         str.append("SupportedCategories: ");
-        str.append(AlertCategoryIDBitMask::toStringInternal(btSpecObject.categoryIDBitMask));
+        str.append(AlertCategoryIDBitMask::toStringInternal(btSpecObject.categoryIDBitMask, configuration));
 
         return str;
     }

@@ -7,20 +7,33 @@
 #include <fmt/format.h>
 
 
-#define BVP_GETTER(TReturn, Name, TStruct)\
+#define BVP_STRUCT(T)\
+class T;\
+template<>\
+struct Struct<T>
+#define BVP_STRUCT_INHERITED(T, TBase)\
+class T;\
+template<>\
+struct Struct<T> : TBase
+
+#define BVP_GETTER(TReturn, Name, T)\
     TReturn Name() const\
     {\
-        return Name(m_btSpecObject);\
+        const auto& thisRef = static_cast<const T &>(*this);\
+        return Name(thisRef.m_btSpecObject);\
     }\
-    static TReturn Name(const TStruct &btSpecObject)
-#define BVP_GETTER_CONF(TReturn, Name, TStruct)\
-TReturn Name() const\
+    static TReturn Name(const Struct<T> &btSpecObject)
+#define BVP_GETTER_CONF(TReturn, Name, T)\
+    TReturn Name() const\
     {\
-        return Name(m_btSpecObject, configuration());\
+        const auto& thisRef = static_cast<const T &>(*this);\
+        return Name(thisRef.m_btSpecObject, thisRef.configuration());\
     }\
-    static TReturn Name(const TStruct &btSpecObject, const Configuration &configuration)
+    static TReturn Name(const Struct<T> &btSpecObject, const Configuration &configuration)
 
-#define BVP_CTORS(TBase, T, TStruct)\
+#define BVP_CTORS(TBase, T)\
+    template<class T>\
+    friend class BaseValueSpec;\
     friend class BLEValueParser;\
 \
     explicit T(Parser &parser, const Configuration &configuration) :\
@@ -35,29 +48,15 @@ TReturn Name() const\
         create(data, size);\
     }\
 \
-    explicit T(const TStruct &btSpecObject, const Configuration &configuration) :\
+    explicit T(const Struct<T> &btSpecObject, const Configuration &configuration) :\
         TBase{btSpecObject, configuration}\
     {}
 
-#define BVP_PARSE(TStruct)\
-    virtual bool parse(Parser &parser) override\
-    {\
-        return parse(parser, m_btSpecObject);\
-    }\
-    static bool parse(Parser &parser, TStruct &btSpecObject)
+#define BVP_PARSE(T)\
+    static bool parse(BaseValue::Parser &parser, Struct<T> &btSpecObject)
 
-#define BVP_TO_STRING(TStruct)\
-    virtual std::string toStringInternal() const override\
-    {\
-        return toStringInternal(m_btSpecObject);\
-    }\
-    static std::string toStringInternal(const TStruct &btSpecObject)
-#define BVP_TO_STRING_CONF(TStruct)\
-    virtual std::string toStringInternal() const override\
-    {\
-        return toStringInternal(m_btSpecObject, configuration());\
-    }\
-    static std::string toStringInternal(const TStruct &btSpecObject, const Configuration &configuration)
+#define BVP_TO_STRING(T)\
+    static std::string toStringInternal(const Struct<T> &btSpecObject, const Configuration &configuration)
 
 
 namespace bvp
@@ -473,13 +472,17 @@ protected:
     }
 };
 
-template<class TStruct>
+template<class T>
+struct Struct
+{};
+
+template<class T>
 class BaseValueSpec : public BaseValue
 {
 public:
     virtual ~BaseValueSpec() = default;
 
-    TStruct getBtSpecObject() const
+    Struct<T> getBtSpecObject() const
     {
         return m_btSpecObject;
     }
@@ -489,14 +492,24 @@ protected:
         BaseValue{configuration}
     {}
 
-    explicit BaseValueSpec(const TStruct &btSpecObject, const Configuration &configuration) :
+    explicit BaseValueSpec(const Struct<T> &btSpecObject, const Configuration &configuration) :
         BaseValue{configuration},
         m_btSpecObject{btSpecObject}
     {
         m_isValid = true;
     }
 
-    TStruct m_btSpecObject;
+    virtual bool parse(Parser &parser) override
+    {
+        return static_cast<T *>(this)->parse(parser, m_btSpecObject);
+    }
+
+    virtual std::string toStringInternal() const override
+    {
+        return static_cast<const T *>(this)->toStringInternal(m_btSpecObject, configuration());
+    }
+
+    Struct<T> m_btSpecObject;
 };
 
 }  // namespace bvp

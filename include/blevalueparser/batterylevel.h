@@ -8,7 +8,7 @@ namespace bvp
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.27 Battery Level
-struct BatteryLevelStruct
+BVP_STRUCT(BatteryLevel)
 {
     uint8_t batteryLevel{0};
 };
@@ -16,20 +16,20 @@ struct BatteryLevelStruct
 // BAS_V1.1.pdf
 // Battery Service v1.1
 // 3.1 Battery Level
-class BatteryLevel final : public BaseValueSpec<BatteryLevelStruct>
+class BatteryLevel final : public BaseValueSpec<BatteryLevel>
 {
 public:
     friend class BatteryLevelStatus;
 
-    BVP_GETTER(uint8_t, level, BatteryLevelStruct)
+    BVP_GETTER(uint8_t, level, BatteryLevel)
     {
         return btSpecObject.batteryLevel;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, BatteryLevel, BatteryLevelStruct)
+    BVP_CTORS(BaseValueSpec, BatteryLevel)
 
-    BVP_PARSE(BatteryLevelStruct)
+    BVP_PARSE(BatteryLevel)
     {
         bool result{true};
 
@@ -42,8 +42,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(BatteryLevelStruct)
+    BVP_TO_STRING(BatteryLevel)
     {
+        (void)configuration;
         return fmt::format("{}%", btSpecObject.batteryLevel);
     }
 

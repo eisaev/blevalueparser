@@ -9,25 +9,25 @@ namespace bvp
 // GATT_Specification_Supplement_v8.pdf
 // 3.239 User Index
 
-struct UserIndexStruct
+BVP_STRUCT(UserIndex)
 {
     uint8_t userIndex{0};
 };
 
-class UserIndex final : public BaseValueSpec<UserIndexStruct>
+class UserIndex final : public BaseValueSpec<UserIndex>
 {
 public:
     friend class BodyCompositionMeasurement;
 
-    BVP_GETTER(uint8_t, userIndex, UserIndexStruct)
+    BVP_GETTER(uint8_t, userIndex, UserIndex)
     {
         return btSpecObject.userIndex;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, UserIndex, UserIndexStruct)
+    BVP_CTORS(BaseValueSpec, UserIndex)
 
-    BVP_PARSE(UserIndexStruct)
+    BVP_PARSE(UserIndex)
     {
         bool result{true};
 
@@ -36,8 +36,10 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(UserIndexStruct)
+    BVP_TO_STRING(UserIndex)
     {
+        (void)configuration;
+
         if (0xFF == btSpecObject.userIndex)
         {
             return "<Unknown User>";

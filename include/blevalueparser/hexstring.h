@@ -6,23 +6,23 @@
 namespace bvp
 {
 
-struct HexStringStruct
+BVP_STRUCT(HexString)
 {
     std::string rawString;
 };
 
-class HexString final : public BaseValueSpec<HexStringStruct>
+class HexString final : public BaseValueSpec<HexString>
 {
 public:
-    BVP_GETTER(std::string, rawString, HexStringStruct)
+    BVP_GETTER(std::string, rawString, HexString)
     {
         return btSpecObject.rawString;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, HexString, HexStringStruct)
+    BVP_CTORS(BaseValueSpec, HexString)
 
-    BVP_PARSE(HexStringStruct)
+    BVP_PARSE(HexString)
     {
         bool result{true};
 
@@ -31,7 +31,7 @@ private:
         return result;
     }
 
-    BVP_TO_STRING_CONF(HexStringStruct)
+    BVP_TO_STRING(HexString)
     {
         std::string str;
 

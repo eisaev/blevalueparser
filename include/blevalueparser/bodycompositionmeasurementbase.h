@@ -29,12 +29,12 @@ constexpr uint16_t BCS_FLAG_BCM_RESERVED3                   = 1 << 15;
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.34 Body Composition Measurement
-struct BodyCompositionMeasurementStruct
+struct BodyCompositionMeasurementBaseStruct
 {
     uint16_t flags{0};
     uint16_t bodyFatPercentage{0};  // org.bluetooth.unit.percentage * 0.1
-    DateTimeStruct timeStamp;
-    UserIndexStruct userID;
+    Struct<DateTime> timeStamp;
+    Struct<UserIndex> userID;
     uint16_t basalMetabolism{0};  // org.bluetooth.unit.energy.joule * 1000
     uint16_t musclePercentage{0};  // org.bluetooth.unit.percentage * 0.1
     uint16_t muscleMass{0};
@@ -49,179 +49,181 @@ struct BodyCompositionMeasurementStruct
 // BCS_V1.0.0.pdf
 // Body Composition Service v1.0.0
 // 3.2 BodyCompositionMeasurement
-class BodyCompositionMeasurementBase : public BaseValueSpec<BodyCompositionMeasurementStruct>
+template<class T>
+class BodyCompositionMeasurementBase : public BaseValueSpec<T>
 {
 public:
     virtual ~BodyCompositionMeasurementBase() = default;
 
-    BVP_GETTER(bool, isMeasurementUnsuccessful, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isMeasurementUnsuccessful, T)
     {
         return 0xFFFF == btSpecObject.bodyFatPercentage;
     }
 
-    BVP_GETTER(MeasurementUnitsEnum, measurementUnits, BodyCompositionMeasurementStruct)
+    BVP_GETTER(MeasurementUnitsEnum, measurementUnits, T)
     {
         return MeasurementUnitsEnum(btSpecObject.flags & BCS_FLAG_BCM_MEASUREMENT_UNITS);
     }
 
-    BVP_GETTER(bool, isTimeStampPresent, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isTimeStampPresent, T)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_TIME_STAMP_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isUserIDPresent, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isUserIDPresent, T)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_USER_ID_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isBasalMetabolismPresent, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isBasalMetabolismPresent, T)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_BASAL_METABOLISM_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isMusclePercentagePresent, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isMusclePercentagePresent, T)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_MUSCLE_PERCENTAGE_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isMuscleMassPresent, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isMuscleMassPresent, T)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_MUSCLE_MASS_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isFatFreeMassPresent, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isFatFreeMassPresent, T)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_FAT_FREE_MASS_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isSoftLeanMassPresent, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isSoftLeanMassPresent, T)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_SOFT_LEAN_MASS_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isBodyWaterMassPresent, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isBodyWaterMassPresent, T)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_BODY_WATER_MASS_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isImpedancePresent, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isImpedancePresent, T)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_IMPEDANCE_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isWeightPresent, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isWeightPresent, T)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_WEIGHT_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isHeightPresent, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isHeightPresent, T)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_HEIGHT_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isMultiplePacketMeasurement, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isMultiplePacketMeasurement, T)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_MULTIPLE_PACKET_MEASUREMENT) != 0;
     }
 
-    BVP_GETTER(float, bodyFatPercentage, BodyCompositionMeasurementStruct)
+    BVP_GETTER(float, bodyFatPercentage, T)
     {
         return btSpecObject.bodyFatPercentage / 10.0;
     }
 
-    BVP_GETTER(uint16_t, year, BodyCompositionMeasurementStruct)
+    BVP_GETTER(uint16_t, year, T)
     {
         return btSpecObject.timeStamp.year;
     }
 
-    BVP_GETTER(uint8_t, month, BodyCompositionMeasurementStruct)
+    BVP_GETTER(uint8_t, month, T)
     {
         return btSpecObject.timeStamp.month;
     }
 
-    BVP_GETTER(uint8_t, day, BodyCompositionMeasurementStruct)
+    BVP_GETTER(uint8_t, day, T)
     {
         return btSpecObject.timeStamp.day;
     }
 
-    BVP_GETTER(uint8_t, hour, BodyCompositionMeasurementStruct)
+    BVP_GETTER(uint8_t, hour, T)
     {
         return btSpecObject.timeStamp.hour;
     }
 
-    BVP_GETTER(uint8_t, minute, BodyCompositionMeasurementStruct)
+    BVP_GETTER(uint8_t, minute, T)
     {
         return btSpecObject.timeStamp.minute;
     }
 
-    BVP_GETTER(uint8_t, seconds, BodyCompositionMeasurementStruct)
+    BVP_GETTER(uint8_t, seconds, T)
     {
         return btSpecObject.timeStamp.seconds;
     }
 
-    BVP_GETTER(uint8_t, userID, BodyCompositionMeasurementStruct)
+    BVP_GETTER(uint8_t, userID, T)
     {
         return btSpecObject.userID.userIndex;
     }
 
-    BVP_GETTER(uint16_t, basalMetabolism, BodyCompositionMeasurementStruct)
+    BVP_GETTER(uint16_t, basalMetabolism, T)
     {
         return btSpecObject.basalMetabolism;
     }
 
-    BVP_GETTER(float, musclePercentage, BodyCompositionMeasurementStruct)
+    BVP_GETTER(float, musclePercentage, T)
     {
         return btSpecObject.musclePercentage / 10.0;
     }
 
-    BVP_GETTER_CONF(float, muscleMass, BodyCompositionMeasurementStruct)
+    BVP_GETTER_CONF(float, muscleMass, T)
     {
         return configuration.massToUnits(btSpecObject.muscleMass);
     }
 
-    BVP_GETTER_CONF(float, fatFreeMass, BodyCompositionMeasurementStruct)
+    BVP_GETTER_CONF(float, fatFreeMass, T)
     {
         return configuration.massToUnits(btSpecObject.fatFreeMass);
     }
 
-    BVP_GETTER_CONF(float, softLeanMass, BodyCompositionMeasurementStruct)
+    BVP_GETTER_CONF(float, softLeanMass, T)
     {
         return configuration.massToUnits(btSpecObject.softLeanMass);
     }
 
-    BVP_GETTER_CONF(float, bodyWaterMass, BodyCompositionMeasurementStruct)
+    BVP_GETTER_CONF(float, bodyWaterMass, T)
     {
         return configuration.massToUnits(btSpecObject.bodyWaterMass);
     }
 
-    BVP_GETTER(float, impedance, BodyCompositionMeasurementStruct)
+    BVP_GETTER(float, impedance, T)
     {
         return btSpecObject.impedance / 10.0;
     }
 
-    BVP_GETTER_CONF(float, weight, BodyCompositionMeasurementStruct)
+    BVP_GETTER_CONF(float, weight, T)
     {
         return configuration.massToUnits(btSpecObject.weight);
     }
 
-    BVP_GETTER_CONF(float, height, BodyCompositionMeasurementStruct)
+    BVP_GETTER_CONF(float, height, T)
     {
         return configuration.lenghtToUnits(btSpecObject.height);
     }
 
     virtual Configuration configuration() const override
     {
-        m_configuration.measurementUnits = measurementUnits();
-        return m_configuration;
+        const auto& thisRef = static_cast<const T &>(*this);\
+        thisRef.m_configuration.measurementUnits = measurementUnits();
+        return thisRef.m_configuration;
     }
 
 protected:
     explicit BodyCompositionMeasurementBase(const Configuration &configuration) :
-        BaseValueSpec{configuration}
+        BaseValueSpec<T>{configuration}
     {}
 
-    explicit BodyCompositionMeasurementBase(const BodyCompositionMeasurementStruct &btSpecObject, const Configuration &configuration) :
-        BaseValueSpec{btSpecObject, configuration}
+    explicit BodyCompositionMeasurementBase(const Struct<T> &btSpecObject, const Configuration &configuration) :
+        BaseValueSpec<T>{btSpecObject, configuration}
     {}
 
     virtual bool checkSize(size_t size) override

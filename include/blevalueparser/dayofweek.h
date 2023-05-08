@@ -65,25 +65,25 @@ inline DayOfWeekEnum &operator%=(DayOfWeekEnum &lhs, const DayOfWeekEnum &rhs)
     return lhs;
 }
 
-struct DayOfWeekStruct
+BVP_STRUCT(DayOfWeek)
 {
     DayOfWeekEnum dayOfWeek{DayOfWeekEnum::Unknown};
 };
 
-class DayOfWeek final : public BaseValueSpec<DayOfWeekStruct>
+class DayOfWeek final : public BaseValueSpec<DayOfWeek>
 {
 public:
     friend class DayDateTime;
 
-    BVP_GETTER(DayOfWeekEnum, dayOfWeek, DayOfWeekStruct)
+    BVP_GETTER(DayOfWeekEnum, dayOfWeek, DayOfWeek)
     {
         return btSpecObject.dayOfWeek;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, DayOfWeek, DayOfWeekStruct)
+    BVP_CTORS(BaseValueSpec, DayOfWeek)
 
-    BVP_PARSE(DayOfWeekStruct)
+    BVP_PARSE(DayOfWeek)
     {
         bool result{true};
 
@@ -92,8 +92,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(DayOfWeekStruct)
+    BVP_TO_STRING(DayOfWeek)
     {
+        (void)configuration;
         return enumToString(btSpecObject.dayOfWeek);
     }
 

@@ -198,42 +198,42 @@ inline std::ostream &operator<<(std::ostream &os, const ServiceRequiredEnum valu
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.28 Battery Level Status
-struct BatteryLevelStatusStruct
+BVP_STRUCT(BatteryLevelStatus)
 {
     uint8_t flags{0};
     uint16_t powerState{0};
     uint16_t identifier{0};
-    BatteryLevelStruct batteryLevel;
+    Struct<BatteryLevel> batteryLevel;
     uint8_t additionalStatus{0};
 };
 
 // BAS_V1.1.pdf
 // Battery Service v1.1
 // 3.2 Battery Level Status
-class BatteryLevelStatus final : public BaseValueSpec<BatteryLevelStatusStruct>
+class BatteryLevelStatus final : public BaseValueSpec<BatteryLevelStatus>
 {
 public:
-    BVP_GETTER(bool, isIdentifierPresent, BatteryLevelStatusStruct)
+    BVP_GETTER(bool, isIdentifierPresent, BatteryLevelStatus)
     {
         return (btSpecObject.flags & BAS_FLAG_IDENTIFIER_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isBatteryLevelPresent, BatteryLevelStatusStruct)
+    BVP_GETTER(bool, isBatteryLevelPresent, BatteryLevelStatus)
     {
         return (btSpecObject.flags & BAS_FLAG_BATTERY_LEVEL_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isAdditionalStatusPresent, BatteryLevelStatusStruct)
+    BVP_GETTER(bool, isAdditionalStatusPresent, BatteryLevelStatus)
     {
         return (btSpecObject.flags & BAS_FLAG_ADDITIONAL_STATUS_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isBatteryPresent, BatteryLevelStatusStruct)
+    BVP_GETTER(bool, isBatteryPresent, BatteryLevelStatus)
     {
         return (btSpecObject.powerState & BAS_PS_BATTERY_PRESENT) != 0;
     }
 
-    BVP_GETTER(ExternalPowerSourceConnectedEnum, wiredExternalPowerSourceConnected, BatteryLevelStatusStruct)
+    BVP_GETTER(ExternalPowerSourceConnectedEnum, wiredExternalPowerSourceConnected, BatteryLevelStatus)
     {
         uint16_t value =
             (btSpecObject.powerState & BAS_PS_WIRED_EXTERNAL_POWER_SOURCE_CONNECTED0) +
@@ -243,7 +243,7 @@ public:
         return ExternalPowerSourceConnectedEnum(value);
     }
 
-    BVP_GETTER(ExternalPowerSourceConnectedEnum, wirelessExternalPowerSourceConnected, BatteryLevelStatusStruct)
+    BVP_GETTER(ExternalPowerSourceConnectedEnum, wirelessExternalPowerSourceConnected, BatteryLevelStatus)
     {
         uint16_t value =
             (btSpecObject.powerState & BAS_PS_WIRELESS_EXTERNAL_POWER_SOURCE_CONNECTED0) +
@@ -253,7 +253,7 @@ public:
         return ExternalPowerSourceConnectedEnum(value);
     }
 
-    BVP_GETTER(BatteryChargeStateEnum, batteryChargeState, BatteryLevelStatusStruct)
+    BVP_GETTER(BatteryChargeStateEnum, batteryChargeState, BatteryLevelStatus)
     {
         uint16_t value =
             (btSpecObject.powerState & BAS_PS_BATTERY_CHARGE_STATE0) +
@@ -263,7 +263,7 @@ public:
         return BatteryChargeStateEnum(value);
     }
 
-    BVP_GETTER(BatteryChargeLevelEnum, batteryChargeLevel, BatteryLevelStatusStruct)
+    BVP_GETTER(BatteryChargeLevelEnum, batteryChargeLevel, BatteryLevelStatus)
     {
         uint16_t value =
             (btSpecObject.powerState & BAS_PS_BATTERY_CHARGE_LEVEL0) +
@@ -273,7 +273,7 @@ public:
         return BatteryChargeLevelEnum(value);
     }
 
-    BVP_GETTER(ChargingTypeEnum, chargingType, BatteryLevelStatusStruct)
+    BVP_GETTER(ChargingTypeEnum, chargingType, BatteryLevelStatus)
     {
         uint16_t value =
             (btSpecObject.powerState & BAS_PS_CHARGING_TYPE0) +
@@ -284,22 +284,22 @@ public:
         return ChargingTypeEnum(value);
     }
 
-    BVP_GETTER(bool, isChargingFaultReasonBattery, BatteryLevelStatusStruct)
+    BVP_GETTER(bool, isChargingFaultReasonBattery, BatteryLevelStatus)
     {
         return (btSpecObject.powerState & BAS_PS_CHARGING_FAULT_REASON_BATTERY) != 0;
     }
 
-    BVP_GETTER(bool, isChargingFaultReasonExternalPowerSource, BatteryLevelStatusStruct)
+    BVP_GETTER(bool, isChargingFaultReasonExternalPowerSource, BatteryLevelStatus)
     {
         return (btSpecObject.powerState & BAS_PS_CHARGING_FAULT_REASON_EXTERNAL_POWER_SOURCE) != 0;
     }
 
-    BVP_GETTER(bool, isChargingFaultReasonOther, BatteryLevelStatusStruct)
+    BVP_GETTER(bool, isChargingFaultReasonOther, BatteryLevelStatus)
     {
         return (btSpecObject.powerState & BAS_PS_CHARGING_FAULT_REASON_OTHER) != 0;
     }
 
-    BVP_GETTER(bool, hasChargingFault, BatteryLevelStatusStruct)
+    BVP_GETTER(bool, hasChargingFault, BatteryLevelStatus)
     {
         return
             isChargingFaultReasonBattery(btSpecObject) ||
@@ -307,17 +307,17 @@ public:
             isChargingFaultReasonOther(btSpecObject);
     }
 
-    BVP_GETTER(uint16_t, identifier, BatteryLevelStatusStruct)
+    BVP_GETTER(uint16_t, identifier, BatteryLevelStatus)
     {
         return btSpecObject.identifier;
     }
 
-    BVP_GETTER(uint8_t, batteryLevel, BatteryLevelStatusStruct)
+    BVP_GETTER(uint8_t, batteryLevel, BatteryLevelStatus)
     {
         return btSpecObject.batteryLevel.batteryLevel;
     }
 
-    BVP_GETTER(ServiceRequiredEnum, serviceRequired, BatteryLevelStatusStruct)
+    BVP_GETTER(ServiceRequiredEnum, serviceRequired, BatteryLevelStatus)
     {
         uint8_t value =
             (btSpecObject.additionalStatus & BAS_AS_SERVICE_REQUIRED0) +
@@ -327,15 +327,15 @@ public:
         return ServiceRequiredEnum(value);
     }
 
-    BVP_GETTER(bool, hasBatteryFault, BatteryLevelStatusStruct)
+    BVP_GETTER(bool, hasBatteryFault, BatteryLevelStatus)
     {
         return (btSpecObject.additionalStatus & BAS_AS_BATTERY_FAULT) != 0;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, BatteryLevelStatus, BatteryLevelStatusStruct)
+    BVP_CTORS(BaseValueSpec, BatteryLevelStatus)
 
-    BVP_PARSE(BatteryLevelStatusStruct)
+    BVP_PARSE(BatteryLevelStatus)
     {
         bool result{true};
 
@@ -360,7 +360,7 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(BatteryLevelStatusStruct)
+    BVP_TO_STRING(BatteryLevelStatus)
     {
         std::string str;
 
@@ -410,7 +410,7 @@ private:
         if (isBatteryLevelPresent(btSpecObject))
         {
             str.append(", BatteryLevel: ");
-            str.append(BatteryLevel::toStringInternal(btSpecObject.batteryLevel));
+            str.append(BatteryLevel::toStringInternal(btSpecObject.batteryLevel, configuration));
         }
 
         if (isAdditionalStatusPresent(btSpecObject))

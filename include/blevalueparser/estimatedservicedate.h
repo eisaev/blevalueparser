@@ -10,43 +10,43 @@ namespace bvp
 // GATT_Specification_Supplement_v8.pdf
 // 3.88 Estimated Service Date
 
-struct EstimatedServiceDateStruct
+BVP_STRUCT(EstimatedServiceDate)
 {
-    DateUTCStruct estimatedServiceDate;
+    Struct<DateUTC> estimatedServiceDate;
 };
 
-class EstimatedServiceDate final : public BaseValueSpec<EstimatedServiceDateStruct>
+class EstimatedServiceDate final : public BaseValueSpec<EstimatedServiceDate>
 {
 public:
-    BVP_GETTER(uint64_t, days, EstimatedServiceDateStruct)
+    BVP_GETTER(uint64_t, days, EstimatedServiceDate)
     {
         return DateUTC::days(btSpecObject.estimatedServiceDate);
     }
 
-    BVP_GETTER(time_t, date, EstimatedServiceDateStruct)
+    BVP_GETTER(time_t, date, EstimatedServiceDate)
     {
         return DateUTC::date(btSpecObject.estimatedServiceDate);
     }
 
-    BVP_GETTER(uint16_t, year, EstimatedServiceDateStruct)
+    BVP_GETTER(uint16_t, year, EstimatedServiceDate)
     {
         return DateUTC::year(btSpecObject.estimatedServiceDate);
     }
 
-    BVP_GETTER(uint8_t, month, EstimatedServiceDateStruct)
+    BVP_GETTER(uint8_t, month, EstimatedServiceDate)
     {
         return DateUTC::month(btSpecObject.estimatedServiceDate);
     }
 
-    BVP_GETTER(uint8_t, day, EstimatedServiceDateStruct)
+    BVP_GETTER(uint8_t, day, EstimatedServiceDate)
     {
         return DateUTC::day(btSpecObject.estimatedServiceDate);
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, EstimatedServiceDate, EstimatedServiceDateStruct)
+    BVP_CTORS(BaseValueSpec, EstimatedServiceDate)
 
-    BVP_PARSE(EstimatedServiceDateStruct)
+    BVP_PARSE(EstimatedServiceDate)
     {
         bool result{true};
 
@@ -55,9 +55,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(EstimatedServiceDateStruct)
+    BVP_TO_STRING(EstimatedServiceDate)
     {
-        return DateUTC::toStringInternal(btSpecObject.estimatedServiceDate);
+        return DateUTC::toStringInternal(btSpecObject.estimatedServiceDate, configuration);
     }
 
     virtual bool checkSize(size_t size) override

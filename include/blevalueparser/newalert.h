@@ -9,9 +9,9 @@ namespace bvp
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.154 New Alert
-struct NewAlertStruct
+BVP_STRUCT(NewAlert)
 {
-    AlertCategoryIDStruct categoryID;
+    Struct<AlertCategoryID> categoryID;
     uint8_t numberOfNewAlert{0};
     std::string textStringInformation;
 };
@@ -19,28 +19,28 @@ struct NewAlertStruct
 // ANS_SPEC_V10.pdf
 // Alert Notification Service v10r00
 // 3.2 New Alert
-class NewAlert final : public BaseValueSpec<NewAlertStruct>
+class NewAlert final : public BaseValueSpec<NewAlert>
 {
 public:
-    BVP_GETTER(AlertCategoryIDEnum, categoryID, NewAlertStruct)
+    BVP_GETTER(AlertCategoryIDEnum, categoryID, NewAlert)
     {
         return btSpecObject.categoryID.categoryID;
     }
 
-    BVP_GETTER(uint8_t, numberOfNewAlert, NewAlertStruct)
+    BVP_GETTER(uint8_t, numberOfNewAlert, NewAlert)
     {
         return btSpecObject.numberOfNewAlert;
     }
 
-    BVP_GETTER(std::string, recentAlertBrief, NewAlertStruct)
+    BVP_GETTER(std::string, recentAlertBrief, NewAlert)
     {
         return btSpecObject.textStringInformation;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, NewAlert, NewAlertStruct)
+    BVP_CTORS(BaseValueSpec, NewAlert)
 
-    BVP_PARSE(NewAlertStruct)
+    BVP_PARSE(NewAlert)
     {
         bool result{true};
 
@@ -51,8 +51,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(NewAlertStruct)
+    BVP_TO_STRING(NewAlert)
     {
+        (void)configuration;
         std::string str;
 
         str.append("Category: ");

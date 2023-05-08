@@ -24,7 +24,7 @@ constexpr uint8_t BHS_FLAG_RESERVED4                        = 1 << 7;
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.25 Battery Health Status
-struct BatteryHealthStatusStruct
+BVP_STRUCT(BatteryHealthStatus)
 {
     uint8_t flags{0};
     uint8_t batteryHealthSummary{0};  // org.bluetooth.unit.percentage
@@ -33,63 +33,63 @@ struct BatteryHealthStatusStruct
     uint16_t deepDischargeCount{0};
 };
 
-class BatteryHealthStatus final : public BaseValueSpec<BatteryHealthStatusStruct>
+class BatteryHealthStatus final : public BaseValueSpec<BatteryHealthStatus>
 {
 public:
-    BVP_GETTER(bool, isBatteryHealthSummaryPresent, BatteryHealthStatusStruct)
+    BVP_GETTER(bool, isBatteryHealthSummaryPresent, BatteryHealthStatus)
     {
         return (btSpecObject.flags & BHS_FLAG_BATTERY_HEALTH_SUMMARY_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isCycleCountPresent, BatteryHealthStatusStruct)
+    BVP_GETTER(bool, isCycleCountPresent, BatteryHealthStatus)
     {
         return (btSpecObject.flags & BHS_FLAG_CYCLE_COUNT_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isCurrentTemperaturePresent, BatteryHealthStatusStruct)
+    BVP_GETTER(bool, isCurrentTemperaturePresent, BatteryHealthStatus)
     {
         return (btSpecObject.flags & BHS_FLAG_CURRENT_TEMPERATURE_PRESENT) != 0;
     }
 
-    BVP_GETTER(bool, isDeepDischargeCountPresent, BatteryHealthStatusStruct)
+    BVP_GETTER(bool, isDeepDischargeCountPresent, BatteryHealthStatus)
     {
         return (btSpecObject.flags & BHS_FLAG_DEEP_DISCHARGE_COUNT_PRESENT) != 0;
     }
 
-    BVP_GETTER(uint8_t, batteryHealthSummary, BatteryHealthStatusStruct)
+    BVP_GETTER(uint8_t, batteryHealthSummary, BatteryHealthStatus)
     {
         return btSpecObject.batteryHealthSummary;
     }
 
-    BVP_GETTER(uint16_t, cycleCount, BatteryHealthStatusStruct)
+    BVP_GETTER(uint16_t, cycleCount, BatteryHealthStatus)
     {
         return btSpecObject.cycleCount;
     }
 
-    BVP_GETTER(int8_t, currentTemperature, BatteryHealthStatusStruct)
+    BVP_GETTER(int8_t, currentTemperature, BatteryHealthStatus)
     {
         return btSpecObject.currentTemperature;
     }
 
-    BVP_GETTER(uint16_t, deepDischargeCount, BatteryHealthStatusStruct)
+    BVP_GETTER(uint16_t, deepDischargeCount, BatteryHealthStatus)
     {
         return btSpecObject.deepDischargeCount;
     }
 
-    BVP_GETTER(bool, isCurrentTemperatureGreater, BatteryHealthStatusStruct)
+    BVP_GETTER(bool, isCurrentTemperatureGreater, BatteryHealthStatus)
     {
         return BHS_GREATER == btSpecObject.currentTemperature;
     }
 
-    BVP_GETTER(bool, isCurrentTemperatureLess, BatteryHealthStatusStruct)
+    BVP_GETTER(bool, isCurrentTemperatureLess, BatteryHealthStatus)
     {
         return BHS_LESS == btSpecObject.currentTemperature;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, BatteryHealthStatus, BatteryHealthStatusStruct)
+    BVP_CTORS(BaseValueSpec, BatteryHealthStatus)
 
-    BVP_PARSE(BatteryHealthStatusStruct)
+    BVP_PARSE(BatteryHealthStatus)
     {
         bool result{true};
 
@@ -119,8 +119,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(BatteryHealthStatusStruct)
+    BVP_TO_STRING(BatteryHealthStatus)
     {
+        (void)configuration;
         std::string str;
 
         if (isBatteryHealthSummaryPresent(btSpecObject))

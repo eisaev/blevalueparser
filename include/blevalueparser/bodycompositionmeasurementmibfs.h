@@ -6,6 +6,8 @@
 namespace bvp
 {
 
+BVP_STRUCT_INHERITED(BodyCompositionMeasurementMIBFS, BodyCompositionMeasurementBaseStruct) {};
+
 // GATT_Specification_Supplement_v8.pdf
 // 3.34.1 Flags field
 // Non standard - Xiaomi Mi Body Composition Scale 2 (XMTZC05HM)
@@ -17,28 +19,28 @@ constexpr uint16_t BCS_FLAG_BCM_MIBFS_UNLOADED   = BCS_FLAG_BCM_RESERVED3;
 // Body Composition Service v1.0.0
 // 3.2 BodyCompositionMeasurement
 // Non standard - Xiaomi Mi Body Composition Scale 2 (XMTZC05HM)
-class BodyCompositionMeasurementMIBFS final : public BodyCompositionMeasurementBase
+class BodyCompositionMeasurementMIBFS final : public BodyCompositionMeasurementBase<BodyCompositionMeasurementMIBFS>
 {
 public:
-    BVP_GETTER(bool, isStabilized, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isStabilized, BodyCompositionMeasurementMIBFS)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_MIBFS_STABILIZED) != 0;
     }
 
-    BVP_GETTER(bool, isUnknown, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isUnknown, BodyCompositionMeasurementMIBFS)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_MIBFS_UNKNOWN1) != 0;
     }
 
-    BVP_GETTER(bool, isUnloaded, BodyCompositionMeasurementStruct)
+    BVP_GETTER(bool, isUnloaded, BodyCompositionMeasurementMIBFS)
     {
         return (btSpecObject.flags & BCS_FLAG_BCM_MIBFS_UNLOADED) != 0;
     }
 
 private:
-    BVP_CTORS(BodyCompositionMeasurementBase, BodyCompositionMeasurementMIBFS, BodyCompositionMeasurementStruct)
+    BVP_CTORS(BodyCompositionMeasurementBase<BodyCompositionMeasurementMIBFS>, BodyCompositionMeasurementMIBFS)
 
-    BVP_PARSE(BodyCompositionMeasurementStruct)
+    BVP_PARSE(BodyCompositionMeasurementMIBFS)
     {
         bool result{true};
 
@@ -65,7 +67,7 @@ private:
         return result;
     }
 
-    BVP_TO_STRING_CONF(BodyCompositionMeasurementStruct)
+    BVP_TO_STRING(BodyCompositionMeasurementMIBFS)
     {
         std::string str;
 
@@ -85,7 +87,7 @@ private:
         if (isTimeStampPresent(btSpecObject))
         {
             str.append(", TimeStamp: ");
-            str.append(DateTime::toStringInternal(btSpecObject.timeStamp));
+            str.append(DateTime::toStringInternal(btSpecObject.timeStamp, configuration));
         }
 
         if (isImpedancePresent(btSpecObject))

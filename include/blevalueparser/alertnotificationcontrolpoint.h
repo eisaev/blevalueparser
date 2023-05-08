@@ -63,32 +63,32 @@ inline AlertNotificationControlPointCommandIDEnum &operator%=(AlertNotificationC
 
 // GATT_Specification_Supplement_v8.pdf
 // 3.9 Alert Notification Control Point
-struct AlertNotificationControlPointStruct
+BVP_STRUCT(AlertNotificationControlPoint)
 {
     AlertNotificationControlPointCommandIDEnum commandID{AlertNotificationControlPointCommandIDEnum::EnableNewIncomingAlertNotification};
-    AlertCategoryIDStruct categoryID;
+    Struct<AlertCategoryID> categoryID;
 };
 
 // ANS_SPEC_V10.pdf
 // Alert Notification Service v10r00
 // 3.5 Alert Notification Control Point
-class AlertNotificationControlPoint final : public BaseValueSpec<AlertNotificationControlPointStruct>
+class AlertNotificationControlPoint final : public BaseValueSpec<AlertNotificationControlPoint>
 {
 public:
-    BVP_GETTER(AlertNotificationControlPointCommandIDEnum, commandID, AlertNotificationControlPointStruct)
+    BVP_GETTER(AlertNotificationControlPointCommandIDEnum, commandID, AlertNotificationControlPoint)
     {
         return btSpecObject.commandID;
     }
 
-    BVP_GETTER(AlertCategoryIDEnum, categoryID, AlertNotificationControlPointStruct)
+    BVP_GETTER(AlertCategoryIDEnum, categoryID, AlertNotificationControlPoint)
     {
         return btSpecObject.categoryID.categoryID;
     }
 
 private:
-    BVP_CTORS(BaseValueSpec, AlertNotificationControlPoint, AlertNotificationControlPointStruct)
+    BVP_CTORS(BaseValueSpec, AlertNotificationControlPoint)
 
-    BVP_PARSE(AlertNotificationControlPointStruct)
+    BVP_PARSE(AlertNotificationControlPoint)
     {
         bool result{true};
 
@@ -98,8 +98,9 @@ private:
         return result;
     }
 
-    BVP_TO_STRING(AlertNotificationControlPointStruct)
+    BVP_TO_STRING(AlertNotificationControlPoint)
     {
+        (void)configuration;
         std::string str;
 
         str.append("Command: ");
